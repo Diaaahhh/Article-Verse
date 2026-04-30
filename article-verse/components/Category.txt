@@ -1,0 +1,44 @@
+| Category | Subcategory           | Sub-Subcategory        |
+| -------- | --------------------- | ---------------------- |
+| Science  | Physics               | Quantum Physics        |
+| Science  | Physics               | Astrophysics           |
+| Science  | Physics               | Nuclear Physics        |
+| Science  | Physics               | Thermodynamics         |
+| Science  | Physics               | Electromagnetism       |
+| Science  | Chemistry             | Organic Chemistry      |
+| Science  | Chemistry             | Inorganic Chemistry    |
+| Science  | Chemistry             | Biochemistry           |
+| Science  | Chemistry             | Analytical Chemistry   |
+| Science  | Biology               | Genetics               |
+| Science  | Biology               | Microbiology           |
+| Science  | Biology               | Zoology                |
+| Science  | Biology               | Botany                 |
+| Science  | Biology               | Biotechnology          |
+| Science  | Environmental Science | Climate Change         |
+| Science  | Environmental Science | Renewable Energy       |
+| Science  | Environmental Science | Conservation           |
+| Science  | Earth Science         | Geology                |
+| Science  | Earth Science         | Meteorology            |
+| Science  | Earth Science         | Oceanography           |
+| Science  | Astronomy             | Space Exploration      |
+| Science  | Astronomy             | Planetary Science      |
+| Science  | Astronomy             | Cosmology              |
+| Science  | Medical Science       | Human Anatomy          |
+| Science  | Medical Science       | Neurology              |
+| Science  | Medical Science       | Immunology             |
+| Science  | Medical Science       | Public Health          |
+| Science  | Neuroscience          | Brain Research         |
+| Science  | Neuroscience          | Cognitive Science      |
+| Science  | Psychology            | Behavioral Science     |
+| Science  | Psychology            | Clinical Psychology    |
+| Science  | Data Science          | Scientific Computing   |
+| Science  | Robotics              | Automation             |
+| Science  | Nanotechnology        | Nano Materials         |
+| Science  | Forensic Science      | Criminal Investigation |
+| Science  | Agricultural Science  | Food Technology        |
+| Science  | Agricultural Science  | Soil Science           |
+| Science  | Marine Science        | Marine Biology         |
+| Science  | Space Science         | Rocket Science         |
+| Science  | Genetics              | DNA Research           |
+| Science  | Ecology               | Biodiversity           |
+| Science  | Scientific Research   | Laboratory Research    |

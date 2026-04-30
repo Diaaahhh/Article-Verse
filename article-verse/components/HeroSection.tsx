@@ -1,12 +1,41 @@
 "use client";
-import { Open_Sans } from "next/font/google";
 
-// components/HeroSection.tsx
+import { useEffect, useState } from "react";
+import { Open_Sans } from "next/font/google";
+import { API_BASE_URL } from "@/constants/api";
 const openSans = Open_Sans({
   subsets: ["latin"],
-  weight: ["400","600"],
+  weight: ["400", "600", "700", "800"],
 });
+
 export default function HeroSection() {
+  // State for database data
+  const [infoName, setInfoName] = useState("Not from Backend");
+  const [infoSubtitle, setInfoSubtitle] = useState("Subtitle not from Backend");
+  // Fetch data from backend
+  useEffect(() => {
+    const fetchInformation = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/hero_section`);
+
+        const data = await response.json();
+
+        // Get first row's info_name
+        if (data.length > 0) {
+          // Heading
+          setInfoName(data[0].info_name);
+
+          // Subtitle
+          setInfoSubtitle(data[0].info_subtitle);
+        }
+      } catch (error) {
+        console.log("Error fetching information:", error);
+      }
+    };
+
+    fetchInformation();
+  }, []);
+
   return (
     <section className="relative flex min-h-[90vh] items-center justify-center overflow-hidden bg-[#302C2B] text-white">
       {/* Background Image */}
@@ -35,7 +64,7 @@ export default function HeroSection() {
           className={`${openSans.className} max-w-4xl text-5xl font-extrabold leading-tight md:text-7xl`}
           style={{ marginBottom: "55px" }}
         >
-          Article Verse
+          {infoName}
         </h1>
 
         {/* Search Box */}
@@ -83,8 +112,7 @@ export default function HeroSection() {
             marginTop: "15px",
           }}
         >
-          Discover articles, stories, research, tutorials, and ideas from
-          writers around the world.
+          {infoSubtitle}
         </p>
       </div>
     </section>
