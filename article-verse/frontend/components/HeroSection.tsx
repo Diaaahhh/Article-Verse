@@ -10,8 +10,8 @@ const openSans = Open_Sans({
 
 export default function HeroSection() {
   // State for database data
-  const [infoName, setInfoName] = useState("Not from Backend");
-  const [infoSubtitle, setInfoSubtitle] = useState("Subtitle not from Backend");
+  const [infoName, setInfoName] = useState("");
+  const [infoSubtitle, setInfoSubtitle] = useState("");
   // Fetch data from backend
   useEffect(() => {
     const fetchInformation = async () => {
@@ -37,8 +37,8 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative flex min-h-[90vh] items-center justify-center overflow-hidden bg-[#302C2B] text-white">
-      {/* Background Image */}
+<section className="relative flex min-h-[25vh] justify-center overflow-hidden bg-[#302C2B] text-white">      
+  {/* Background Image */}
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-20"></div>
 
       {/* Dark Overlay */}
@@ -47,7 +47,7 @@ export default function HeroSection() {
       {/* Content */}
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center px-6 text-center">
         {/* Image Placeholder */}
-        <div
+        {/* <div
           className="mb-10 flex h-[120px] w-[120px] items-center justify-center rounded-3xl border-2 border-dashed"
           style={{
             borderColor: "#D5D4D3",
@@ -57,12 +57,12 @@ export default function HeroSection() {
           <span className="text-sm font-medium" style={{ color: "#D5D4D3" }}>
             Logo Here
           </span>
-        </div>
+        </div> */}
 
         {/* Heading */}
         <h1
           className={`${openSans.className} max-w-4xl text-5xl font-extrabold leading-tight md:text-7xl`}
-          style={{ marginBottom: "55px" }}
+          // style={{ marginBottom: "55px" }}
         >
           {infoName}
         </h1>

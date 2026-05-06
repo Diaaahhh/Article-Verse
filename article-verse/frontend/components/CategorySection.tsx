@@ -43,18 +43,24 @@ type DeepTopicType = {
   cat_sub_subcategory: string;
 };
 
-export default function CategorySection({ setSelectedDeepTopic }: any) {
+export default function CategorySection({
+   selectedCategory,
+  selectedSubcategory,
+  selectedDeepTopic,
+  setSelectedCategory,
+  setSelectedSubcategory,
+  setSelectedDeepTopic,
+}: any) {
   const [categories, setCategories] = useState<CategoryType[]>([]);
   // Stores fetched subcategories
   const [subcategories, setSubcategories] = useState<SubcategoryType[]>([]);
 
-  // Stores currently selected category
-  const [selectedCategory, setSelectedCategory] = useState("");
   // Stores fetched deep topics
 const [deepTopics, setDeepTopics] = useState<DeepTopicType[]>([]);
 
-// Stores selected subcategory
-const [selectedSubcategory, setSelectedSubcategory] = useState("");
+const [categorySearch, setCategorySearch] = useState("");
+const [subcategorySearch, setSubcategorySearch] = useState("");
+const [deepTopicSearch, setDeepTopicSearch] = useState("");
   /*
   |--------------------------------------------------------------------------
   | FETCH CATEGORY DATA
@@ -177,9 +183,7 @@ const [selectedSubcategory, setSelectedSubcategory] = useState("");
 
   const fetchSubcategories = async (category: string) => {
     try {
-      // Save selected category
-      setSelectedCategory(category);
-
+      
       // API request
       const response = await fetch(
         `${API_BASE_URL}/api/category_section/subcategories/${category}`
@@ -204,9 +208,7 @@ const [selectedSubcategory, setSelectedSubcategory] = useState("");
 
 const fetchDeepTopics = async (subcategory: string) => {
   try {
-    // Save selected subcategory
-    setSelectedSubcategory(subcategory);
-
+    
     // API request
     const response = await fetch(
       `${API_BASE_URL}/api/category_section/deep-topics/${subcategory}`
@@ -221,6 +223,17 @@ const fetchDeepTopics = async (subcategory: string) => {
     console.log(error);
   }
 };
+const filteredCategories = categories.filter((item) =>
+  item.cat_category.toLowerCase().includes(categorySearch.toLowerCase())
+);
+
+const filteredSubcategories = subcategories.filter((item) =>
+  item.cat_subcategory.toLowerCase().includes(subcategorySearch.toLowerCase())
+);
+
+const filteredDeepTopics = deepTopics.filter((item) =>
+  item.cat_sub_subcategory.toLowerCase().includes(deepTopicSearch.toLowerCase())
+);
   return (
     <section
       className="relative w-full overflow-hidden px-4 py-24 md:px-8"
@@ -257,8 +270,8 @@ const fetchDeepTopics = async (subcategory: string) => {
             className="text-3xl font-bold md:text-5xl"
             style={{
               color: "#302C2B",
-              marginTop: "48px",
-              marginBottom: "48px",
+              marginTop: "20px",
+              marginBottom: "20px",
             }}
           >
             Explore Categories
@@ -283,6 +296,20 @@ const fetchDeepTopics = async (subcategory: string) => {
                 padding: "15px",
               }}
             >
+              {/* Search Bar */}
+<div className="mb-4">
+  <input
+    type="text"
+    placeholder="Search categories..."
+    value={categorySearch}
+    onChange={(e) => setCategorySearch(e.target.value)}
+    className="w-full rounded-xl border px-4 py-2 text-sm outline-none"
+    style={{
+      borderColor: "#D5D4D3",
+      backgroundColor: "#FAFAFA",
+    }}
+  />
+</div>
               {/* Header */}
               <div
                 className="mx-auto mb-[20px] mt-4 flex items-center justify-between   px-2 py-9"
@@ -301,7 +328,7 @@ const fetchDeepTopics = async (subcategory: string) => {
                 </h3>
 
                 <span
-                  className="flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold shadow-md"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold shadow-md"
                   style={{
                     backgroundColor: "#A9512C",
                     color: "#FFFFFF",
@@ -313,11 +340,14 @@ const fetchDeepTopics = async (subcategory: string) => {
 
               {/* Scrollable List */}
               <div className="max-h-[600px] space-y-4 overflow-y-auto pr-2 ">
-                {categories.map((item, index) => (
+                {filteredCategories.map((item, index) => (
                   <div
                     key={index}
-                    onClick={() => fetchSubcategories(item.cat_category)}
-                    className="flex cursor-pointer items-center gap-4 rounded-2xl border p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                    onClick={() => {
+  setSelectedCategory(item.cat_category);
+  fetchSubcategories(item.cat_category);
+}}
+                    className="flex cursor-pointer items-center gap-4 rounded-2xl border p-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                     style={{
                       borderColor:
                         selectedCategory === item.cat_category
@@ -329,7 +359,7 @@ const fetchDeepTopics = async (subcategory: string) => {
                           ? "#FDF1EB"
                           : "#FAFAFA",
 
-                      marginTop: "10px",
+                      marginTop: "5px",
 
                       boxShadow:
                         selectedCategory === item.cat_category
@@ -339,7 +369,7 @@ const fetchDeepTopics = async (subcategory: string) => {
                   >
                     {/* Icon */}
                     <div
-                      className="flex h-14 w-14 items-center justify-center rounded-2xl text-2xl"
+                      className="flex h-9 w-14 items-center justify-center rounded-2xl text-2xl"
                       style={{
                         background:
                           selectedCategory === item.cat_category
@@ -379,6 +409,20 @@ const fetchDeepTopics = async (subcategory: string) => {
                 padding: "15px",
               }}
             >
+              {/* Search Bar */}
+<div className="mb-4">
+  <input
+    type="text"
+    placeholder="Search subcategories..."
+    value={subcategorySearch}
+    onChange={(e) => setSubcategorySearch(e.target.value)}
+    className="w-full rounded-xl border px-4 py-2 text-sm outline-none"
+    style={{
+      borderColor: "#D5D4D3",
+      backgroundColor: "#FAFAFA",
+    }}
+  />
+</div>
               {/* Header */}
               <div
                 className="mx-auto mb-[20px] mt-4 flex items-center justify-between px-2 py-9"
@@ -397,7 +441,7 @@ const fetchDeepTopics = async (subcategory: string) => {
                 </h3>
 
                 <span
-                  className="flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold shadow-md"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold shadow-md"
                   style={{
                     backgroundColor: "#A9512C",
                     color: "#FFFFFF",
@@ -409,12 +453,15 @@ const fetchDeepTopics = async (subcategory: string) => {
 
               {/* Scrollable List */}
               <div className="max-h-[600px] space-y-4 overflow-y-auto pr-2">
-                {subcategories.length > 0 ? (
-                  subcategories.map((item, index) => (
+                {filteredSubcategories.length > 0 ? (
+                  filteredSubcategories.map((item, index) => (
                     <div
   key={index}
-  onClick={() => fetchDeepTopics(item.cat_subcategory)}
-  className="flex min-h-[60px] cursor-pointer items-center gap-4 rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+onClick={() => {
+  setSelectedSubcategory(item.cat_subcategory);
+  fetchDeepTopics(item.cat_subcategory);
+}}
+  className="flex min-h-[40px] cursor-pointer items-center gap-4 rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
 
                       style={{
   borderColor:
@@ -427,7 +474,7 @@ const fetchDeepTopics = async (subcategory: string) => {
       ? "#FDF1EB"
       : "#FAFAFA",
 
-  marginTop: "10px",
+  marginTop: "5px",
 
   paddingLeft: "10px",
 
@@ -488,6 +535,20 @@ const fetchDeepTopics = async (subcategory: string) => {
     padding: "15px",
   }}
 >
+  {/* Search Bar */}
+<div className="mb-4">
+  <input
+    type="text"
+    placeholder="Search topics..."
+    value={deepTopicSearch}
+    onChange={(e) => setDeepTopicSearch(e.target.value)}
+    className="w-full rounded-xl border px-4 py-2 text-sm outline-none"
+    style={{
+      borderColor: "#D5D4D3",
+      backgroundColor: "#FAFAFA",
+    }}
+  />
+</div>
   {/* Header */}
   <div
     className="mx-auto mb-[20px] mt-4 flex items-center justify-between px-2 py-9"
@@ -506,7 +567,7 @@ const fetchDeepTopics = async (subcategory: string) => {
     </h3>
 
     <span
-      className="flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold shadow-md"
+      className="flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold shadow-md"
       style={{
         backgroundColor: "#A9512C",
         color: "#FFFFFF",
@@ -518,18 +579,32 @@ const fetchDeepTopics = async (subcategory: string) => {
 
   {/* Scrollable List */}
   <div className="max-h-[600px] space-y-4 overflow-y-auto pr-2">
-    {deepTopics.length > 0 ? (
-      deepTopics.map((item, index) => (
+    {filteredDeepTopics.length > 0 ? (
+      filteredDeepTopics.map((item, index) => (
         <div
           key={index}
-          onClick={() =>{ console.log("Clicked:", item.cat_sub_subcategory); setSelectedDeepTopic(item.cat_sub_subcategory)}}
-          className="flex min-h-[60px] cursor-pointer items-center gap-4 rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+onClick={() => {
+  setSelectedDeepTopic(item.cat_sub_subcategory);
+}}
+          className="flex min-h-[40px] cursor-pointer items-center gap-4 rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
           style={{
-            borderColor: "#D5D4D3",
-            backgroundColor: "#FAFAFA",
-            marginTop: "10px",
-            paddingLeft: "10px",
-          }}
+  borderColor:
+    selectedDeepTopic === item.cat_sub_subcategory
+      ? "#A9512C"
+      : "#D5D4D3",
+
+  backgroundColor:
+selectedDeepTopic === item.cat_sub_subcategory      ? "#FDF1EB"
+      : "#FAFAFA",
+
+  marginTop: "5px",
+
+  paddingLeft: "10px",
+
+  boxShadow:
+selectedDeepTopic === item.cat_sub_subcategory      ? "0 0 15px rgba(169,81,44,0.18)"
+      : "none",
+}}
         >
           {/* Text Section */}
           <div>
