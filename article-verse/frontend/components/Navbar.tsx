@@ -1,15 +1,54 @@
 "use client";
-import { useRouter } from "next/navigation";
+
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { API_BASE_URL } from "@/constants/api";
 
 export default function Navbar() {
   const router = useRouter();
-   const handleAddPost = async () => {
+  const pathname = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/check-auth`, {
+          credentials: "include",
+        });
+        setIsLoggedIn(res.status === 200);
+      } catch (error) {
+        console.log(error);
+        setIsLoggedIn(false);
+      }
+    };
+    checkAuth();
+
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [pathname]);
+
+  const handleLogout = async () => {
+    try {
+      await fetch(`${API_BASE_URL}/api/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      setIsLoggedIn(false);
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAddPost = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/check-auth`, {
-        credentials: "include", // VERY IMPORTANT
+        credentials: "include",
       });
-
       if (res.status === 401) {
         router.push("/login");
       } else {
@@ -20,76 +59,89 @@ export default function Navbar() {
       router.push("/login");
     }
   };
+
   return (
     <nav
-      className="w-full border-b shadow-sm flex justify-center"
-      style={{
-        borderColor: "#D5D4D3",
-        backgroundColor: "#FFFFFF",
-      }}
+      className={`w-full border-b transition-all duration-300 flex justify-center sticky top-0 z-50 ${
+        scrolled ? 'shadow-lg bg-white/95 backdrop-blur-sm' : 'shadow-sm bg-white'
+      }`}
+      style={{ borderColor: "#D5D4D3" }}
     >
-      <div className="mx-auto flex h-28 w-full max-w-[1400px] items-center justify-end px-4"
-      // style={{
-      //   borderColor: "#D5D4D3",
-      //   backgroundColor: "#FF00FF",
-      // }}
-      >
+      <div className="mx-auto flex h-20 w-full max-w-[1400px] items-center justify-between px-6">
+        {/* Logo */}
+        <div 
+          className="flex items-center gap-2 cursor-pointer group"
+          onClick={() => router.push("/")}
+        >
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A9512C] to-[#302C2B] flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+            <span className="text-white font-bold text-xl">C</span>
+          </div>
+          <div>
+            <h1 className="font-bold text-xl bg-gradient-to-r from-[#A9512C] to-[#302C2B] bg-clip-text text-transparent">
+              ContentHub
+            </h1>
+            <p className="text-xs text-gray-500">Manage your content</p>
+          </div>
+        </div>
+
         {/* Right Actions */}
-        <div className="ml-auto flex items-center gap-4">
+        <div className="flex items-center gap-4">
           {/* Add Post */}
-          <div
-            role="button"
-            tabIndex={0}
-              onClick={handleAddPost}
-            className="flex h-[52px] w-[130px] cursor-pointer items-center justify-center border-2 text-sm font-semibold tracking-wide transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:h-[58px] md:w-[145px] md:text-base"
+          <button
+            onClick={handleAddPost}
+            className="group relative overflow-hidden flex h-[44px] w-[130px] cursor-pointer items-center justify-center text-sm font-semibold tracking-wide transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:h-[48px] md:w-[140px]"
             style={{
-              borderColor: "#A9512C",
+              border: "2px solid #A9512C",
               color: "#A9512C",
               backgroundColor: "#FFFFFF",
               borderRadius: "12px",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = "#A9512C";
               e.currentTarget.style.color = "#FFFFFF";
-              e.currentTarget.style.boxShadow =
-                "0 10px 24px rgba(169, 81, 44, 0.28)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = "#FFFFFF";
               e.currentTarget.style.color = "#A9512C";
-              e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.06)";
             }}
           >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+            </svg>
             Add Post
-          </div>
+          </button>
 
-          {/* Sign In */}
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={() => router.push("/login")}
-            className="flex h-[52px] w-[145px] cursor-pointer items-center justify-center text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:h-[58px] md:w-[165px] md:text-base"
+          {/* Sign In/Out */}
+          <button
+            onClick={() => {
+              if (isLoggedIn) {
+                handleLogout();
+              } else {
+                router.push("/login");
+              }
+            }}
+            className="flex h-[44px] w-[130px] cursor-pointer items-center justify-center text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:h-[48px] md:w-[140px]"
             style={{
               background: "linear-gradient(135deg, #A9512C 0%, #302C2B 100%)",
               borderRadius: "12px",
-              boxShadow: "0 8px 18px rgba(48, 44, 43, 0.22)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow =
-                "0 14px 30px rgba(48, 44, 43, 0.32)";
-              e.currentTarget.style.opacity = "0.96";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow =
-                "0 8px 18px rgba(48, 44, 43, 0.22)";
-              e.currentTarget.style.opacity = "1";
             }}
           >
-            Sign In
-          </div>
+            {isLoggedIn ? (
+              <>
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Log Out
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+                Sign In
+              </>
+            )}
+          </button>
         </div>
       </div>
     </nav>

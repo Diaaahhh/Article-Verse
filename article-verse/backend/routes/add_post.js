@@ -1,65 +1,142 @@
 import express from "express";
 import db from "../db.js";
+import multer from "multer";
+import path from "path";
 
 const router = express.Router();
 
-// ADD POST API
-router.post("/", async (req, res) => {
-  try {
-    const {
-      title,
-      subtitle,
-      content,
-      metaTitle,
-      metaDesc,
-      metaKeywords,
-    } = req.body;
 
-    // Basic validation
-    if (!title || !content) {
-      return res.status(400).json({ message: "Title and content required" });
-    }
+// ============================
+// MULTER CONFIG
+// ============================
 
-    // Default values (you can change later)
-    const cat_id = 1;
-    const lan_id = 1;
-    const art_status = 0; // pending
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
 
-    // Convert keywords array → string
-    const keywordsString = Array.isArray(metaKeywords)
-      ? metaKeywords.join(",")
-      : metaKeywords;
-
-    const query = `
-      INSERT INTO articles
-      (cat_id, art_title, art_subtitle, art_text, art_image, lan_id, art_status, art_meta_title, art_meta_desc, art_meta_keywords)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    const values = [
-      cat_id,
-      title,
-      subtitle || null,
-      content,
-      null, // art_image (you can add later)
-      lan_id,
-      art_status,
-      metaTitle || null,
-      metaDesc || null,
-      keywordsString || null,
-    ];
-
-    await db.query(query, values);
-
-    return res.status(201).json({
-      message: "Post created successfully",
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      message: "Server error",
-    });
-  }
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      Date.now() + path.extname(file.originalname)
+    );
+  },
 });
+
+const upload = multer({
+  storage,
+
+  limits: {
+    fileSize: 5 * 1024, // 5 KB
+  },
+});
+
+
+// ============================
+// ADD POST
+// ============================
+
+router.post(
+  "/",
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const {
+        title,
+        subtitle,
+        content,
+        metaTitle,
+        metaDesc,
+        metaKeywords,
+        languageId,
+        category,
+        subcategory,
+        deepTopic,
+      } = req.body;
+
+      // Validation
+      if (!title || !content) {
+        return res.status(400).json({
+          message: "Title and content required",
+        });
+      }
+
+      // Find category ID using deep topic
+      const [categoryRows] = await db.query(
+        `
+        SELECT id
+        FROM categories
+        WHERE cat_sub_subcategory = ?
+        LIMIT 1
+        `,
+        [deepTopic]
+      );
+
+      if (categoryRows.length === 0) {
+        return res.status(400).json({
+          message: "Deep topic not found",
+        });
+      }
+
+      const cat_id = categoryRows[0].id;
+
+      // Image path
+      const imagePath = req.file
+        ? req.file.filename
+        : null;
+
+      // Convert keywords array
+      const keywordsString = Array.isArray(
+        JSON.parse(metaKeywords)
+      )
+        ? JSON.parse(metaKeywords).join(",")
+        : metaKeywords;
+
+      // Insert article
+      await db.query(
+        `
+        INSERT INTO articles
+        (
+          cat_id,
+          art_title,
+          art_subtitle,
+          art_text,
+          art_image,
+          lan_id,
+          art_status,
+          art_meta_title,
+          art_meta_desc,
+          art_meta_keywords
+        )
+
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `,
+        [
+          cat_id,
+          title,
+          subtitle || null,
+          content,
+          imagePath,
+          languageId,
+          0,
+          metaTitle || null,
+          metaDesc || null,
+          keywordsString || null,
+        ]
+      );
+
+      return res.status(201).json({
+        message: "Post submitted successfully",
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      return res.status(500).json({
+        message: "Server error",
+      });
+    }
+  }
+);
 
 export default router;

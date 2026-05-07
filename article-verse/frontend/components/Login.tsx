@@ -3,21 +3,23 @@
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { API_BASE_URL } from "@/constants/api";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
-
+const router = useRouter();
 const handleLogin = async () => {
   try {
     const res = await fetch(`${API_BASE_URL}/api/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  credentials: "include",
+  body: JSON.stringify({ email, password }),
+});
 
     const data = await res.json();
 
@@ -26,7 +28,15 @@ const handleLogin = async () => {
     } else if (res.status === 401) {
       toast.error("Incorrect password");
     } else if (res.status === 200) {
+      localStorage.setItem(
+  "user",
+  JSON.stringify(data.user)
+);
       toast.success("Welcome to the Chulkani!!");
+
+setTimeout(() => {
+  router.push("/");
+}, 1000);
     } else {
       toast.error("Something went wrong");
     }
@@ -119,9 +129,12 @@ const handleLogin = async () => {
     {/* Register */}
     <p className="mt-4 text-center text-xs md:text-sm text-gray-600">
       Don't have an account?{" "}
-      <span className="cursor-pointer font-semibold text-[#A9512C]">
-        Register now
-      </span>
+      <span
+  onClick={() => router.push("/registration")}
+  className="cursor-pointer font-semibold text-[#A9512C]"
+>
+  Register now
+</span>
     </p>
 
   </div>
