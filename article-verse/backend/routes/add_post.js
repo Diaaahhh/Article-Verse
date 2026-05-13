@@ -44,6 +44,7 @@ router.post(
       const {
         title,
         subtitle,
+        slug,
         content,
         metaTitle,
         metaDesc,
@@ -92,6 +93,23 @@ router.post(
         ? JSON.parse(metaKeywords).join(",")
         : metaKeywords;
 
+        // ============================
+// GENERATE ARTICLE DESCRIPTION
+// ============================
+
+const articleDescription = `
+${title || ""}
+
+${subtitle || ""}
+
+${content || ""}
+
+${metaTitle || ""}
+
+${metaDesc || ""}
+
+${keywordsString || ""}
+`.trim();
       // Insert article
       await db.query(
         `
@@ -100,29 +118,32 @@ router.post(
           cat_id,
           art_title,
           art_subtitle,
+          slug,
           art_text,
           art_image,
           lan_id,
           art_status,
           art_meta_title,
           art_meta_desc,
-          art_meta_keywords
+          art_meta_keywords,
+          art_description
         )
 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-          cat_id,
-          title,
-          subtitle || null,
-          content,
-          imagePath,
-          languageId,
-          0,
-          metaTitle || null,
-          metaDesc || null,
-          keywordsString || null,
-        ]
+  cat_id,
+  title,
+  subtitle || null,
+  slug,
+  content,
+  imagePath,
+  languageId,
+  0,
+  metaTitle || null,
+  metaDesc || null,
+  keywordsString || null,
+  articleDescription,
+]
       );
 
       return res.status(201).json({

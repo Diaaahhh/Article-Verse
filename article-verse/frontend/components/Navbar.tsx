@@ -78,7 +78,7 @@ export default function Navbar() {
           </div>
           <div>
             <h1 className="font-bold text-xl bg-gradient-to-r from-[#A9512C] to-[#302C2B] bg-clip-text text-transparent">
-              ContentHub
+              Chulkani
             </h1>
             <p className="text-xs text-gray-500">Manage your content</p>
           </div>
@@ -86,7 +86,7 @@ export default function Navbar() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-4">
-          {/* Add Post */}
+          {/* Add Post - Always visible */}
           <button
             onClick={handleAddPost}
             className="group relative overflow-hidden flex h-[44px] w-[130px] cursor-pointer items-center justify-center text-sm font-semibold tracking-wide transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:h-[48px] md:w-[140px]"
@@ -111,37 +111,22 @@ export default function Navbar() {
             Add Post
           </button>
 
-          {/* Sign In/Out */}
-          <button
-            onClick={() => {
-              if (isLoggedIn) {
-                handleLogout();
-              } else {
-                router.push("/login");
-              }
-            }}
-            className="flex h-[44px] w-[130px] cursor-pointer items-center justify-center text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:h-[48px] md:w-[140px]"
-            style={{
-              background: "linear-gradient(135deg, #A9512C 0%, #302C2B 100%)",
-              borderRadius: "12px",
-            }}
-          >
-            {isLoggedIn ? (
-              <>
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                Log Out
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                </svg>
-                Sign In
-              </>
-            )}
-          </button>
+          {/* Log Out Button - Only show when logged in (no Sign In button) */}
+          {isLoggedIn && (
+            <button
+              onClick={handleLogout}
+              className="flex h-[44px] w-[130px] cursor-pointer items-center justify-center text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:h-[48px] md:w-[140px]"
+              style={{
+                background: "linear-gradient(135deg, #A9512C 0%, #302C2B 100%)",
+                borderRadius: "12px",
+              }}
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Log Out
+            </button>
+          )}
         </div>
       </div>
     </nav>

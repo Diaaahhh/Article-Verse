@@ -19,6 +19,8 @@ import checkAuthRoute from "./routes/check_auth.js";
 import categoryRoutes from "./routes/category_section.js";
 import languageRoutes from "./routes/languages.js";
 import postsRoutes from "./routes/posts.js";
+import articleRoute from "./routes/article.js";
+import searchRoutes from "./routes/search.js";
 
 const app = express();
 
@@ -60,7 +62,8 @@ app.use("/api/check-auth", checkAuthRoute);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/languages", languageRoutes);
 app.use("/api/posts", postsRoutes);
-
+app.use("/api/article", articleRoute);
+app.use("/api/search", searchRoutes);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

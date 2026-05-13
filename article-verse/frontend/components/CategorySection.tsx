@@ -44,7 +44,7 @@ type DeepTopicType = {
 };
 
 export default function CategorySection({
-   selectedCategory,
+  selectedCategory,
   selectedSubcategory,
   selectedDeepTopic,
   setSelectedCategory,
@@ -52,20 +52,11 @@ export default function CategorySection({
   setSelectedDeepTopic,
 }: any) {
   const [categories, setCategories] = useState<CategoryType[]>([]);
-  // Stores fetched subcategories
   const [subcategories, setSubcategories] = useState<SubcategoryType[]>([]);
-
-  // Stores fetched deep topics
-const [deepTopics, setDeepTopics] = useState<DeepTopicType[]>([]);
-
-const [categorySearch, setCategorySearch] = useState("");
-const [subcategorySearch, setSubcategorySearch] = useState("");
-const [deepTopicSearch, setDeepTopicSearch] = useState("");
-  /*
-  |--------------------------------------------------------------------------
-  | FETCH CATEGORY DATA
-  |--------------------------------------------------------------------------
-  */
+  const [deepTopics, setDeepTopics] = useState<DeepTopicType[]>([]);
+  const [categorySearch, setCategorySearch] = useState("");
+  const [subcategorySearch, setSubcategorySearch] = useState("");
+  const [deepTopicSearch, setDeepTopicSearch] = useState("");
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/category_section`)
@@ -78,259 +69,214 @@ const [deepTopicSearch, setDeepTopicSearch] = useState("");
       });
   }, []);
 
-  /*
-  |--------------------------------------------------------------------------
-  | CATEGORY ICONS
-  |--------------------------------------------------------------------------
-  | Icons are matched based on category name
-  |--------------------------------------------------------------------------
-  */
-
   const getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
       case "technology":
-        return <Laptop size={26} />;
-
+        return <Laptop size={22} />;
       case "science":
-        return <FlaskConical size={26} />;
-
+        return <FlaskConical size={22} />;
       case "health":
       case "healthcare":
-        return <HeartPulse size={26} />;
-
+        return <HeartPulse size={22} />;
       case "education":
-        return <GraduationCap size={26} />;
-
+        return <GraduationCap size={22} />;
       case "business":
-        return <Briefcase size={26} />;
-
+        return <Briefcase size={22} />;
       case "music":
-        return <Music size={26} />;
-
+        return <Music size={22} />;
       case "sports":
-        return <Trophy size={26} />;
-
+        return <Trophy size={22} />;
       case "food":
-        return <Utensils size={26} />;
-
+        return <Utensils size={22} />;
       case "movie":
       case "cinema":
-        return <Clapperboard size={26} />;
-
+        return <Clapperboard size={22} />;
       case "travelling":
-        return <Plane size={26} />;
-
+        return <Plane size={22} />;
       case "books":
       case "literature":
-        return <BookOpen size={26} />;
-
+        return <BookOpen size={22} />;
       case "politics":
-        return <Landmark size={26} />;
-
+        return <Landmark size={22} />;
       case "design":
-        return <Palette size={26} />;
-
+        return <Palette size={22} />;
       case "marketing":
-        return <Megaphone size={26} />;
-
+        return <Megaphone size={22} />;
       case "art and craft":
-        return <Scissors size={26} />;
-
+        return <Scissors size={22} />;
       case "cuisine":
-        return <ChefHat size={26} />;
-
+        return <ChefHat size={22} />;
       case "culinary":
-        return <Soup size={26} />;
-
+        return <Soup size={22} />;
       case "history":
-        return <ScrollText size={26} />;
-
+        return <ScrollText size={22} />;
       case "investment":
-        return <LineChart size={26} />;
-
+        return <LineChart size={22} />;
       case "journalism":
-        return <Newspaper size={26} />;
-
+        return <Newspaper size={22} />;
       case "mathematics":
-        return <Sigma size={26} />;
-
+        return <Sigma size={22} />;
       case "performing arts":
-        return <Theater size={26} />;
-
+        return <Theater size={22} />;
       case "philosophy":
-        return <Library size={26} />;
-
+        return <Library size={22} />;
       case "psychology":
-        return <Brain size={26} />;
-
+        return <Brain size={22} />;
       case "television":
-        return <Tv size={26} />;
-
+        return <Tv size={22} />;
       case "writing":
-        return <PenTool size={26} />;
-
+        return <PenTool size={22} />;
       default:
-        return <Film size={26} />;
+        return <Film size={22} />;
     }
   };
-  /*
-|--------------------------------------------------------------------------
-| FETCH SUBCATEGORIES
-|--------------------------------------------------------------------------
-| Fetches subcategories based on selected category
-|--------------------------------------------------------------------------
-*/
 
   const fetchSubcategories = async (category: string) => {
     try {
-      
-      // API request
       const response = await fetch(
         `${API_BASE_URL}/api/category_section/subcategories/${category}`
       );
-
-      // Convert to JSON
       const data = await response.json();
-
-      // Save subcategories
       setSubcategories(data);
     } catch (error) {
       console.log(error);
     }
   };
-  /*
-|--------------------------------------------------------------------------
-| FETCH DEEP TOPICS
-|--------------------------------------------------------------------------
-| Fetches sub-subcategories based on selected subcategory
-|--------------------------------------------------------------------------
-*/
 
-const fetchDeepTopics = async (subcategory: string) => {
-  try {
-    
-    // API request
-    const response = await fetch(
-      `${API_BASE_URL}/api/category_section/deep-topics/${subcategory}`
-    );
+  const fetchDeepTopics = async (subcategory: string) => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/category_section/deep-topics/${subcategory}`
+      );
+      const data = await response.json();
+      setDeepTopics(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    // Convert response into JSON
-    const data = await response.json();
+  const filteredCategories = categories.filter((item) =>
+    item.cat_category.toLowerCase().includes(categorySearch.toLowerCase())
+  );
 
-    // Store deep topics
-    setDeepTopics(data);
-  } catch (error) {
-    console.log(error);
-  }
-};
-const filteredCategories = categories.filter((item) =>
-  item.cat_category.toLowerCase().includes(categorySearch.toLowerCase())
-);
+  const filteredSubcategories = subcategories.filter((item) =>
+    item.cat_subcategory.toLowerCase().includes(subcategorySearch.toLowerCase())
+  );
 
-const filteredSubcategories = subcategories.filter((item) =>
-  item.cat_subcategory.toLowerCase().includes(subcategorySearch.toLowerCase())
-);
+  const filteredDeepTopics = deepTopics.filter((item) =>
+    item.cat_sub_subcategory.toLowerCase().includes(deepTopicSearch.toLowerCase())
+  );
 
-const filteredDeepTopics = deepTopics.filter((item) =>
-  item.cat_sub_subcategory.toLowerCase().includes(deepTopicSearch.toLowerCase())
-);
+  // Custom scrollbar styles with new theme
+  const scrollbarStyles = {
+    scrollbarWidth: "thin" as const,
+    scrollbarColor: "#D95C2B #2A2A2A",
+  };
+
   return (
     <section
-      className="relative w-full overflow-hidden px-4 py-24 md:px-8"
+      className="relative w-full overflow-hidden px-4 py-16 md:px-8"
       style={{
-        background:
-          "linear-gradient(135deg, #F5E6DC 0%, #F1E0D6 45%, #FFFFFF 100%)",
+        background: "var(--black-rich)",
       }}
     >
-      {/* Background Glow Effects */}
+      {/* Background Glow Effects with new colours */}
       <div
         className="absolute left-[-120px] top-[-120px] h-[320px] w-[320px] rounded-full blur-3xl"
         style={{
-          background: "rgba(169, 81, 44, 0.10)",
+          background: "rgba(217, 92, 43, 0.08)",
         }}
       ></div>
 
       <div
         className="absolute bottom-[-150px] right-[-100px] h-[350px] w-[350px] rounded-full blur-3xl"
         style={{
-          background: "rgba(48, 44, 43, 0.08)",
+          background: "rgba(26, 26, 26, 0.05)",
         }}
       ></div>
 
       <div
         className="absolute left-[40%] top-[20%] h-[220px] w-[220px] rounded-full blur-3xl"
         style={{
-          background: "rgba(90, 104, 105, 0.06)",
+          background: "rgba(217, 92, 43, 0.04)",
         }}
       ></div>
-      <div className="relative z-10 ">
+
+      <div className="relative z-10">
         {/* Section Heading */}
-        <div className="mb-10 text-center">
+        <div className="mb-8 text-center">
           <h2
-            className="text-3xl font-bold md:text-5xl"
+            className="text-3xl font-bold md:text-4xl"
             style={{
-              color: "#302C2B",
-              marginTop: "20px",
-              marginBottom: "20px",
+              color: "var(--text-heading)",
+              marginTop: "10px",
+              marginBottom: "10px",
             }}
           >
             Explore Categories
           </h2>
         </div>
+
         {/* 3 Column Layout Wrapper */}
         <div
           className="flex justify-center"
           style={{
-            marginBottom: "48px",
+            marginBottom: "32px",
           }}
         >
           {/* 3 Column Layout */}
-          <div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 lg:grid-cols-3 gap-6 ">
-            {/* COLUMN 1 */}
+          <div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 lg:grid-cols-3 gap-6"
+          style={{
+    background: "var(--black-warm)",  // Warm black (#1E1B1A)
+    // borderRadius: "24px",
+    padding: "20px",
+    marginBottom: "0px"
+  }}>
+            
+            {/* COLUMN 1 - CATEGORIES */}
             <div
-              className="rounded-3xl border p-5 shadow-lg"
+              className="rounded-2xl border shadow-lg overflow-hidden flex flex-col"
               style={{
-                borderColor: "#D5D4D3",
-                background: "rgba(255,255,255,0.75)",
+                borderColor: "var(--border-light)",
+                background: "var(--black-card)",
                 backdropFilter: "blur(14px)",
-                padding: "15px",
+                padding: "10px",
               }}
             >
               {/* Search Bar */}
-<div className="mb-4">
-  <input
-    type="text"
-    placeholder="Search categories..."
-    value={categorySearch}
-    onChange={(e) => setCategorySearch(e.target.value)}
-    className="w-full rounded-xl border px-4 py-2 text-sm outline-none"
-    style={{
-      borderColor: "#D5D4D3",
-      backgroundColor: "#FAFAFA",
-    }}
-  />
-</div>
-              {/* Header */}
-              <div
-                className="mx-auto mb-[20px] mt-4 flex items-center justify-between   px-2 py-9"
-                style={{
-                  marginTop: "5px",
-                  marginBottom: "5px",
-                }}
-              >
-                <h3
-                  className="text-2xl font-bold"
+              <div className="p-4 pb-0">
+                <input
+                  type="text"
+                  placeholder="Search categories..."
+                  value={categorySearch}
+                  onChange={(e) => setCategorySearch(e.target.value)}
+                  className="w-full rounded-xl border px-4 py-2 text-sm outline-none"
                   style={{
-                    color: "#302C2B",
+                    borderColor: "var(--border-light)",
+                    backgroundColor: "var(--black-soft)",
+                    color: "var(--text-primary)",
+                  }}
+                />
+              </div>
+              
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-3"
+               style={{
+                marginTop: "5px"
+              }}>
+                <h3
+                  className="text-xl font-bold"
+                  style={{
+                    color: "var(--text-heading)",
                   }}
                 >
                   Categories
                 </h3>
 
                 <span
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold shadow-md"
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold shadow-md"
                   style={{
-                    backgroundColor: "#A9512C",
+                    backgroundColor: "var(--accent-primary)",
                     color: "#FFFFFF",
                   }}
                 >
@@ -339,56 +285,52 @@ const filteredDeepTopics = deepTopics.filter((item) =>
               </div>
 
               {/* Scrollable List */}
-              <div className="max-h-[600px] space-y-4 overflow-y-auto pr-2 ">
-                {filteredCategories.map((item, index) => (
+              <div 
+                className="max-h-[420px] overflow-y-auto space-y-2 px-3 pb-3"
+                style={scrollbarStyles}
+              >
+                {filteredCategories.slice(0, 50).map((item, index) => (
                   <div
                     key={index}
                     onClick={() => {
-  setSelectedCategory(item.cat_category);
-  fetchSubcategories(item.cat_category);
-}}
-                    className="flex cursor-pointer items-center gap-4 rounded-2xl border p-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                      setSelectedCategory(item.cat_category);
+                      fetchSubcategories(item.cat_category);
+                    }}
+                    className="flex cursor-pointer items-center gap-3 rounded-xl border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                     style={{
                       borderColor:
                         selectedCategory === item.cat_category
-                          ? "#A9512C"
-                          : "#D5D4D3",
-
+                          ? "var(--accent-primary)"
+                          : "var(--border-light)",
                       backgroundColor:
                         selectedCategory === item.cat_category
-                          ? "#FDF1EB"
-                          : "#FAFAFA",
-
-                      marginTop: "5px",
-
+                          ? "rgba(217, 92, 43, 0.1)"
+                          : "var(--black-soft)",
                       boxShadow:
                         selectedCategory === item.cat_category
-                          ? "0 0 15px rgba(169,81,44,0.18)"
+                          ? "0 0 10px rgba(217, 92, 43, 0.15)"
                           : "none",
                     }}
                   >
-                    {/* Icon */}
                     <div
-                      className="flex h-9 w-14 items-center justify-center rounded-2xl text-2xl"
+                      className="flex h-10 w-12 items-center justify-center rounded-xl text-white"
                       style={{
                         background:
                           selectedCategory === item.cat_category
-                            ? "linear-gradient(135deg, #A9512C 0%, #6E3218 100%)"
-                            : "linear-gradient(135deg, #e07a52 0%, #302C2B 100%)",
+                            ? "var(--gradient-primary)"
+                            : "linear-gradient(135deg, #4A6FA5 0%, #2A2A2A 100%)",
                       }}
                     >
                       {getCategoryIcon(item.cat_category)}
                     </div>
-
-                    {/* Text */}
-                    <div>
+                    <div className="flex-1 py-2 pr-2">
                       <h4
-                        className="text-lg font-semibold"
+                        className="text-base font-semibold"
                         style={{
                           color:
                             selectedCategory === item.cat_category
-                              ? "#A9512C"
-                              : "#302C2B",
+                              ? "var(--accent-primary)"
+                              : "var(--text-primary)",
                         }}
                       >
                         {item.cat_category}
@@ -396,54 +338,58 @@ const filteredDeepTopics = deepTopics.filter((item) =>
                     </div>
                   </div>
                 ))}
+                {filteredCategories.length === 0 && (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500" style={{ color: "var(--text-secondary)" }}>No categories found</p>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* COLUMN 2 */}
+            {/* COLUMN 2 - SUBCATEGORIES */}
             <div
-              className="rounded-3xl border p-5 shadow-lg"
+              className="rounded-2xl border shadow-lg overflow-hidden flex flex-col"
               style={{
-                borderColor: "#D5D4D3",
-                background: "rgba(255,255,255,0.75)",
+                borderColor: "var(--border-light)",
+                background: "var(--black-card)",
                 backdropFilter: "blur(14px)",
-                padding: "15px",
+                padding: "10px",
               }}
             >
               {/* Search Bar */}
-<div className="mb-4">
-  <input
-    type="text"
-    placeholder="Search subcategories..."
-    value={subcategorySearch}
-    onChange={(e) => setSubcategorySearch(e.target.value)}
-    className="w-full rounded-xl border px-4 py-2 text-sm outline-none"
-    style={{
-      borderColor: "#D5D4D3",
-      backgroundColor: "#FAFAFA",
-    }}
-  />
-</div>
-              {/* Header */}
-              <div
-                className="mx-auto mb-[20px] mt-4 flex items-center justify-between px-2 py-9"
-                style={{
-                  marginTop: "5px",
-                  marginBottom: "5px",
-                }}
-              >
-                <h3
-                  className="text-2xl font-bold"
+              <div className="p-4 pb-0">
+                <input
+                  type="text"
+                  placeholder="Search subcategories..."
+                  value={subcategorySearch}
+                  onChange={(e) => setSubcategorySearch(e.target.value)}
+                  className="w-full rounded-xl border px-4 py-2 text-sm outline-none"
                   style={{
-                    color: "#302C2B",
+                    borderColor: "var(--border-light)",
+                    backgroundColor: "var(--black-soft)",
+                    color: "var(--text-primary)",
+                  }}
+                />
+              </div>
+              
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-3" 
+              style={{
+                marginTop: "5px"
+              }}>
+                <h3
+                  className="text-xl font-bold"
+                  style={{
+                    color: "var(--text-heading)",
                   }}
                 >
                   Subcategories
                 </h3>
 
                 <span
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold shadow-md"
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold shadow-md"
                   style={{
-                    backgroundColor: "#A9512C",
+                    backgroundColor: "var(--accent-primary)",
                     color: "#FFFFFF",
                   }}
                 >
@@ -452,71 +398,53 @@ const filteredDeepTopics = deepTopics.filter((item) =>
               </div>
 
               {/* Scrollable List */}
-              <div className="max-h-[600px] space-y-4 overflow-y-auto pr-2">
+              <div 
+                className="max-h-[420px] overflow-y-auto space-y-2 px-3 pb-3"
+                style={scrollbarStyles}
+              >
                 {filteredSubcategories.length > 0 ? (
-                  filteredSubcategories.map((item, index) => (
+                  filteredSubcategories.slice(0, 50).map((item, index) => (
                     <div
-  key={index}
-onClick={() => {
-  setSelectedSubcategory(item.cat_subcategory);
-  fetchDeepTopics(item.cat_subcategory);
-}}
-  className="flex min-h-[40px] cursor-pointer items-center gap-4 rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-
+                      key={index}
+                      onClick={() => {
+                        setSelectedSubcategory(item.cat_subcategory);
+                        fetchDeepTopics(item.cat_subcategory);
+                      }}
+                      className="cursor-pointer rounded-xl border p-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                       style={{
-  borderColor:
-    selectedSubcategory === item.cat_subcategory
-      ? "#A9512C"
-      : "#D5D4D3",
-
-  backgroundColor:
-    selectedSubcategory === item.cat_subcategory
-      ? "#FDF1EB"
-      : "#FAFAFA",
-
-  marginTop: "5px",
-
-  paddingLeft: "10px",
-
-  boxShadow:
-    selectedSubcategory === item.cat_subcategory
-      ? "0 0 15px rgba(169,81,44,0.18)"
-      : "none",
-}}
+                        borderColor:
+                          selectedSubcategory === item.cat_subcategory
+                            ? "var(--accent-primary)"
+                            : "var(--border-light)",
+                        backgroundColor:
+                          selectedSubcategory === item.cat_subcategory
+                            ? "rgba(217, 92, 43, 0.1)"
+                            : "var(--black-soft)",
+                        boxShadow:
+                          selectedSubcategory === item.cat_subcategory
+                            ? "0 0 10px rgba(217, 92, 43, 0.15)"
+                            : "none",
+                        padding: "10px",
+                      }}
                     >
-                      {/* Text Section */}
-                      <div>
-                        <h4
-                          className="text-lg font-semibold"
-                          style={{
-                            color: "#302C2B",
-                          }}
-                        >
-                          {item.cat_subcategory}
-                        </h4>
-                      </div>
+                      <h4
+                        className="text-base font-semibold"
+                        style={{
+                          color: "var(--text-primary)",
+                        }}
+                      >
+                        {item.cat_subcategory}
+                      </h4>
                     </div>
                   ))
                 ) : (
-                  <div className="flex min-h-[400px] items-center justify-center">
+                  <div className="flex min-h-[300px] items-center justify-center">
                     <div className="text-center">
-                      <div className="text-5xl">📂</div>
-
-                      <h3
-                        className="mt-4 text-2xl font-bold"
-                        style={{
-                          color: "#302C2B",
-                        }}
-                      >
+                      <div className="text-4xl">📂</div>
+                      <h3 className="mt-3 text-xl font-bold" style={{ color: "var(--text-heading)" }}>
                         No Subcategories
                       </h3>
-
-                      <p
-                        className="mt-2 text-sm"
-                        style={{
-                          color: "#5A6869",
-                        }}
-                      >
+                      <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
                         Select a category to explore
                       </p>
                     </div>
@@ -525,130 +453,132 @@ onClick={() => {
               </div>
             </div>
 
-           {/* COLUMN 3 */}
-<div
-  className="rounded-3xl border p-5 shadow-lg"
-  style={{
-    borderColor: "#D5D4D3",
-    background: "rgba(255,255,255,0.75)",
-    backdropFilter: "blur(14px)",
-    padding: "15px",
-  }}
->
-  {/* Search Bar */}
-<div className="mb-4">
-  <input
-    type="text"
-    placeholder="Search topics..."
-    value={deepTopicSearch}
-    onChange={(e) => setDeepTopicSearch(e.target.value)}
-    className="w-full rounded-xl border px-4 py-2 text-sm outline-none"
-    style={{
-      borderColor: "#D5D4D3",
-      backgroundColor: "#FAFAFA",
-    }}
-  />
-</div>
-  {/* Header */}
-  <div
-    className="mx-auto mb-[20px] mt-4 flex items-center justify-between px-2 py-9"
-    style={{
-      marginTop: "5px",
-      marginBottom: "5px",
-    }}
-  >
-    <h3
-      className="text-2xl font-bold"
-      style={{
-        color: "#302C2B",
-      }}
-    >
-      Deep Topics
-    </h3>
-
-    <span
-      className="flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold shadow-md"
-      style={{
-        backgroundColor: "#A9512C",
-        color: "#FFFFFF",
-      }}
-    >
-      {deepTopics.length}
-    </span>
-  </div>
-
-  {/* Scrollable List */}
-  <div className="max-h-[600px] space-y-4 overflow-y-auto pr-2">
-    {filteredDeepTopics.length > 0 ? (
-      filteredDeepTopics.map((item, index) => (
-        <div
-          key={index}
-onClick={() => {
-  setSelectedDeepTopic(item.cat_sub_subcategory);
-}}
-          className="flex min-h-[40px] cursor-pointer items-center gap-4 rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-          style={{
-  borderColor:
-    selectedDeepTopic === item.cat_sub_subcategory
-      ? "#A9512C"
-      : "#D5D4D3",
-
-  backgroundColor:
-selectedDeepTopic === item.cat_sub_subcategory      ? "#FDF1EB"
-      : "#FAFAFA",
-
-  marginTop: "5px",
-
-  paddingLeft: "10px",
-
-  boxShadow:
-selectedDeepTopic === item.cat_sub_subcategory      ? "0 0 15px rgba(169,81,44,0.18)"
-      : "none",
-}}
-        >
-          {/* Text Section */}
-          <div>
-            <h4
-              className="text-lg font-semibold"
+            {/* COLUMN 3 - DEEP TOPICS */}
+            <div
+              className="rounded-2xl border shadow-lg overflow-hidden flex flex-col"
               style={{
-                color: "#302C2B",
+                borderColor: "var(--border-light)",
+                background: "var(--black-card)",
+                backdropFilter: "blur(14px)",
+                padding: "10px",
               }}
             >
-              {item.cat_sub_subcategory}
-            </h4>
+              {/* Search Bar */}
+              <div className="p-4 pb-0">
+                <input
+                  type="text"
+                  placeholder="Search topics..."
+                  value={deepTopicSearch}
+                  onChange={(e) => setDeepTopicSearch(e.target.value)}
+                  className="w-full rounded-xl border px-4 py-2 text-sm outline-none"
+                  style={{
+                    borderColor: "var(--border-light)",
+                    backgroundColor: "var(--black-soft)",
+                    color: "var(--text-primary)",
+                  }}
+                />
+              </div>
+              
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-3"
+              style={{
+                marginTop: "5px"
+              }}>
+                <h3
+                  className="text-xl font-bold"
+                  style={{
+                    color: "var(--text-heading)",
+                  }}
+                >
+                  Deep Topics
+                </h3>
+
+                <span
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold shadow-md"
+                  style={{
+                    backgroundColor: "var(--accent-primary)",
+                    color: "#FFFFFF",
+                  }}
+                >
+                  {deepTopics.length}
+                </span>
+              </div>
+
+              {/* Scrollable List */}
+              <div 
+                className="max-h-[420px] overflow-y-auto space-y-2 px-3 pb-3"
+                style={scrollbarStyles}
+              >
+                {filteredDeepTopics.length > 0 ? (
+                  filteredDeepTopics.slice(0, 50).map((item, index) => (
+                    <div
+                      key={index}
+                      onClick={() => {
+                        setSelectedDeepTopic(item.cat_sub_subcategory);
+                      }}
+                      className="cursor-pointer rounded-xl border p-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                      style={{
+                        borderColor:
+                          selectedDeepTopic === item.cat_sub_subcategory
+                            ? "var(--accent-primary)"
+                            : "var(--border-light)",
+                        backgroundColor:
+                          selectedDeepTopic === item.cat_sub_subcategory
+                            ? "rgba(217, 92, 43, 0.1)"
+                            : "var(--black-soft)",
+                        boxShadow:
+                          selectedDeepTopic === item.cat_sub_subcategory
+                            ? "0 0 10px rgba(217, 92, 43, 0.15)"
+                            : "none",
+                        padding: "10px",
+                      }}
+                    >
+                      <h4
+                        className="text-base font-semibold"
+                        style={{
+                          color: "var(--text-primary)",
+                        }}
+                      >
+                        {item.cat_sub_subcategory}
+                      </h4>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex min-h-[300px] items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-4xl">🧠</div>
+                      <h3 className="mt-3 text-xl font-bold" style={{ color: "var(--text-heading)" }}>
+                        No Deep Topics
+                      </h3>
+                      <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
+                        Select a subcategory to explore
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      ))
-    ) : (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="text-center">
-          <div className="text-5xl">🧠</div>
-
-          <h3
-            className="mt-4 text-2xl font-bold"
-            style={{
-              color: "#302C2B",
-            }}
-          >
-            No Deep Topics
-          </h3>
-
-          <p
-            className="mt-2 text-sm"
-            style={{
-              color: "#5A6869",
-            }}
-          >
-            Select a subcategory to explore
-          </p>
-        </div>
       </div>
-    )}
-  </div>
-</div>
-          </div>
-        </div>
-      </div>
+
+      {/* Custom Scrollbar Styles - Updated for dark theme */}
+      <style jsx>{`
+        div::-webkit-scrollbar {
+          width: 6px;
+        }
+        div::-webkit-scrollbar-track {
+          background: #2A2A2A;
+          border-radius: 10px;
+        }
+        div::-webkit-scrollbar-thumb {
+          background: #D95C2B;
+          border-radius: 10px;
+        }
+        div::-webkit-scrollbar-thumb:hover {
+          background: #1E6B6B;
+        }
+      `}</style>
     </section>
   );
 }

@@ -4,7 +4,7 @@ import "./globals.css";
 
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
-
+import Footer from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -21,28 +21,27 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Navbar />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <Toaster 
+        <main className="min-h-screen">{children}</main>
+        <Footer />
+        <Toaster
           position="top-right"
           toastOptions={{
             duration: 3000,
             style: {
-              background: '#363636',
-              color: '#fff',
-              borderRadius: '12px',
+              background: "#363636",
+              color: "#fff",
+              borderRadius: "12px",
             },
             success: {
               iconTheme: {
-                primary: '#10B981',
-                secondary: '#fff',
+                primary: "#10B981",
+                secondary: "#fff",
               },
             },
             error: {
               iconTheme: {
-                primary: '#EF4444',
-                secondary: '#fff',
+                primary: "#EF4444",
+                secondary: "#fff",
               },
             },
           }}
