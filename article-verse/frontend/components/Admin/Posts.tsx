@@ -177,6 +177,8 @@ export default function Posts() {
                     <th style={{ width: '100px' }}>Author</th>
                     <th style={{ width: '100px' }}>Language</th>
                     <th style={{ width: '150px' }}>Category</th>
+                    <th style={{ width: '150px' }}>Sub Category</th>
+                    <th style={{ width: '150px' }}>Deep Topics</th>
                     <th style={{ width: '110px' }}>Status</th>
                     <th style={{ width: '110px' }}>Date</th>
                     <th style={{ width: '280px' }}>Actions</th>
@@ -245,27 +247,53 @@ export default function Posts() {
                         <span className="admin-badge admin-badge-info">{article.lan_name}</span>
                       </td>
                       <td>
-                        <div style={{ 
-                          fontWeight: 500, 
-                          color: '#1F2937', 
-                          maxWidth: '130px', 
-                          overflow: 'hidden', 
-                          textOverflow: 'ellipsis', 
-                          whiteSpace: 'nowrap' 
-                        }}>
-                          {article.cat_category}
-                        </div>
-                        <div style={{ 
-                          fontSize: '11px', 
-                          color: '#6B7280', 
-                          maxWidth: '130px', 
-                          overflow: 'hidden', 
-                          textOverflow: 'ellipsis', 
-                          whiteSpace: 'nowrap' 
-                        }}>
-                          {article.cat_subcategory}
-                        </div>
-                      </td>
+  <div
+    style={{
+      fontWeight: 500,
+      color: '#1F2937',
+      maxWidth: '180px',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap'
+    }}
+  >
+    {article.cat_category}
+  </div>
+
+  {/* Subcategory */}
+  {article.cat_subcategory && (
+    <div
+      style={{
+        fontSize: '11px',
+        color: '#6B7280',
+        maxWidth: '180px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        marginTop: '2px'
+      }}
+    >
+      📂 {article.cat_subcategory}
+    </div>
+  )}
+
+  {/* Deep Topic */}
+  {article.cat_sub_subcategory && (
+    <div
+      style={{
+        fontSize: '11px',
+        color: '#9CA3AF',
+        maxWidth: '180px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        marginTop: '2px'
+      }}
+    >
+      🏷️ {article.cat_sub_subcategory}
+    </div>
+  )}
+</td>
                       <td>{getStatusBadge(article.art_status)}</td>
                       <td style={{ whiteSpace: 'nowrap', fontSize: '13px', color: '#6B7280' }}>
                         {new Date(article.updated_at).toLocaleDateString()}

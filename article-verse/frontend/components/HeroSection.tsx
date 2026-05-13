@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Open_Sans } from "next/font/google";
 import { API_BASE_URL } from "@/constants/api";
 import { useRouter } from "next/navigation";
 
@@ -11,10 +10,7 @@ type SearchArticle = {
   art_title: string;
   art_subtitle: string;
 };
-const openSans = Open_Sans({
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
-});
+
 
 export default function HeroSection() {
   const router = useRouter();
@@ -91,7 +87,7 @@ const handleSearch = () => {
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center px-6 text-center">
         {/* Heading - FIXED with solid color */}
         <h1
-          className={`${openSans.className} max-w-4xl text-5xl font-extrabold leading-tight md:text-7xl`}
+          className={` max-w-4xl text-5xl font-extrabold leading-tight md:text-7xl`}
           style={{
             color: "white",
             background: "none",

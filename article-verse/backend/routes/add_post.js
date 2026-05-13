@@ -41,6 +41,13 @@ router.post(
   upload.single("image"),
   async (req, res) => {
     try {
+       const userId = req.cookies.userId;
+
+      if (!userId) {
+        return res.status(401).json({
+          message: "Please login first",
+        });
+      }
       const {
         title,
         subtitle,
@@ -126,10 +133,11 @@ ${keywordsString || ""}
           art_meta_title,
           art_meta_desc,
           art_meta_keywords,
-          art_description
+          art_description,
+           user_id
         )
 
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
   cat_id,
   title,
@@ -143,6 +151,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   metaDesc || null,
   keywordsString || null,
   articleDescription,
+  userId,
 ]
       );
 

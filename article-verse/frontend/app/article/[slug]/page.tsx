@@ -2,13 +2,11 @@ import { Metadata } from "next";
 import ArticleClient from "./ArticleClient";
 import { API_BASE_URL } from "@/constants/api";
 
-
-interface Props {
-  params: {
+type Props = {
+  params: Promise<{
     slug: string;
-  };
-}
-
+  }>;
+};
 
 async function getArticle(slug: string) {
   try {
@@ -19,11 +17,9 @@ async function getArticle(slug: string) {
       }
     );
 
-
     if (!res.ok) {
       return null;
     }
-
 
     return res.json();
   } catch (error) {
@@ -32,14 +28,14 @@ async function getArticle(slug: string) {
   }
 }
 
-
 export async function generateMetadata({
   params,
 }: Props): Promise<Metadata> {
+  
+  // IMPORTANT FIX
+  const { slug } = await params;
 
-
-  const article = await getArticle(params.slug);
-
+  const article = await getArticle(slug);
 
   if (!article) {
     return {
@@ -48,46 +44,33 @@ export async function generateMetadata({
     };
   }
 
-
   const articleUrl = `${API_BASE_URL}/article/${article.slug}`;
-
 
   const imageUrl = article.art_image
     ? `${API_BASE_URL}/uploads/${article.art_image}`
     : `${API_BASE_URL}/default-image.jpg`;
 
-
   return {
-    title:
-      article.art_meta_title || article.art_title,
-
+    title: article.art_meta_title || article.art_title,
 
     description:
       article.art_meta_desc ||
       article.art_subtitle ||
       "Read this article on Article Verse.",
 
-
-    keywords:
-      article.art_meta_keywords || "",
-
+    keywords: article.art_meta_keywords || "",
 
     openGraph: {
-      title:
-        article.art_meta_title || article.art_title,
-
+      title: article.art_meta_title || article.art_title,
 
       description:
         article.art_meta_desc ||
         article.art_subtitle ||
         "Read this article on Article Verse.",
 
-
       url: articleUrl,
 
-
       siteName: "Chulkani",
-
 
       images: [
         {
@@ -98,33 +81,25 @@ export async function generateMetadata({
         },
       ],
 
-
       locale: "en_US",
-
 
       type: "article",
     },
 
-
     twitter: {
       card: "summary_large_image",
 
-
-      title:
-        article.art_meta_title || article.art_title,
-
+      title: article.art_meta_title || article.art_title,
 
       description:
         article.art_meta_desc ||
         article.art_subtitle ||
         "Read this article on Article Verse.",
 
-
       images: [imageUrl],
     },
   };
 }
-
 
 export default function Page() {
   return <ArticleClient />;
