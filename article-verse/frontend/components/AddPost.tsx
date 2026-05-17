@@ -4,12 +4,33 @@ import React, { useState, KeyboardEvent, useEffect } from "react";
 import { API_BASE_URL } from "@/constants/api";
 import toast from "react-hot-toast";
 import slugify from "slugify";
-import dynamic from "next/dynamic";
+// import dynamic from "next/dynamic";
 
-const CKEditor = dynamic(
-  () => import("@ckeditor/ckeditor5-react").then((mod) => mod.CKEditor),
-  { ssr: false }
-);
+// const CKEditor = dynamic(
+//   () => import("@ckeditor/ckeditor5-react").then((mod) => mod.CKEditor),
+//   { ssr: false }
+// );
+
+// import {
+//   ClassicEditor,
+//   Bold,
+//   Essentials,
+//   Italic,
+//   Paragraph,
+//   Heading,
+//   List,
+//   Link,
+//   BlockQuote,
+//   Image,
+//   ImageToolbar,
+//   ImageCaption,
+//   ImageStyle,
+//   ImageUpload,
+//   Table,
+//   TableToolbar,
+
+//   Undo
+// } from "ckeditor5";
 export default function AddPost() {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -21,7 +42,6 @@ export default function AddPost() {
   const [metaDesc, setMetaDesc] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [editor, setEditor] = useState<any>(null);
   const [languages, setLanguages] = useState<any[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState("");
 
@@ -174,20 +194,11 @@ export default function AddPost() {
   };
 
   useEffect(() => {
-    fetchLanguages();
+    fetchLanguages(); 
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    const loadEditor = async () => {
-      const ClassicEditor = (await import("@ckeditor/ckeditor5-build-classic"))
-        .default;
 
-      setEditor(() => ClassicEditor);
-    };
-
-    loadEditor();
-  }, []);
   const handleCategoryChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -362,277 +373,9 @@ export default function AddPost() {
                 />
               </div>
 
-              {/* Beautiful CKEditor Content */}
-              <div>
-                <label className={labelStyle}>
-                  Content <span className="text-red-500">*</span>
-                </label>
 
-                <div
-                  className="rounded-xl overflow-hidden transition-all duration-300"
-                  style={{
-                    border: "1px solid var(--border-light)",
-                    background: "var(--black-soft)",
-                  }}
-                >
-                  <style jsx global>{`
-                    /* CKEditor Dark Theme Overrides */
-                    .ck-editor__editable {
-                      min-height: 400px;
-                      background: #1a1a1a !important;
-                      color: #eaeaea !important;
-                      border: none !important;
-                      font-family: "Inter", system-ui, sans-serif !important;
-                      font-size: 14px !important;
-                      line-height: 1.7 !important;
-                    }
 
-                    .ck-editor__editable:focus {
-                      outline: none !important;
-                      box-shadow: 0 0 0 2px rgba(217, 92, 43, 0.2) !important;
-                    }
 
-                    .ck-toolbar {
-                      background: #2a2a2a !important;
-                      border: none !important;
-                      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-                      padding: 8px 12px !important;
-                    }
-
-                    .ck-toolbar .ck-button {
-                      color: #eaeaea !important;
-                      background: transparent !important;
-                      border-radius: 6px !important;
-                      transition: all 0.2s ease !important;
-                    }
-
-                    .ck-toolbar .ck-button:hover {
-                      background: rgba(217, 92, 43, 0.15) !important;
-                      color: var(--accent-primary) !important;
-                    }
-
-                    .ck-toolbar .ck-button.ck-on {
-                      background: rgba(217, 92, 43, 0.2) !important;
-                      color: var(--accent-primary) !important;
-                    }
-
-                    .ck-toolbar .ck-button.ck-on:hover {
-                      background: rgba(217, 92, 43, 0.3) !important;
-                    }
-
-                    .ck-dropdown__panel {
-                      background: #2a2a2a !important;
-                      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                      border-radius: 8px !important;
-                    }
-
-                    .ck-list__item {
-                      color: #eaeaea !important;
-                    }
-
-                    .ck-list__item:hover {
-                      background: rgba(217, 92, 43, 0.15) !important;
-                    }
-
-                    .ck-input {
-                      background: #1a1a1a !important;
-                      border-color: rgba(255, 255, 255, 0.1) !important;
-                      color: #eaeaea !important;
-                    }
-
-                    .ck-labeled-field-view__status {
-                      color: #eaeaea !important;
-                    }
-
-                    /* Link dialog styling */
-                    .ck-link-form {
-                      background: #2a2a2a !important;
-                      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                    }
-
-                    .ck-link-form input {
-                      background: #1a1a1a !important;
-                      color: #eaeaea !important;
-                      border-color: rgba(255, 255, 255, 0.1) !important;
-                    }
-
-                    .ck-button__label {
-                      color: #eaeaea !important;
-                    }
-
-                    /* Dropdown menu styling */
-                    .ck-dropdown__panel {
-                      background: #2a2a2a !important;
-                    }
-
-                    .ck.ck-dropdown .ck-dropdown__panel .ck-list__item {
-                      color: #eaeaea !important;
-                    }
-
-                    .ck.ck-dropdown .ck-dropdown__panel .ck-list__item:hover {
-                      background: #3a3a3a !important;
-                    }
-
-                    /* Block quote styling */
-                    .ck-content blockquote {
-                      border-left: 3px solid var(--accent-primary) !important;
-                      background: rgba(217, 92, 43, 0.05) !important;
-                      padding: 12px 20px !important;
-                      margin: 16px 0 !important;
-                      font-style: italic !important;
-                    }
-
-                    /* Table styling */
-                    .ck-content table {
-                      border-color: rgba(255, 255, 255, 0.1) !important;
-                    }
-
-                    .ck-content th,
-                    .ck-content td {
-                      border-color: rgba(255, 255, 255, 0.1) !important;
-                      padding: 8px 12px !important;
-                    }
-
-                    /* Link styling in editor */
-                    .ck-content a {
-                      color: var(--accent-primary) !important;
-                      text-decoration: underline !important;
-                    }
-
-                    /* Heading styles in editor */
-                    .ck-content h1,
-                    .ck-content h2,
-                    .ck-content h3,
-                    .ck-content h4,
-                    .ck-content h5,
-                    .ck-content h6 {
-                      color: #ffffff !important;
-                      margin-top: 24px !important;
-                      margin-bottom: 16px !important;
-                    }
-
-                    /* List styling */
-                    .ck-content ul,
-                    .ck-content ol {
-                      padding-left: 24px !important;
-                    }
-
-                    .ck-content li {
-                      margin: 8px 0 !important;
-                    }
-
-                    /* Placeholder styling */
-                    .ck.ck-editor__editable_inline::before {
-                      color: #6b7280 !important;
-                    }
-
-                    /* Scrollbar for editor */
-                    .ck-editor__editable::-webkit-scrollbar {
-                      width: 8px;
-                    }
-
-                    .ck-editor__editable::-webkit-scrollbar-track {
-                      background: #2a2a2a;
-                      border-radius: 4px;
-                    }
-
-                    .ck-editor__editable::-webkit-scrollbar-thumb {
-                      background: var(--accent-primary);
-                      border-radius: 4px;
-                    }
-
-                    .ck-editor__editable::-webkit-scrollbar-thumb:hover {
-                      background: var(--accent-secondary);
-                    }
-
-                    /* Resize handle styling */
-                    .ck-reset_all {
-                      color: #eaeaea !important;
-                    }
-                  `}</style>
-{editor && (
-                  <CKEditor
-                    editor={editor}
-                    data={content}
-                    onChange={(event, editor) => {
-                      const data = editor.getData();
-                      setContent(data);
-                    }}
-                    config={{
-                      placeholder:
-                        "✍️ Write your amazing article content here...",
-                      toolbar: {
-                        items: [
-                          "heading",
-                          "|",
-                          "bold",
-                          "italic",
-                          "link",
-                          "|",
-                          "bulletedList",
-                          "numberedList",
-                          "|",
-                          "blockQuote",
-                          "insertTable",
-                          "|",
-                          "undo",
-                          "redo",
-                        ],
-                      },
-                      heading: {
-                        options: [
-                          {
-                            model: "paragraph",
-                            title: "Paragraph",
-                            class: "ck-heading_paragraph",
-                          },
-                          {
-                            model: "heading1",
-                            view: "h1",
-                            title: "Heading 1",
-                            class: "ck-heading_heading1",
-                          },
-                          {
-                            model: "heading2",
-                            view: "h2",
-                            title: "Heading 2",
-                            class: "ck-heading_heading2",
-                          },
-                          {
-                            model: "heading3",
-                            view: "h3",
-                            title: "Heading 3",
-                            class: "ck-heading_heading3",
-                          },
-                          {
-                            model: "heading4",
-                            view: "h4",
-                            title: "Heading 4",
-                            class: "ck-heading_heading4",
-                          },
-                        ],
-                      },
-                      link: {
-                        addTargetToExternalLinks: true,
-                        defaultProtocol: "https://",
-                      },
-                      table: {
-                        contentToolbar: [
-                          "tableColumn",
-                          "tableRow",
-                          "mergeTableCells",
-                        ],
-                      },
-                    }}
-                  />)}
-                </div>
-
-                {fieldErrors.content && (
-                  <p className="text-red-500 text-sm mt-2">
-                    {fieldErrors.content}
-                  </p>
-                )}
-              </div>
 
               {/* Meta Fields Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

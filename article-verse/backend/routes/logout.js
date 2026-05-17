@@ -3,10 +3,16 @@ import express from "express";
 const router = express.Router();
 
 router.post("/", (req, res) => {
-  res.clearCookie("userId");
+  // Clear authentication cookie
+  res.clearCookie("userId", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
 
   return res.status(200).json({
-    message: "Logged out",
+    success: true,
+    message: "Logged out successfully",
   });
 });
 

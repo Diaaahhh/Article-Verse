@@ -10,7 +10,7 @@ export default function AddPostPage() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const res = await fetch(`${API_BASE_URL}/api/check-auth`, {
+      const res = await fetch(`${API_BASE_URL}/api/check_auth`, {
         credentials: "include",
       });
 

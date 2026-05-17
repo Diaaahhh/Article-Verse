@@ -55,4 +55,33 @@ router.get("/articles/:deepTopic", async (req, res) => {
   }
 });
 
+/*
+|--------------------------------------------------------------------------
+| GET TOP 10 LATEST ARTICLES
+|--------------------------------------------------------------------------
+| Shows latest accepted articles when no category is selected
+|--------------------------------------------------------------------------
+*/
+
+router.get("/latest", async (req, res) => {
+  try {
+    const [articles] = await db.query(
+      `
+      SELECT *
+      FROM articles
+      WHERE art_status = 1
+      ORDER BY created_at DESC
+      LIMIT 10
+      `
+    );
+
+    res.json(articles);
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Server Error",
+    });
+  }
+});
 export default router;

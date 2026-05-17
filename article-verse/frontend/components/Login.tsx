@@ -33,8 +33,17 @@ export default function Login() {
         toast.success("Welcome to the Chulkani!!");
 
         setTimeout(() => {
-          router.push("/");
-        }, 1000);
+
+  // Admin redirect
+const userEmail = data.user.email.trim().toLowerCase();
+
+if (userEmail === "root@iglweb.com") {
+  router.push("/admin");
+} else {
+  router.push("/");
+}
+
+}, 1000);
       } else {
         toast.error("Something went wrong");
       }

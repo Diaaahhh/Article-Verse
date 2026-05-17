@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@import "ckeditor5/ckeditor5.css";
 /* Root variables for consistent theming - NEW PREMIUM BLACK PALETTE */
 :root {
   /* ===== BLACK BASE COLOURS ===== */
@@ -1468,362 +1468,196 @@ tr:hover {
   -webkit-user-select: auto;
 }
 
-/* ========================================
-   CKEDITOR DARK THEME - IMPROVED CONTRAST
-   ======================================== */
+/* CKEditor Dark Theme */
 
 .ck-editor__editable {
-  min-height: 400px;
+  min-height: 300px;
   background: var(--black-soft) !important;
   color: var(--text-primary) !important;
-  border: none !important;
-  font-family: 'Inter', system-ui, sans-serif !important;
-  font-size: 14px !important;
-  line-height: 1.7 !important;
 }
 
-.ck-editor__editable:focus {
-  outline: none !important;
-  box-shadow: 0 0 0 2px rgba(217, 92, 43, 0.2) !important;
-}
-
-/* Toolbar styling */
-.ck-toolbar {
-  background: var(--black-card) !important;
-  border: none !important;
-  border-bottom: 1px solid var(--border-light) !important;
-  padding: 8px 12px !important;
-}
-
-.ck-toolbar .ck-button {
-  color: var(--text-primary) !important;
-  background: transparent !important;
-  border-radius: 6px !important;
-  transition: all 0.2s ease !important;
-}
-
-.ck-toolbar .ck-button:hover {
-  background: rgba(217, 92, 43, 0.15) !important;
-  color: var(--accent-primary) !important;
-}
-
-.ck-toolbar .ck-button.ck-on {
-  background: rgba(217, 92, 43, 0.2) !important;
-  color: var(--accent-primary) !important;
-}
-
-.ck-toolbar .ck-button.ck-on:hover {
-  background: rgba(217, 92, 43, 0.3) !important;
-}
-
-/* Dropdown panel - Main container */
-.ck-dropdown__panel {
-  background: var(--black-card) !important;
-  border: 1px solid var(--border-medium) !important;
-  border-radius: 8px !important;
-  box-shadow: var(--shadow-lg) !important;
-}
-
-/* Dropdown button styling */
-.ck-dropdown .ck-button {
-  color: var(--text-primary) !important;
-}
-
-.ck-dropdown .ck-button:hover {
-  background: rgba(217, 92, 43, 0.15) !important;
-}
-
-/* List items in dropdown */
-.ck-list {
-  background: var(--black-card) !important;
-}
-
-.ck-list__item {
-  background: var(--black-card) !important;
-  color: var(--text-primary) !important;
-  transition: all 0.2s ease !important;
-}
-
-.ck-list__item:hover {
-  background: rgba(217, 92, 43, 0.15) !important;
-  color: var(--accent-primary) !important;
-}
-
-.ck-list__item .ck-button {
-  color: var(--text-primary) !important;
-  background: transparent !important;
-}
-
-.ck-list__item .ck-button:hover {
-  color: var(--accent-primary) !important;
-}
-
-/* Active/selected list item */
-.ck-list__item .ck-button.ck-on {
-  background: rgba(217, 92, 43, 0.2) !important;
-  color: var(--accent-primary) !important;
-}
-
-/* Dropdown panel for heading selector */
-.ck-heading-dropdown .ck-list__item {
-  background: var(--black-card) !important;
-}
-
-.ck-heading-dropdown .ck-list__item .ck-button {
-  color: var(--text-primary) !important;
-}
-
-.ck-heading-dropdown .ck-list__item .ck-button:hover {
-  background: rgba(217, 92, 43, 0.15) !important;
-  color: var(--accent-primary) !important;
-}
-
-/* Input fields in dialogs (like link dialog) */
-.ck-input {
-  background: var(--black-soft) !important;
-  border-color: var(--border-light) !important;
-  color: var(--text-primary) !important;
-}
-
-.ck-input:focus {
-  border-color: var(--accent-primary) !important;
-  box-shadow: 0 0 0 2px rgba(217, 92, 43, 0.1) !important;
-}
-
-.ck-labeled-field-view__status {
-  color: var(--text-secondary) !important;
-}
-
-/* Link dialog styling */
-.ck-link-form {
-  background: var(--black-card) !important;
-  border: 1px solid var(--border-medium) !important;
-  border-radius: 8px !important;
-  padding: 12px !important;
-}
-
-.ck-link-form input {
-  background: var(--black-soft) !important;
-  color: var(--text-primary) !important;
-  border-color: var(--border-light) !important;
-}
-
-.ck-link-form input:focus {
-  border-color: var(--accent-primary) !important;
-}
-
-.ck-link-form .ck-button {
-  color: var(--text-primary) !important;
-}
-
-.ck-link-form .ck-button:hover {
-  color: var(--accent-primary) !important;
-}
-
-/* Button labels */
-.ck-button__label {
-  color: var(--text-primary) !important;
-}
-
-/* Dropdown menu styling for all dropdowns */
-.ck.ck-dropdown .ck-dropdown__panel .ck-list__item {
-  color: var(--text-primary) !important;
-  background: var(--black-card) !important;
-}
-
-.ck.ck-dropdown .ck-dropdown__panel .ck-list__item:hover {
-  background: rgba(217, 92, 43, 0.15) !important;
-  color: var(--accent-primary) !important;
-}
-
-.ck.ck-dropdown .ck-dropdown__panel .ck-list__item .ck-button {
-  color: var(--text-primary) !important;
-}
-
-.ck.ck-dropdown .ck-dropdown__panel .ck-list__item .ck-button:hover {
-  color: var(--accent-primary) !important;
-}
-
-/* Color dropdown items */
-.ck-color-grid__tile {
-  border-radius: 4px !important;
-}
-
-/* Font dropdown */
-.ck-font-size-dropdown .ck-list__item,
-.ck-font-family-dropdown .ck-list__item {
-  background: var(--black-card) !important;
-  color: var(--text-primary) !important;
-}
-
-.ck-font-size-dropdown .ck-list__item:hover,
-.ck-font-family-dropdown .ck-list__item:hover {
-  background: rgba(217, 92, 43, 0.15) !important;
-  color: var(--accent-primary) !important;
-}
-
-/* Block quote styling in editor content */
-.ck-content blockquote {
-  border-left: 3px solid var(--accent-primary) !important;
-  background: rgba(217, 92, 43, 0.05) !important;
-  padding: 12px 20px !important;
-  margin: 16px 0 !important;
-  font-style: italic !important;
-}
-
-/* Table styling in editor content */
-.ck-content table {
-  border-color: var(--border-light) !important;
-}
-
-.ck-content th,
-.ck-content td {
-  border-color: var(--border-light) !important;
-  padding: 8px 12px !important;
-}
-
-/* Link styling in editor content */
-.ck-content a {
-  color: var(--accent-primary) !important;
-  text-decoration: underline !important;
-}
-
-.ck-content a:hover {
-  color: var(--accent-secondary) !important;
-}
-
-/* Heading styles in editor content */
-.ck-content h1,
-.ck-content h2,
-.ck-content h3,
-.ck-content h4,
-.ck-content h5,
-.ck-content h6 {
-  color: var(--text-heading) !important;
-  margin-top: 24px !important;
-  margin-bottom: 16px !important;
-}
-
-/* List styling in editor content */
-.ck-content ul,
-.ck-content ol {
-  padding-left: 24px !important;
-}
-
-.ck-content li {
-  margin: 8px 0 !important;
-}
-
-/* Placeholder styling */
-.ck.ck-editor__editable_inline::before {
-  color: var(--text-tertiary) !important;
-}
-
-/* Scrollbar for editor */
-.ck-editor__editable::-webkit-scrollbar {
-  width: 8px;
-}
-
-.ck-editor__editable::-webkit-scrollbar-track {
-  background: var(--black-soft);
-  border-radius: 4px;
-}
-
-.ck-editor__editable::-webkit-scrollbar-thumb {
-  background: var(--accent-primary);
-  border-radius: 4px;
-}
-
-.ck-editor__editable::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-secondary);
-}
-
-/* Resize handle styling */
-.ck-reset_all {
-  color: var(--text-primary) !important;
-}
-
-/* Balloon panel (tooltips) */
-.ck-balloon-panel {
-  background: var(--black-card) !important;
-  border: 1px solid var(--border-medium) !important;
-  box-shadow: var(--shadow-lg) !important;
-}
-
-.ck-balloon-panel .ck-button {
-  color: var(--text-primary) !important;
-}
-
-.ck-balloon-panel .ck-button:hover {
-  color: var(--accent-primary) !important;
-}
-
-/* Context menu items */
-.ck-context-menu {
-  background: var(--black-card) !important;
-  border: 1px solid var(--border-medium) !important;
-}
-
-.ck-context-menu .ck-list__item {
-  color: var(--text-primary) !important;
-}
-
-.ck-context-menu .ck-list__item:hover {
-  background: rgba(217, 92, 43, 0.15) !important;
-  color: var(--accent-primary) !important;
-}
-
-/* Editor wrapper border */
 .ck.ck-editor {
-  border-radius: 12px;
-  overflow: hidden;
+  width: 100%;
 }
 
-/* When dropdown is open, ensure proper contrast */
-.ck-dropdown__panel-visible {
+.ck.ck-toolbar {
   background: var(--black-card) !important;
+  border-color: var(--border-light) !important;
 }
 
-/* For light backgrounds in dropdown (if any) - ensure dark text */
-[class*="ck-dropdown"] [class*="ck-list"] {
-  background: var(--black-card) !important;
-}
-
-[class*="ck-dropdown"] [class*="ck-list__item"] {
+.ck.ck-content {
+  background: var(--black-soft) !important;
   color: var(--text-primary) !important;
-  background: var(--black-card) !important;
 }
 
-[class*="ck-dropdown"] [class*="ck-list__item"]:hover {
-  background: rgba(217, 92, 43, 0.15) !important;
-  color: var(--accent-primary) !important;
+.ck.ck-button {
+  color: var(--text-primary) !important;
 }
 
-/* Force dark background for all dropdown panels */
+.ck.ck-button:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
 .ck.ck-dropdown__panel {
   background: var(--black-card) !important;
 }
 
-.ck.ck-dropdown__panel .ck-list {
-  background: var(--black-card) !important;
-}
-
-.ck.ck-dropdown__panel .ck-list__item {
+.ck.ck-list {
   background: var(--black-card) !important;
   color: var(--text-primary) !important;
 }
 
-.ck.ck-dropdown__panel .ck-list__item:hover {
-  background: rgba(217, 92, 43, 0.15) !important;
-  color: var(--accent-primary) !important;
+/* ========================================
+   CKEDITOR DROPDOWN CONTRAST FIX
+   ======================================== */
+
+/* Main dropdown panel */
+.ck.ck-dropdown__panel,
+.ck.ck-list,
+.ck.ck-reset_all {
+  background: var(--black-card) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
 }
 
-/* Additional contrast fixes */
-.ck.ck-button.ck-dropdown__button {
+/* Dropdown list items */
+.ck.ck-list__item .ck-button,
+.ck.ck-dropdown__panel .ck-button {
+  color: var(--text-primary) !important;
+  background: transparent !important;
+}
+
+/* Hover state */
+.ck.ck-list__item .ck-button:hover,
+.ck.ck-dropdown__panel .ck-button:hover {
+  background: rgba(217, 92, 43, 0.15) !important;
+  color: white !important;
+}
+
+/* Active/selected item */
+.ck.ck-list__item .ck-button.ck-on,
+.ck.ck-dropdown__panel .ck-button.ck-on {
+  background: var(--accent-primary) !important;
+  color: white !important;
+}
+
+/* Dropdown labels/text */
+.ck.ck-dropdown__panel .ck.ck-list__item-text {
   color: var(--text-primary) !important;
 }
 
-.ck.ck-button.ck-dropdown__button:hover {
-  background: rgba(217, 92, 43, 0.15) !important;
-  color: var(--accent-primary) !important;
+/* Toolbar buttons */
+.ck.ck-toolbar .ck-button {
+  color: var(--text-primary) !important;
+}
+
+/* Toolbar hover */
+.ck.ck-toolbar .ck-button:hover {
+  background: rgba(255,255,255,0.08) !important;
+}
+
+/* Active toolbar button */
+.ck.ck-toolbar .ck-button.ck-on {
+  background: var(--accent-primary) !important;
+  color: white !important;
+}
+
+/* Input fields inside CKEditor */
+.ck.ck-input {
+  background: var(--black-soft) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+/* Focused inputs */
+.ck.ck-input:focus {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 2px rgba(217, 92, 43, 0.2) !important;
+}
+
+/* Placeholder text */
+.ck.ck-input::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
+/* Dropdown arrow */
+.ck.ck-dropdown .ck-dropdown__arrow {
+  color: var(--text-secondary) !important;
+}
+
+/* Separator lines */
+.ck.ck-toolbar__separator {
+  background: var(--border-light) !important;
+}
+
+/* Balloon panels */
+.ck.ck-balloon-panel {
+  background: var(--black-card) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+/* Link form popup */
+.ck.ck-link-form {
+  background: var(--black-card) !important;
+  color: var(--text-primary) !important;
+}
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+}
+
+.admin-modal {
+  width: 95%;
+  max-width: 900px;
+
+  max-height: 90vh;
+  overflow-y: auto;
+
+  background: #111827;
+
+  padding: 24px;
+
+  border-radius: 16px;
+}
+
+.admin-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 20px;
+}
+
+.admin-modal-close {
+  background: transparent;
+  border: none;
+
+  color: white;
+
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.admin-input,
+.admin-textarea {
+  width: 100%;
+
+  padding: 12px;
+
+  margin-bottom: 16px;
+
+  border-radius: 10px;
+
+  border: 1px solid #374151;
+
+  background: #1F2937;
+
+  color: white;
 }

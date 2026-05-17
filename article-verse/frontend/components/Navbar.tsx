@@ -12,16 +12,30 @@ export default function Navbar() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/check-auth`, {
-          credentials: "include",
-        });
-        setIsLoggedIn(res.status === 200);
-      } catch (error) {
-        console.log(error);
-        setIsLoggedIn(false);
+  try {
+
+    const res = await fetch(
+      `${API_BASE_URL}/api/check_auth`,
+      {
+        credentials: "include",
       }
-    };
+    );
+
+    const data = await res.json();
+
+    if (data.loggedIn) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+
+  } catch (error) {
+
+    console.log(error);
+    setIsLoggedIn(false);
+
+  }
+};
     checkAuth();
 
     const handleScroll = () => {
@@ -37,6 +51,8 @@ export default function Navbar() {
         method: "POST",
         credentials: "include",
       });
+        // Remove local storage
+    localStorage.removeItem("user");
       setIsLoggedIn(false);
       router.push("/");
     } catch (error) {
@@ -46,7 +62,7 @@ export default function Navbar() {
 
   const handleAddPost = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/check-auth`, {
+      const res = await fetch(`${API_BASE_URL}/api/check_auth`, {
         credentials: "include",
       });
       if (res.status === 401) {

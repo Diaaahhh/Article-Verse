@@ -136,17 +136,30 @@ const [selectedLanguage, setSelectedLanguage] = useState("all");
   };
 
   useEffect(() => {
-    if (!selectedDeepTopic) return;
-    fetch(`${API_BASE_URL}/api/content_section/articles/${selectedDeepTopic}`)
-      .then((res) => res.json())
-      .then((data) => {
-  setArticles(data);
-  setSelectedLanguage("all");
-})
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [selectedDeepTopic]);
+  const fetchArticles = async () => {
+    try {
+      let url = "";
+
+      // If no category/topic selected → show latest 10 articles
+      if (!selectedDeepTopic) {
+        url = `${API_BASE_URL}/api/content_section/latest`;
+      } else {
+        // Otherwise show topic articles
+        url = `${API_BASE_URL}/api/content_section/articles/${selectedDeepTopic}`;
+      }
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      setArticles(data);
+      setSelectedLanguage("all");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  fetchArticles();
+}, [selectedDeepTopic]);
 
   // Close share dropdown when clicking outside
   useEffect(() => {
@@ -530,11 +543,11 @@ const filteredArticles =
         </h3>
 
         <p
-          className="mt-2 text-sm"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          Select a deep topic to explore
-        </p>
+  className="mt-2 text-sm"
+  style={{ color: "var(--text-secondary)" }}
+>
+  No articles available right now
+</p>
       </div>
     </div>
   )}
