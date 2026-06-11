@@ -103,4 +103,100 @@ router.get("/deep-topics/:subcategory", async (req, res) => {
     });
   }
 });
+
+// get all subcategories
+router.get("/all-subcategories", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT DISTINCT cat_subcategory
+      FROM categories
+      WHERE cat_subcategory IS NOT NULL
+      AND cat_subcategory != ''
+      ORDER BY cat_subcategory ASC
+    `);
+
+    res.json(rows);
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Server Error",
+    });
+  }
+});
+
+//get all dee ptopics
+router.get("/all-deep-topics", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT DISTINCT cat_sub_subcategory
+      FROM categories
+      WHERE cat_sub_subcategory IS NOT NULL
+      AND cat_sub_subcategory != ''
+      ORDER BY cat_sub_subcategory ASC
+    `);
+
+    res.json(rows);
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Server Error",
+    });
+  }
+});
+
+router.get("/deep-topic/:deepTopic", async (req, res) => {
+  try {
+    const { deepTopic } = req.params;
+
+    const [rows] = await db.query(
+      `
+      SELECT
+        cat_category,
+        cat_subcategory,
+        cat_sub_subcategory
+      FROM categories
+      WHERE cat_sub_subcategory = ?
+      LIMIT 1
+      `,
+      [deepTopic]
+    );
+
+    res.json(rows[0] || null);
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Server Error",
+    });
+  }
+});
+
+router.get("/subcategory/:subcategory", async (req, res) => {
+  try {
+    const { subcategory } = req.params;
+
+    const [rows] = await db.query(
+      `
+      SELECT
+        cat_category,
+        cat_subcategory
+      FROM categories
+      WHERE cat_subcategory = ?
+      LIMIT 1
+      `,
+      [subcategory]
+    );
+
+    res.json(rows[0] || null);
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Server Error",
+    });
+  }
+});
+
 export default router;

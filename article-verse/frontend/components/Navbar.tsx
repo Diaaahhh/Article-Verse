@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { API_BASE_URL } from "@/constants/api";
 
@@ -9,13 +9,18 @@ export default function Navbar() {
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+const [userImage, setUserImage] = useState("");
+const [userId, setUserId] = useState<number | null>(null);
+const [dropdownOpen, setDropdownOpen] = useState(false);
 
+const dropdownRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const checkAuth = async () => {
+
   try {
 
     const res = await fetch(
-      `${API_BASE_URL}/api/check_auth`,
+      `${API_BASE_URL}/api/profile`,
       {
         credentials: "include",
       }
@@ -23,20 +28,29 @@ export default function Navbar() {
 
     const data = await res.json();
 
-    if (data.loggedIn) {
+    if (res.ok) {
+
       setIsLoggedIn(true);
+
+      setUserImage(data.user.user_image || "");
+      setUserId(data.user.id);
+
     } else {
+
       setIsLoggedIn(false);
+
     }
 
   } catch (error) {
 
     console.log(error);
+
     setIsLoggedIn(false);
 
   }
+
 };
-    checkAuth();
+checkAuth();
 
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -45,6 +59,41 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [pathname]);
 
+
+  useEffect(() => {
+
+  const handleClickOutside = (
+    event: MouseEvent
+  ) => {
+
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(
+        event.target as Node
+      )
+    ) {
+
+      setDropdownOpen(false);
+
+    }
+
+  };
+
+  document.addEventListener(
+    "mousedown",
+    handleClickOutside
+  );
+
+  return () => {
+
+    document.removeEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
+  };
+
+}, []);
   const handleLogout = async () => {
     try {
       await fetch(`${API_BASE_URL}/api/logout`, {
@@ -129,20 +178,218 @@ export default function Navbar() {
 
           {/* Log Out Button - Only show when logged in (no Sign In button) */}
           {isLoggedIn && (
-            <button
-              onClick={handleLogout}
-              className="flex h-[44px] w-[130px] cursor-pointer items-center justify-center text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:h-[48px] md:w-[140px]"
-              style={{
-                background: "linear-gradient(135deg, #A9512C 0%, #302C2B 100%)",
-                borderRadius: "12px",
-              }}
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              Log Out
-            </button>
-          )}
+
+  <div
+  className="relative"
+  ref={dropdownRef}
+  onMouseEnter={() => setDropdownOpen(true)}
+  onMouseLeave={() => setDropdownOpen(false)}
+>
+
+    {/* PROFILE IMAGE */}
+
+    <div
+      className="w-12 h-12 rounded-full overflow-hidden cursor-pointer border-2 border-[#A9512C] hover:scale-105 transition-all duration-300"
+    >
+
+      {userImage ? (
+
+        <img
+          src={`${API_BASE_URL}/uploads/profiles/${userImage}`}
+          alt="Profile"
+          className="w-full h-full object-cover"
+        />
+
+      ) : (
+
+        <div className="w-full h-full bg-gradient-to-br from-[#A9512C] to-[#302C2B] flex items-center justify-center text-white font-bold">
+          U
+        </div>
+
+      )}
+
+    </div>
+
+    {/* DROPDOWN */}
+
+    {dropdownOpen && (
+
+  <div
+    className="
+      absolute 
+      right-0 
+      top-12.5
+      w-60
+      overflow-hidden
+      rounded-2xl
+      border
+      backdrop-blur-xl
+      shadow-2xl
+      animate-in
+      fade-in
+      zoom-in-95
+      duration-200
+    "
+    style={{
+      background: "rgba(26,26,26,0.96)",
+      borderColor: "var(--border-light)",
+      boxShadow: "0 20px 40px rgba(0,0,0,0.6)",
+      padding: "10px"
+    }}
+  >
+
+    {/* TOP USER SECTION */}
+
+    <div
+      className="px-5 py-4 border-b"
+      style={{
+        borderColor: "var(--border-light)",
+      }}
+    >
+
+      <p
+        className="text-sm font-semibold"
+        style={{
+          color: "var(--text-heading)",
+        }}
+      >
+        Welcome Back
+      </p>
+
+      <p
+        className="text-xs mt-1"
+        style={{
+          color: "var(--text-secondary)",
+        }}
+      >
+        Manage your profile & content
+      </p>
+
+    </div>
+
+    {/* MENU ITEMS */}
+
+    <div className="p-2">
+
+      <button
+        onClick={() => {
+
+          setDropdownOpen(false);
+
+          router.push(`/profile/${userId}`);
+
+        }}
+        className="
+          w-full
+          flex
+          items-center
+          gap-3
+          px-4
+          py-3
+          rounded-xl
+          text-sm
+          font-medium
+          transition-all
+          duration-200
+          hover:translate-x-1
+        "
+        style={{
+          color: "var(--text-primary)",
+          paddingTop: "10px",
+          paddingBottom: "10px"
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background =
+            "rgba(217, 92, 43, 0.12)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background =
+            "transparent";
+        }}
+      >
+
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+        </svg>
+
+        Profile
+
+      </button>
+
+      <button
+        onClick={() => {
+
+          setDropdownOpen(false);
+
+          handleLogout();
+
+        }}
+        className="
+          w-full
+          flex
+          items-center
+          gap-3
+          px-4
+          py-3
+          rounded-xl
+          text-sm
+          font-medium
+          transition-all
+          duration-200
+          hover:translate-x-1
+        "
+        style={{
+          color: "#EF4444",
+          paddingTop: "10px",
+          paddingBottom: "10px"
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background =
+            "rgba(239, 68, 68, 0.12)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background =
+            "transparent";
+        }}
+      >
+
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V4"
+          />
+        </svg>
+
+        Logout
+
+      </button>
+
+    </div>
+
+  </div>
+
+)}
+
+  </div>
+
+)}
         </div>
       </div>
     </nav>

@@ -21,23 +21,35 @@ import languageRoutes from "./routes/languages.js";
 import postsRoutes from "./routes/posts.js";
 import articleRoute from "./routes/article.js";
 import searchRoutes from "./routes/search.js";
+import profileRoute from "./routes/profile.js";
+import checkUserIdRoute from "./routes/check-userid.js";
+// import uploadEditorImage from "./routes/upload_editor_image.js";
 
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser()); 
 app.use("/uploads", express.static("uploads"));
+
 app.use(
   cors({
     origin: [
       "http://localhost:3000",
       "https://article-frontend.chulkani.com",
       "https://chulkani.com",
+      "http://chulkani.com",
     "https://www.chulkani.com",
     ],
     credentials: true,
   })
 );
+
+// app.use(
+//   cors({
+//     origin: "*",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//   })
+// );
 
 db.query("SELECT 1")
   .then(() => {
@@ -64,6 +76,9 @@ app.use("/api/languages", languageRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/article", articleRoute);
 app.use("/api/search", searchRoutes);
+app.use("/api/profile", profileRoute);
+app.use("/api/check-userid", checkUserIdRoute);
+// app.use("/api/upload-editor-image", uploadEditorImage);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

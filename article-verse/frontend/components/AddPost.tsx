@@ -4,33 +4,10 @@ import React, { useState, KeyboardEvent, useEffect } from "react";
 import { API_BASE_URL } from "@/constants/api";
 import toast from "react-hot-toast";
 import slugify from "slugify";
-// import dynamic from "next/dynamic";
-
-// const CKEditor = dynamic(
-//   () => import("@ckeditor/ckeditor5-react").then((mod) => mod.CKEditor),
-//   { ssr: false }
-// );
-
-// import {
-//   ClassicEditor,
-//   Bold,
-//   Essentials,
-//   Italic,
-//   Paragraph,
-//   Heading,
-//   List,
-//   Link,
-//   BlockQuote,
-//   Image,
-//   ImageToolbar,
-//   ImageCaption,
-//   ImageStyle,
-//   ImageUpload,
-//   Table,
-//   TableToolbar,
-
-//   Undo
-// } from "ckeditor5";
+import { useSearchParams } from "next/navigation";
+import Cropper from "react-easy-crop";
+import TiptapEditor from "./editor/TiptapEditor";
+import Select from "react-select";
 export default function AddPost() {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -42,9 +19,19 @@ export default function AddPost() {
   const [metaDesc, setMetaDesc] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [croppedImageSize, setCroppedImageSize] = useState<number | null>(null);
+  const [crop, setCrop] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [showCropper, setShowCropper] = useState(false);
   const [languages, setLanguages] = useState<any[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState("");
-
+  const searchParams = useSearchParams();
+  const articleId = searchParams.get("id");
+  const [loggedInUserId, setLoggedInUserId] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
   const [selectedDeepTopic, setSelectedDeepTopic] = useState("");
@@ -53,7 +40,6 @@ export default function AddPost() {
   const [deepTopics, setDeepTopics] = useState<any[]>([]);
   const [imageError, setImageError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<any>({});
-
   // Title validation function - accepts letters, spaces, and numbers 0-9
   const validateTitle = (value: string) => {
     const regex = /^[a-zA-Z0-9\s]*$/;
@@ -69,17 +55,94 @@ export default function AddPost() {
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (validateTitle(value)) {
-      setTitle(value);
+
+    if (value.length > 60) {
+      setTitleError("Title cannot exceed 60 characters");
+      return;
     }
+
+    setTitle(value);
+    setTitleError("");
   };
 
+  const handleSubtitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    const urlRegex = /(https?:\/\/|www\.|\.com|\.net|\.org|\.io|\.co)/i;
+
+    if (urlRegex.test(value)) {
+      return;
+    }
+
+    if (value.length > 160) {
+      return;
+    }
+
+    setSubtitle(value);
+    setMetaDesc(value);
+  };
+  const handleCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
+  const getCroppedImage = async () => {
+    if (!imagePreview || !croppedAreaPixels) return null;
+
+    const image = new Image();
+
+    image.src = imagePreview;
+
+    await new Promise((resolve) => {
+      image.onload = resolve;
+    });
+
+    const canvas = document.createElement("canvas");
+
+    canvas.width = 850;
+    canvas.height = 300;
+
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return null;
+
+    ctx.drawImage(
+      image,
+
+      croppedAreaPixels.x,
+      croppedAreaPixels.y,
+
+      croppedAreaPixels.width,
+      croppedAreaPixels.height,
+
+      0,
+      0,
+
+      850,
+      300
+    );
+
+    return new Promise<File | null>((resolve) => {
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            resolve(null);
+            return;
+          }
+
+          const file = new File([blob], "featured.jpg", {
+            type: "image/jpeg",
+          });
+
+          setCroppedImageSize(file.size);
+
+          resolve(file);
+        },
+        "image/jpeg",
+        0.8
+      );
+    });
+  };
   const handleSubmit = async () => {
     try {
-      if (image && image.size > 5 * 1024) {
-        toast.error("Image must be below 5KB");
-        return;
-      }
       const errors: any = {};
 
       if (!title.trim()) {
@@ -108,7 +171,16 @@ export default function AddPost() {
         setFieldErrors(errors);
         return;
       }
+      const parser = new DOMParser();
 
+      const doc = parser.parseFromString(finalContent, "text/html");
+
+      const imageElements = doc.querySelectorAll("img");
+
+      const editorImages = Array.from(imageElements)
+        .map((img) => img.getAttribute("src"))
+        .filter(Boolean)
+        .slice(0, 4);
       setFieldErrors({});
       const formData = new FormData();
 
@@ -121,6 +193,7 @@ export default function AddPost() {
       formData.append("slug", slug);
       formData.append("subtitle", subtitle);
       formData.append("content", finalContent);
+      formData.append("editorImages", JSON.stringify(editorImages));
       formData.append("metaTitle", metaTitle);
       formData.append("metaDesc", metaDesc);
       formData.append("metaKeywords", JSON.stringify(tags));
@@ -128,9 +201,16 @@ export default function AddPost() {
       formData.append("category", selectedCategory);
       formData.append("subcategory", selectedSubcategory);
       formData.append("deepTopic", selectedDeepTopic);
+      if (articleId) {
+        formData.append("articleId", articleId);
+      }
 
-      if (image) {
-        formData.append("image", image);
+      if (imagePreview) {
+        const croppedFile = await getCroppedImage();
+
+        if (croppedFile) {
+          formData.append("image", croppedFile);
+        }
       }
 
       const res = await fetch(`${API_BASE_URL}/api/add-post`, {
@@ -187,17 +267,143 @@ export default function AddPost() {
     setLanguages(data);
   };
 
-  const fetchCategories = async () => {
-    const res = await fetch(`${API_BASE_URL}/api/category_section`);
-    const data = await res.json();
-    setCategories(data);
+  const fetchCategoryData = async () => {
+  try {
+    const [catRes, subRes, deepRes] = await Promise.all([
+      fetch(`${API_BASE_URL}/api/category_section`),
+      fetch(`${API_BASE_URL}/api/category_section/all-subcategories`),
+      fetch(`${API_BASE_URL}/api/category_section/all-deep-topics`),
+    ]);
+
+    const categories = await catRes.json();
+    const subcategories = await subRes.json();
+    const deepTopics = await deepRes.json();
+
+    setCategories(categories);
+    setSubcategories(subcategories);
+    setDeepTopics(deepTopics);
+  } catch (error) {
+    console.log(error);
+  }
+};
+  const fetchArticle = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/article/edit/${articleId}`, {
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        const article = data.article;
+
+        setTitle(article.art_title || "");
+
+        setSubtitle(article.art_subtitle || "");
+
+        setContent(article.art_text || "");
+
+        setMetaTitle(article.meta_title || "");
+
+        setMetaDesc(article.meta_description || "");
+
+        setSelectedLanguage(article.language_id || "");
+
+        setSelectedCategory(article.category || "");
+
+        setSelectedSubcategory(article.subcategory || "");
+
+        setSelectedDeepTopic(article.deep_topic || "");
+
+        if (article.meta_keywords) {
+          setTags(article.meta_keywords.split(","));
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  useEffect(() => {
-    fetchLanguages(); 
-    fetchCategories();
-  }, []);
+  const checkOwnership = async () => {
+  try {
+    if (!articleId || !loggedInUserId) return;
 
+    const res = await fetch(
+      `${API_BASE_URL}/api/article/edit/${articleId}`,
+      {
+        credentials: "include",
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      toast.error("Article not found");
+      return;
+    }
+
+    if (data.article.user_id !== loggedInUserId) {
+      toast.error("Unauthorized access");
+
+      window.location.href = "/";
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+  const fetchCurrentUser = async () => {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/api/profile`,
+      {
+        credentials: "include",
+      }
+    );
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setLoggedInUserId(data.user.id);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+  useEffect(() => {
+
+  if (
+    articleId &&
+    loggedInUserId
+  ) {
+
+    checkOwnership();
+
+    fetchArticle();
+
+  }
+
+}, [articleId, loggedInUserId]);
+
+  useEffect(() => {
+  fetchLanguages();
+  fetchCategoryData();
+  fetchCurrentUser();
+}, []);
+  useEffect(() => {
+    const updateSize = async () => {
+      if (!imagePreview || !croppedAreaPixels) return;
+
+      const file = await getCroppedImage();
+
+      if (file) {
+        setCroppedImageSize(file.size);
+      }
+    };
+
+    updateSize();
+  }, [crop, zoom, croppedAreaPixels]);
 
   const handleCategoryChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -219,45 +425,121 @@ export default function AddPost() {
     }
   };
 
-  const handleSubcategoryChange = async (subcategoryValue: string) => {
+  const handleSubcategoryChange = async (
+  subcategoryValue: string
+) => {
+  try {
+    const lookupRes = await fetch(
+      `${API_BASE_URL}/api/category_section/subcategory/${encodeURIComponent(
+        subcategoryValue
+      )}`
+    );
+
+    const lookupData = await lookupRes.json();
+
+    if (!lookupData) return;
+
+    setSelectedCategory(lookupData.cat_category);
     setSelectedSubcategory(subcategoryValue);
     setSelectedDeepTopic("");
 
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/category_section/deep-topics/${subcategoryValue}`
-      );
-      const data = await res.json();
-      setDeepTopics(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    const subRes = await fetch(
+      `${API_BASE_URL}/api/category_section/subcategories/${lookupData.cat_category}`
+    );
+
+    const subData = await subRes.json();
+
+    setSubcategories(subData);
+
+    const deepRes = await fetch(
+      `${API_BASE_URL}/api/category_section/deep-topics/${subcategoryValue}`
+    );
+
+    const deepData = await deepRes.json();
+
+    setDeepTopics(deepData);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+  const handleDeepTopicChange = async (
+  deepTopicValue: string
+) => {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/api/category_section/deep-topic/${encodeURIComponent(
+        deepTopicValue
+      )}`
+    );
+
+    const data = await res.json();
+
+    if (!data) return;
+
+    // Auto-select all three
+    setSelectedCategory(data.cat_category);
+    setSelectedSubcategory(data.cat_subcategory);
+    setSelectedDeepTopic(data.cat_sub_subcategory);
+
+    // Load subcategories of selected category
+    const subRes = await fetch(
+      `${API_BASE_URL}/api/category_section/subcategories/${encodeURIComponent(
+        data.cat_category
+      )}`
+    );
+
+    const subData = await subRes.json();
+
+    setSubcategories(subData);
+
+    // Load deep topics of selected subcategory
+    const deepRes = await fetch(
+      `${API_BASE_URL}/api/category_section/deep-topics/${encodeURIComponent(
+        data.cat_subcategory
+      )}`
+    );
+
+    const deepData = await deepRes.json();
+
+    setDeepTopics(deepData);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
   const handleImageChange = (file: File | null) => {
     if (!file) {
       setImage(null);
       setImagePreview(null);
+      setShowCropper(false);
       return;
     }
 
-    if (file.size > 5 * 1024) {
-      setImageError("Image must be below 5KB");
-      setImage(null);
-      setImagePreview(null);
-      return;
-    }
-
-    setImage(file);
     setImageError("");
 
     const reader = new FileReader();
-    reader.onloadend = () => {
+
+    reader.onload = () => {
       setImagePreview(reader.result as string);
+
+      setShowCropper(true);
     };
+
     reader.readAsDataURL(file);
   };
 
+  const handleRemoveImage = () => {
+    setImage(null);
+    setImagePreview(null);
+    setCroppedImageSize(null);
+    setShowCropper(false);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setCroppedAreaPixels(null);
+    setImageError("");
+  };
   // Dark theme input styles
   const inputStyle =
     "w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[var(--accent-primary)]/20 outline-none transition-all duration-200 bg-[var(--black-soft)] text-[var(--text-primary)] border-[var(--border-light)] placeholder:text-[var(--text-tertiary)]";
@@ -265,7 +547,86 @@ export default function AddPost() {
     "block text-sm font-semibold mb-2 text-[var(--text-secondary)]";
   const selectStyle =
     "w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[var(--accent-primary)]/20 outline-none transition-all duration-200 bg-[var(--black-soft)] text-[var(--text-primary)] border-[var(--border-light)] appearance-none cursor-pointer";
+const customSelectStyles = {
+  control: (provided: any, state: any) => ({
+    ...provided,
+    backgroundColor: "var(--select-bg)",
+    borderColor: state.isFocused
+      ? "var(--select-accent)"
+      : "var(--select-border)",
+    color: "var(--select-text)",
+    minHeight: "50px",
+    borderRadius: "12px",
+    boxShadow: "none",
 
+    "&:hover": {
+      borderColor: "var(--select-accent)",
+    },
+  }),
+
+  singleValue: (provided: any) => ({
+    ...provided,
+    color: "var(--select-text)",
+  }),
+
+  input: (provided: any) => ({
+    ...provided,
+    color: "var(--select-text)",
+  }),
+
+  placeholder: (provided: any) => ({
+    ...provided,
+    color: "var(--select-placeholder)",
+  }),
+
+  menu: (provided: any) => ({
+    ...provided,
+    backgroundColor: "var(--select-menu-bg)",
+    borderRadius: "12px",
+    overflow: "hidden",
+    zIndex: 9999,
+  }),
+
+  menuList: (provided: any) => ({
+    ...provided,
+    backgroundColor: "var(--select-menu-bg)",
+    padding: 0,
+  }),
+
+  option: (provided: any, state: any) => ({
+    ...provided,
+    backgroundColor: state.isSelected
+      ? "var(--select-accent)"
+      : state.isFocused
+      ? "var(--select-bg-hover)"
+      : "var(--select-menu-bg)",
+
+    color: "#FFFFFF",
+    cursor: "pointer",
+  }),
+
+  dropdownIndicator: (provided: any) => ({
+    ...provided,
+    color: "#FFFFFF",
+
+    "&:hover": {
+      color: "var(--select-accent)",
+    },
+  }),
+
+  clearIndicator: (provided: any) => ({
+    ...provided,
+    color: "#FFFFFF",
+
+    "&:hover": {
+      color: "var(--select-accent)",
+    },
+  }),
+
+  indicatorSeparator: () => ({
+    display: "none",
+  }),
+};
   return (
     <div
       className="flex justify-center min-h-screen w-full p-6"
@@ -319,10 +680,16 @@ export default function AddPost() {
                 <input
                   type="text"
                   className={inputStyle}
-                  placeholder="Enter an engaging title (letters, numbers & spaces only)..."
+                  placeholder="Enter an engaging title (Max 60 characters, letters, numbers & spaces only)..."
                   value={title}
                   onChange={handleTitleChange}
                 />
+                <p
+                  className="text-xs mt-1"
+                  style={{ color: "var(--text-tertiary)" }}
+                >
+                  {title.length}/60 characters
+                </p>
                 {titleError && (
                   <p className="text-yellow-500 text-sm mt-2 flex items-center gap-1">
                     <svg
@@ -367,15 +734,37 @@ export default function AddPost() {
                 <input
                   type="text"
                   className={inputStyle}
-                  placeholder="Add a catchy subtitle..."
+                  placeholder="Add a catchy subtitle (Max 160 characters)..."
                   value={subtitle}
-                  onChange={(e) => setSubtitle(e.target.value)}
+                  onChange={handleSubtitleChange}
                 />
+                <p
+                  className="text-xs mt-1"
+                  style={{ color: "var(--text-tertiary)" }}
+                >
+                  {subtitle.length}/160 characters
+                </p>
               </div>
 
+              {/* Tiptap Content */}
+              <div>
+                <label className={labelStyle}>
+                  Content <span className="text-red-500">*</span>
+                </label>
 
-
-
+                <div
+                  className="rounded-xl overflow-hidden border"
+                  style={{
+                    borderColor: "var(--border-light)",
+                    background: "var(--black-soft)",
+                  }}
+                >
+                  <TiptapEditor
+                    content={content}
+                    onChange={(html) => setContent(html)}
+                  />
+                </div>
+              </div>
 
               {/* Meta Fields Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -396,29 +785,11 @@ export default function AddPost() {
                     {metaTitle.length}/60 characters
                   </p>
                 </div>
-
-                <div>
-                  <label className={labelStyle}>Meta Description</label>
-                  <textarea
-                    maxLength={160}
-                    rows={2}
-                    className={inputStyle}
-                    placeholder="Max 160 chars for SEO"
-                    value={metaDesc}
-                    onChange={(e) => setMetaDesc(e.target.value)}
-                  />
-                  <p
-                    className="text-xs mt-1"
-                    style={{ color: "var(--text-tertiary)" }}
-                  >
-                    {metaDesc.length}/160 characters
-                  </p>
-                </div>
               </div>
 
               {/* Image Upload with Preview */}
               <div>
-                <label className={labelStyle}>Featured Image (Max 5KB)</label>
+                <label className={labelStyle}>Featured Image (Max 50KB)</label>
                 <div
                   className="border-2 border-dashed rounded-xl p-6 text-center transition-all duration-300 flex flex-col items-center justify-center"
                   style={{
@@ -441,39 +812,67 @@ export default function AddPost() {
                   />
 
                   {imagePreview ? (
-                    <div className="relative flex flex-col items-center">
-                      <div className="relative">
+                    <div className="w-full">
+                      <div className="flex justify-end mb-3">
+                        <button
+                          type="button"
+                          onClick={handleRemoveImage}
+                          className="px-30 py-2 text-sm rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
+                          style={{
+                            width: "50px",
+                          }}
+                        >
+                          X
+                        </button>
+                      </div>
+                      {showCropper ? (
+                        <>
+                          <div className="relative w-full h-[400px]">
+                            <Cropper
+                              image={imagePreview}
+                              crop={crop}
+                              zoom={zoom}
+                              aspect={850 / 300}
+                              onCropChange={setCrop}
+                              onZoomChange={setZoom}
+                              onCropComplete={handleCropComplete}
+                            />
+                          </div>
+                          {croppedImageSize !== null && (
+                            <p
+                              className={`mt-3 text-sm font-medium ${
+                                croppedImageSize > 50 * 1024
+                                  ? "text-red-500"
+                                  : "text-green-500"
+                              }`}
+                            >
+                              Cropped Image Size:{" "}
+                              {(croppedImageSize / 1024).toFixed(2)} KB
+                              {croppedImageSize > 50 * 1024 &&
+                                " (Exceeds 50 KB limit)"}
+                            </p>
+                          )}
+                          <div className="mt-4">
+                            <label className="text-sm">Zoom</label>
+
+                            <input
+                              type="range"
+                              min={1}
+                              max={3}
+                              step={0.1}
+                              value={zoom}
+                              onChange={(e) => setZoom(Number(e.target.value))}
+                              className="w-full"
+                            />
+                          </div>
+                        </>
+                      ) : (
                         <img
                           src={imagePreview}
                           alt="Preview"
-                          className="w-48 h-48 object-cover rounded-lg mx-auto mb-3"
+                          className="w-full rounded-lg"
                         />
-                        <button
-                          type="button"
-                          onClick={() => handleImageChange(null)}
-                          className="absolute -top-2 -right-2 p-1 rounded-full bg-red-500 text-white hover:bg-red-600 transition-colors"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                      <p
-                        className="text-sm text-center"
-                        style={{ color: "var(--text-secondary)" }}
-                      >
-                        {image?.name}
-                      </p>
+                      )}
                     </div>
                   ) : (
                     <label
@@ -498,7 +897,7 @@ export default function AddPost() {
                         className="text-sm text-center"
                         style={{ color: "var(--text-secondary)" }}
                       >
-                        Click to upload image (Max 5KB)
+                        Click to upload image (Max 50KB)
                       </span>
                     </label>
                   )}
@@ -537,18 +936,37 @@ export default function AddPost() {
                   <label className={labelStyle}>
                     Category <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    className={selectStyle}
-                    value={selectedCategory}
-                    onChange={handleCategoryChange}
-                  >
-                    <option value="">Select Category</option>
+                  <Select
+  styles={customSelectStyles}
+  options={categories.map((cat) => ({
+    value: cat.cat_category,
+    label: cat.cat_category,
+  }))}
+  value={
+    selectedCategory
+      ? {
+          value: selectedCategory,
+          label: selectedCategory,
+        }
+      : null
+  }
+  onChange={(selected) =>
+    handleCategoryChange({
+      target: {
+        value: selected?.value || "",
+      },
+    } as any)
+  }
+  isSearchable
+  placeholder="Search Category..."
+/>
+                    {/* <option value="">Select Category</option>
                     {categories.map((cat, index) => (
                       <option key={index} value={cat.cat_category}>
                         {cat.cat_category}
                       </option>
-                    ))}
-                  </select>
+                    ))} */}
+                  {/* </select> */}
                   {fieldErrors.category && (
                     <p className="text-red-500 text-sm mt-1">
                       {fieldErrors.category}
@@ -563,19 +981,33 @@ export default function AddPost() {
                   <label className={labelStyle}>
                     Subcategory <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    className={selectStyle}
-                    value={selectedSubcategory}
-                    onChange={(e) => handleSubcategoryChange(e.target.value)}
-                    disabled={!selectedCategory}
-                  >
-                    <option value="">Select Subcategory</option>
+                  <Select
+  styles={customSelectStyles}
+  options={subcategories.map((sub) => ({
+    value: sub.cat_subcategory,
+    label: sub.cat_subcategory,
+  }))}
+  value={
+    selectedSubcategory
+      ? {
+          value: selectedSubcategory,
+          label: selectedSubcategory,
+        }
+      : null
+  }
+  onChange={(selected) =>
+    handleSubcategoryChange(selected?.value || "")
+  }
+  isSearchable
+  placeholder="Search Subcategory..."
+/>
+                    {/* <option value="">Select Subcategory</option>
                     {subcategories.map((sub, index) => (
                       <option key={index} value={sub.cat_subcategory}>
                         {sub.cat_subcategory}
                       </option>
-                    ))}
-                  </select>
+                    ))} */}
+                  {/* </select> */}
                   {fieldErrors.subcategory && (
                     <p className="text-red-500 text-sm mt-1">
                       {fieldErrors.subcategory}
@@ -587,19 +1019,33 @@ export default function AddPost() {
                   <label className={labelStyle}>
                     Deep Topic <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    className={selectStyle}
-                    value={selectedDeepTopic}
-                    onChange={(e) => setSelectedDeepTopic(e.target.value)}
-                    disabled={!selectedSubcategory}
-                  >
-                    <option value="">Select Deep Topic</option>
+                  <Select
+  styles={customSelectStyles}
+  options={deepTopics.map((topic) => ({
+    value: topic.cat_sub_subcategory,
+    label: topic.cat_sub_subcategory,
+  }))}
+  value={
+    selectedDeepTopic
+      ? {
+          value: selectedDeepTopic,
+          label: selectedDeepTopic,
+        }
+      : null
+  }
+  onChange={(selected) =>
+  handleDeepTopicChange(selected?.value || "")
+}
+  isSearchable
+  placeholder="Search Deep Topic..."
+/>
+                    {/* <option value="">Select Deep Topic</option>
                     {deepTopics.map((topic, index) => (
                       <option key={index} value={topic.cat_sub_subcategory}>
                         {topic.cat_sub_subcategory}
                       </option>
-                    ))}
-                  </select>
+                    ))} */}
+                  {/* </select> */}
                   {fieldErrors.deepTopic && (
                     <p className="text-red-500 text-sm mt-1">
                       {fieldErrors.deepTopic}
@@ -621,11 +1067,14 @@ export default function AddPost() {
                   {tags.map((tag, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-1 rounded-full text-sm flex items-center gap-1"
+                      className="px-3 py-1  text-sm flex items-center gap-1"
                       style={{
                         background: "rgba(217, 92, 43, 0.15)",
                         color: "var(--accent-primary)",
                         border: "1px solid rgba(217, 92, 43, 0.2)",
+                        borderRadius: "5px",
+                        paddingRight: "3px",
+                        paddingLeft: "3px"
                       }}
                     >
                       {tag}

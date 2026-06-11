@@ -1,0 +1,2162 @@
+[
+  {
+    "category": "Life",
+    "url": "/tag/life",
+    "subcategories": [
+      {
+        "name": "Family",
+        "url": "/tag/family",
+        "topics": [
+          {
+            "name": "Adoption",
+            "url": "/tag/adoption"
+          },
+          {
+            "name": "Children",
+            "url": "/tag/children"
+          },
+          {
+            "name": "Elder Care",
+            "url": "/tag/elder-care"
+          },
+          {
+            "name": "Fatherhood",
+            "url": "/tag/fatherhood"
+          },
+          {
+            "name": "Motherhood",
+            "url": "/tag/motherhood"
+          },
+          {
+            "name": "Parenting",
+            "url": "/tag/parenting"
+          },
+          {
+            "name": "Pregnancy",
+            "url": "/tag/pregnancy"
+          },
+          {
+            "name": "Seniors",
+            "url": "/tag/seniors"
+          }
+        ]
+      },
+      {
+        "name": "Health",
+        "url": "/tag/health",
+        "topics": [
+          {
+            "name": "Aging",
+            "url": "/tag/aging"
+          },
+          {
+            "name": "Coronavirus",
+            "url": "/tag/coronavirus"
+          },
+          {
+            "name": "Covid-19",
+            "url": "/tag/covid19"
+          },
+          {
+            "name": "Death And Dying",
+            "url": "/tag/death-and-dying"
+          },
+          {
+            "name": "Disease",
+            "url": "/tag/disease"
+          },
+          {
+            "name": "Fitness",
+            "url": "/tag/fitness"
+          },
+          {
+            "name": "Mens Health",
+            "url": "/tag/mens-health"
+          },
+          {
+            "name": "Nutrition",
+            "url": "/tag/nutrition"
+          },
+          {
+            "name": "Sleep",
+            "url": "/tag/sleep"
+          },
+          {
+            "name": "Trans Healthcare",
+            "url": "/tag/trans-healthcare"
+          },
+          {
+            "name": "Vaccines",
+            "url": "/tag/vaccines"
+          },
+          {
+            "name": "Weight Loss",
+            "url": "/tag/weight-loss"
+          },
+          {
+            "name": "Womens Health",
+            "url": "/tag/womens-health"
+          }
+        ]
+      },
+      {
+        "name": "Relationships",
+        "url": "/tag/relationships",
+        "topics": [
+          {
+            "name": "Dating",
+            "url": "/tag/dating"
+          },
+          {
+            "name": "Divorce",
+            "url": "/tag/divorce"
+          },
+          {
+            "name": "Friendship",
+            "url": "/tag/friendship"
+          },
+          {
+            "name": "Love",
+            "url": "/tag/love"
+          },
+          {
+            "name": "Marriage",
+            "url": "/tag/marriage"
+          },
+          {
+            "name": "Polyamory",
+            "url": "/tag/polyamory"
+          }
+        ]
+      },
+      {
+        "name": "Sexuality",
+        "url": "/tag/sexuality",
+        "topics": [
+          {
+            "name": "BDSM",
+            "url": "/tag/bdsm"
+          },
+          {
+            "name": "Erotica",
+            "url": "/tag/erotica"
+          },
+          {
+            "name": "Kink",
+            "url": "/tag/kink"
+          },
+          {
+            "name": "Sex",
+            "url": "/tag/sex"
+          },
+          {
+            "name": "Sexual Health",
+            "url": "/tag/sexual-health"
+          }
+        ]
+      },
+      {
+        "name": "Home",
+        "url": "/tag/home",
+        "topics": [
+          {
+            "name": "Architecture",
+            "url": "/tag/architecture"
+          },
+          {
+            "name": "Home Improvement",
+            "url": "/tag/home-improvement"
+          },
+          {
+            "name": "Homeownership",
+            "url": "/tag/homeownership"
+          },
+          {
+            "name": "Interior Design",
+            "url": "/tag/interior-design"
+          },
+          {
+            "name": "Rental Property",
+            "url": "/tag/rental-property"
+          },
+          {
+            "name": "Vacation Rental",
+            "url": "/tag/vacation-rental"
+          }
+        ]
+      },
+      {
+        "name": "Food",
+        "url": "/tag/food",
+        "topics": [
+          {
+            "name": "Baking",
+            "url": "/tag/baking"
+          },
+          {
+            "name": "Coffee",
+            "url": "/tag/coffee"
+          },
+          {
+            "name": "Cooking",
+            "url": "/tag/cooking"
+          },
+          {
+            "name": "Foodies",
+            "url": "/tag/foodies"
+          },
+          {
+            "name": "Restaurants",
+            "url": "/tag/restaurant"
+          },
+          {
+            "name": "Tea",
+            "url": "/tag/tea"
+          }
+        ]
+      },
+      {
+        "name": "Pets",
+        "url": "/tag/pets",
+        "topics": [
+          {
+            "name": "Cats",
+            "url": "/tag/cats"
+          },
+          {
+            "name": "Dog Training",
+            "url": "/tag/dog-training"
+          },
+          {
+            "name": "Dogs",
+            "url": "/tag/dogs"
+          },
+          {
+            "name": "Hamsters",
+            "url": "/tag/hamster"
+          },
+          {
+            "name": "Horses",
+            "url": "/tag/horses"
+          },
+          {
+            "name": "Pet Care",
+            "url": "/tag/pet-care"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "category": "Self Improvement",
+    "url": "/tag/self-improvement",
+    "subcategories": [
+      {
+        "name": "Mental Health",
+        "url": "/tag/mental-health",
+        "topics": [
+          {
+            "name": "Anxiety",
+            "url": "/tag/anxiety"
+          },
+          {
+            "name": "Counseling",
+            "url": "/tag/counseling"
+          },
+          {
+            "name": "Grief",
+            "url": "/tag/grief"
+          },
+          {
+            "name": "Life Lessons",
+            "url": "/tag/life-lessons"
+          },
+          {
+            "name": "Self-awareness",
+            "url": "/tag/self-awareness"
+          },
+          {
+            "name": "Stress",
+            "url": "/tag/stress"
+          },
+          {
+            "name": "Therapy",
+            "url": "/tag/therapy"
+          },
+          {
+            "name": "Trauma",
+            "url": "/tag/trauma"
+          }
+        ]
+      },
+      {
+        "name": "Productivity",
+        "url": "/tag/productivity",
+        "topics": [
+          {
+            "name": "Career Advice",
+            "url": "/tag/career-advice"
+          },
+          {
+            "name": "Coaching",
+            "url": "/tag/coaching"
+          },
+          {
+            "name": "Goal Setting",
+            "url": "/tag/goal-setting"
+          },
+          {
+            "name": "Morning Routines",
+            "url": "/tag/morning-routines"
+          },
+          {
+            "name": "Pomodoro Technique",
+            "url": "/tag/pomodoro-technique"
+          },
+          {
+            "name": "Time Management",
+            "url": "/tag/time-management"
+          },
+          {
+            "name": "Work Life Balance",
+            "url": "/tag/work-life-balance"
+          }
+        ]
+      },
+      {
+        "name": "Mindfulness",
+        "url": "/tag/mindfulness",
+        "topics": [
+          {
+            "name": "Guided Meditation",
+            "url": "/tag/guided-meditation"
+          },
+          {
+            "name": "Journaling",
+            "url": "/tag/journaling"
+          },
+          {
+            "name": "Meditation",
+            "url": "/tag/meditation"
+          },
+          {
+            "name": "Transcendental Meditation",
+            "url": "/tag/transcendental-meditation"
+          },
+          {
+            "name": "Yoga",
+            "url": "/tag/yoga"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "category": "Work",
+    "url": "/tag/work",
+    "subcategories": [
+      {
+        "name": "Business",
+        "url": "/tag/business",
+        "topics": [
+          {
+            "name": "Entrepreneurship",
+            "url": "/tag/entrepreneurship"
+          },
+          {
+            "name": "Freelancing",
+            "url": "/tag/freelancing"
+          },
+          {
+            "name": "Small Business",
+            "url": "/tag/small-business"
+          },
+          {
+            "name": "Startups",
+            "url": "/tag/startup"
+          },
+          {
+            "name": "Venture Capital",
+            "url": "/tag/venture-capital"
+          }
+        ]
+      },
+      {
+        "name": "Marketing",
+        "url": "/tag/marketing",
+        "topics": [
+          {
+            "name": "Advertising",
+            "url": "/tag/advertising"
+          },
+          {
+            "name": "Branding",
+            "url": "/tag/branding"
+          },
+          {
+            "name": "Content Marketing",
+            "url": "/tag/content-marketing"
+          },
+          {
+            "name": "Content Strategy",
+            "url": "/tag/content-strategy"
+          },
+          {
+            "name": "Digital Marketing",
+            "url": "/tag/digital-marketing"
+          },
+          {
+            "name": "SEO",
+            "url": "/tag/seo"
+          },
+          {
+            "name": "Social Media Marketing",
+            "url": "/tag/social-media-marketing"
+          },
+          {
+            "name": "Storytelling For\n                                                                        Business",
+            "url": "/tag/storytelling-for-business"
+          }
+        ]
+      },
+      {
+        "name": "Leadership",
+        "url": "/tag/leadership",
+        "topics": [
+          {
+            "name": "Employee Engagement",
+            "url": "/tag/employee-engagement"
+          },
+          {
+            "name": "Leadership Coaching",
+            "url": "/tag/leadership-coaching"
+          },
+          {
+            "name": "Leadership Development",
+            "url": "/tag/leadership-development"
+          },
+          {
+            "name": "Management",
+            "url": "/tag/management"
+          },
+          {
+            "name": "Meetings",
+            "url": "/tag/meetings"
+          },
+          {
+            "name": "Org Charts",
+            "url": "/tag/org-charts"
+          },
+          {
+            "name": "Thought Leadership",
+            "url": "/tag/thought-leadership"
+          }
+        ]
+      },
+      {
+        "name": "Remote Work",
+        "url": "/tag/remote-work",
+        "topics": [
+          {
+            "name": "Company Retreats",
+            "url": "/tag/company-retreats"
+          },
+          {
+            "name": "Digital Nomads",
+            "url": "/tag/digital-nomads"
+          },
+          {
+            "name": "Distributed Teams",
+            "url": "/tag/distributed-teams"
+          },
+          {
+            "name": "Future Of Work",
+            "url": "/tag/future-of-work"
+          },
+          {
+            "name": "Work From Home",
+            "url": "/tag/work-from-home"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "category": "Technology",
+    "url": "/tag/technology",
+    "subcategories": [
+      {
+        "name": "Artificial Intelligence",
+        "url": "/tag/artificial-intelligence",
+        "topics": [
+          {
+            "name": "ChatGPT",
+            "url": "/tag/chatgpt"
+          },
+          {
+            "name": "Conversational AI",
+            "url": "/tag/conversational-ai"
+          },
+          {
+            "name": "Deep Learning",
+            "url": "/tag/deep-learning"
+          },
+          {
+            "name": "Large Language Models",
+            "url": "/tag/large-language-models"
+          },
+          {
+            "name": "Machine Learning",
+            "url": "/tag/machine-learning"
+          },
+          {
+            "name": "NLP",
+            "url": "/tag/nlp"
+          },
+          {
+            "name": "Voice Assistant",
+            "url": "/tag/voice-assistant"
+          }
+        ]
+      },
+      {
+        "name": "Blockchain",
+        "url": "/tag/blockchain",
+        "topics": [
+          {
+            "name": "Bitcoin",
+            "url": "/tag/bitcoin"
+          },
+          {
+            "name": "Cryptocurrency",
+            "url": "/tag/cryptocurrency"
+          },
+          {
+            "name": "Decentralized Finance",
+            "url": "/tag/decentralized-finance"
+          },
+          {
+            "name": "Ethereum",
+            "url": "/tag/ethereum"
+          },
+          {
+            "name": "Nft",
+            "url": "/tag/nft"
+          },
+          {
+            "name": "Web3",
+            "url": "/tag/web3"
+          }
+        ]
+      },
+      {
+        "name": "Data Science",
+        "url": "/tag/data-science",
+        "topics": [
+          {
+            "name": "Analytics",
+            "url": "/tag/analytics"
+          },
+          {
+            "name": "Data Engineering",
+            "url": "/tag/data-engineering"
+          },
+          {
+            "name": "Data Visualization",
+            "url": "/tag/data-visualization"
+          },
+          {
+            "name": "Database Design",
+            "url": "/tag/database-design"
+          },
+          {
+            "name": "Sql",
+            "url": "/tag/sql"
+          }
+        ]
+      },
+      {
+        "name": "Gadgets",
+        "url": "/tag/gadgets",
+        "topics": [
+          {
+            "name": "eBook",
+            "url": "/tag/ebook"
+          },
+          {
+            "name": "Internet of Things",
+            "url": "/tag/internet-of-things"
+          },
+          {
+            "name": "iPad",
+            "url": "/tag/ipad"
+          },
+          {
+            "name": "Smart Home",
+            "url": "/tag/smart-home"
+          },
+          {
+            "name": "Smartphones",
+            "url": "/tag/smartphones"
+          },
+          {
+            "name": "Wearables",
+            "url": "/tag/wearables"
+          }
+        ]
+      },
+      {
+        "name": "Makers",
+        "url": "/tag/makers",
+        "topics": [
+          {
+            "name": "3D Printing",
+            "url": "/tag/3d-printing"
+          },
+          {
+            "name": "Arduino",
+            "url": "/tag/arduino"
+          },
+          {
+            "name": "DIY",
+            "url": "/tag/diy"
+          },
+          {
+            "name": "Raspberry Pi",
+            "url": "/tag/raspberry-pi"
+          },
+          {
+            "name": "Robotics",
+            "url": "/tag/robotics"
+          }
+        ]
+      },
+      {
+        "name": "Security",
+        "url": "/tag/security",
+        "topics": [
+          {
+            "name": "Cybersecurity",
+            "url": "/tag/cybersecurity"
+          },
+          {
+            "name": "Data Security",
+            "url": "/tag/data-security"
+          },
+          {
+            "name": "Encryption",
+            "url": "/tag/encryption"
+          },
+          {
+            "name": "Infosec",
+            "url": "/tag/infosec"
+          },
+          {
+            "name": "Passwords",
+            "url": "/tag/passwords"
+          },
+          {
+            "name": "Privacy",
+            "url": "/tag/privacy"
+          }
+        ]
+      },
+      {
+        "name": "Tech Companies",
+        "url": "/tag/tech-companies",
+        "topics": [
+          {
+            "name": "Amazon",
+            "url": "/tag/amazon"
+          },
+          {
+            "name": "Apple",
+            "url": "/tag/apple"
+          },
+          {
+            "name": "Google",
+            "url": "/tag/google"
+          },
+          {
+            "name": "Mastodon",
+            "url": "/tag/mastodon"
+          },
+          {
+            "name": "Medium",
+            "url": "/tag/medium"
+          },
+          {
+            "name": "Meta",
+            "url": "/tag/meta"
+          },
+          {
+            "name": "Microsoft",
+            "url": "/tag/microsoft"
+          },
+          {
+            "name": "Tiktok",
+            "url": "/tag/tik-tok"
+          },
+          {
+            "name": "Twitter",
+            "url": "/tag/twitter"
+          }
+        ]
+      },
+      {
+        "name": "Design",
+        "url": "/tag/design",
+        "topics": [
+          {
+            "name": "Accessibility",
+            "url": "/tag/accessibility"
+          },
+          {
+            "name": "Design Systems",
+            "url": "/tag/design-systems"
+          },
+          {
+            "name": "Design Thinking",
+            "url": "/tag/design-thinking"
+          },
+          {
+            "name": "Graphic Design",
+            "url": "/tag/graphic-design"
+          },
+          {
+            "name": "Icon Design",
+            "url": "/tag/icon-design"
+          },
+          {
+            "name": "Inclusive Design",
+            "url": "/tag/inclusive-design"
+          },
+          {
+            "name": "Product Design",
+            "url": "/tag/product-design"
+          },
+          {
+            "name": "Typography",
+            "url": "/tag/typography"
+          },
+          {
+            "name": "UX Design",
+            "url": "/tag/ux-design"
+          },
+          {
+            "name": "UX Research",
+            "url": "/tag/ux-research"
+          }
+        ]
+      },
+      {
+        "name": "Product Management",
+        "url": "/tag/product-management",
+        "topics": [
+          {
+            "name": "Agile",
+            "url": "/tag/agile"
+          },
+          {
+            "name": "Innovation",
+            "url": "/tag/innovation"
+          },
+          {
+            "name": "Kanban",
+            "url": "/tag/kanban"
+          },
+          {
+            "name": "Lean Startup",
+            "url": "/tag/lean-startup"
+          },
+          {
+            "name": "MVP",
+            "url": "/tag/mvp"
+          },
+          {
+            "name": "Product",
+            "url": "/tag/product"
+          },
+          {
+            "name": "Strategy",
+            "url": "/tag/strategy"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "category": "Software Development",
+    "url": "/tag/software-development",
+    "subcategories": [
+      {
+        "name": "Programming",
+        "url": "/tag/programming",
+        "topics": [
+          {
+            "name": "Android Development",
+            "url": "/tag/android-development"
+          },
+          {
+            "name": "Coding",
+            "url": "/tag/coding"
+          },
+          {
+            "name": "Flutter",
+            "url": "/tag/flutter"
+          },
+          {
+            "name": "Frontend Engineering",
+            "url": "/tag/frontend-engineering"
+          },
+          {
+            "name": "iOS Development",
+            "url": "/tag/ios-development"
+          },
+          {
+            "name": "Mobile Development",
+            "url": "/tag/mobile-development"
+          },
+          {
+            "name": "Software Engineering",
+            "url": "/tag/software-engineering"
+          },
+          {
+            "name": "Web Development",
+            "url": "/tag/web-development"
+          }
+        ]
+      },
+      {
+        "name": "Programming Languages",
+        "url": "/tag/programming-languages",
+        "topics": [
+          {
+            "name": "Angular",
+            "url": "/tag/angular"
+          },
+          {
+            "name": "CSS",
+            "url": "/tag/css"
+          },
+          {
+            "name": "HTML",
+            "url": "/tag/html"
+          },
+          {
+            "name": "Java",
+            "url": "/tag/java"
+          },
+          {
+            "name": "JavaScript",
+            "url": "/tag/javascript"
+          },
+          {
+            "name": "Nodejs",
+            "url": "/tag/nodejs"
+          },
+          {
+            "name": "Python",
+            "url": "/tag/python"
+          },
+          {
+            "name": "React",
+            "url": "/tag/react"
+          },
+          {
+            "name": "Ruby",
+            "url": "/tag/ruby"
+          },
+          {
+            "name": "Typescript",
+            "url": "/tag/typescript"
+          }
+        ]
+      },
+      {
+        "name": "Dev Ops",
+        "url": "/tag/devops",
+        "topics": [
+          {
+            "name": "AWS",
+            "url": "/tag/aws"
+          },
+          {
+            "name": "Databricks",
+            "url": "/tag/databricks"
+          },
+          {
+            "name": "Docker",
+            "url": "/tag/docker"
+          },
+          {
+            "name": "Kubernetes",
+            "url": "/tag/kubernetes"
+          },
+          {
+            "name": "Terraform",
+            "url": "/tag/terraform"
+          }
+        ]
+      },
+      {
+        "name": "Operating Systems",
+        "url": "/tag/operating-systems",
+        "topics": [
+          {
+            "name": "Android",
+            "url": "/tag/android"
+          },
+          {
+            "name": "iOS",
+            "url": "/tag/ios"
+          },
+          {
+            "name": "Linux",
+            "url": "/tag/linux"
+          },
+          {
+            "name": "Macos",
+            "url": "/tag/macos"
+          },
+          {
+            "name": "Windows",
+            "url": "/tag/windows"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "category": "Media",
+    "url": "/tag/media",
+    "subcategories": [
+      {
+        "name": "Writing",
+        "url": "/tag/writing",
+        "topics": [
+          {
+            "name": "30 Day Challenge",
+            "url": "/tag/30-day-challenge"
+          },
+          {
+            "name": "Book Reviews",
+            "url": "/tag/book-review"
+          },
+          {
+            "name": "Books",
+            "url": "/tag/books"
+          },
+          {
+            "name": "Creative Nonfiction",
+            "url": "/tag/creative-nonfiction"
+          },
+          {
+            "name": "Diary",
+            "url": "/tag/diary"
+          },
+          {
+            "name": "Fiction",
+            "url": "/tag/fiction"
+          },
+          {
+            "name": "Haiku",
+            "url": "/tag/haiku"
+          },
+          {
+            "name": "Hello World",
+            "url": "/tag/hello-world"
+          },
+          {
+            "name": "Memoir",
+            "url": "/tag/memoir"
+          },
+          {
+            "name": "Nonfiction",
+            "url": "/tag/nonfiction"
+          },
+          {
+            "name": "Personal Essay",
+            "url": "/tag/personal-essay"
+          },
+          {
+            "name": "Poetry",
+            "url": "/tag/poetry"
+          },
+          {
+            "name": "Screenwriting",
+            "url": "/tag/screenwriting"
+          },
+          {
+            "name": "Short Stories",
+            "url": "/tag/short-story"
+          },
+          {
+            "name": "This Happened To Me",
+            "url": "/tag/this-happened-to-me"
+          },
+          {
+            "name": "Writing Prompts",
+            "url": "/tag/writing-prompts"
+          },
+          {
+            "name": "Writing Tips",
+            "url": "/tag/writing-tips"
+          }
+        ]
+      },
+      {
+        "name": "Art",
+        "url": "/tag/art",
+        "topics": [
+          {
+            "name": "Comics",
+            "url": "/tag/comics"
+          },
+          {
+            "name": "Contemporary Art",
+            "url": "/tag/contemporary-art"
+          },
+          {
+            "name": "Drawing",
+            "url": "/tag/drawing"
+          },
+          {
+            "name": "Fine Art",
+            "url": "/tag/fine-art"
+          },
+          {
+            "name": "Generative Art",
+            "url": "/tag/generative-art"
+          },
+          {
+            "name": "Illustration",
+            "url": "/tag/illustration"
+          },
+          {
+            "name": "Painting",
+            "url": "/tag/painting"
+          },
+          {
+            "name": "Portraits",
+            "url": "/tag/portraits"
+          },
+          {
+            "name": "Street Art",
+            "url": "/tag/street-art"
+          }
+        ]
+      },
+      {
+        "name": "Gaming",
+        "url": "/tag/gaming",
+        "topics": [
+          {
+            "name": "Game Design",
+            "url": "/tag/game-design"
+          },
+          {
+            "name": "Game Development",
+            "url": "/tag/game-development"
+          },
+          {
+            "name": "Indie Game",
+            "url": "/tag/indie-game"
+          },
+          {
+            "name": "Metaverse",
+            "url": "/tag/metaverse"
+          },
+          {
+            "name": "Nintendo",
+            "url": "/tag/nintendo"
+          },
+          {
+            "name": "PlayStation",
+            "url": "/tag/playstation"
+          },
+          {
+            "name": "Videogames",
+            "url": "/tag/videogames"
+          },
+          {
+            "name": "Virtual Reality",
+            "url": "/tag/virtual-reality"
+          },
+          {
+            "name": "Xbox",
+            "url": "/tag/xbox"
+          }
+        ]
+      },
+      {
+        "name": "Humor",
+        "url": "/tag/humor",
+        "topics": [
+          {
+            "name": "Comedy",
+            "url": "/tag/comedy"
+          },
+          {
+            "name": "Jokes",
+            "url": "/tag/jokes"
+          },
+          {
+            "name": "Parody",
+            "url": "/tag/parody"
+          },
+          {
+            "name": "Satire",
+            "url": "/tag/satire"
+          },
+          {
+            "name": "Stand Up Comedy",
+            "url": "/tag/stand-up-comedy"
+          }
+        ]
+      },
+      {
+        "name": "Movies",
+        "url": "/tag/movies",
+        "topics": [
+          {
+            "name": "Cinema",
+            "url": "/tag/cinema"
+          },
+          {
+            "name": "Film",
+            "url": "/tag/film"
+          },
+          {
+            "name": "Filmmaking",
+            "url": "/tag/filmmaking"
+          },
+          {
+            "name": "Movie Reviews",
+            "url": "/tag/movie-review"
+          },
+          {
+            "name": "Oscars",
+            "url": "/tag/oscars"
+          },
+          {
+            "name": "Sundance",
+            "url": "/tag/sundance"
+          }
+        ]
+      },
+      {
+        "name": "Music",
+        "url": "/tag/music",
+        "topics": [
+          {
+            "name": "Hip Hop",
+            "url": "/tag/hip-hop"
+          },
+          {
+            "name": "Indie",
+            "url": "/tag/indie"
+          },
+          {
+            "name": "Metal",
+            "url": "/tag/metal"
+          },
+          {
+            "name": "Pop",
+            "url": "/tag/pop"
+          },
+          {
+            "name": "Rap",
+            "url": "/tag/rap"
+          },
+          {
+            "name": "Rock",
+            "url": "/tag/rock"
+          }
+        ]
+      },
+      {
+        "name": "News",
+        "url": "/tag/news",
+        "topics": [
+          {
+            "name": "Data Journalism",
+            "url": "/tag/data-journalism"
+          },
+          {
+            "name": "Fake News",
+            "url": "/tag/fake-news"
+          },
+          {
+            "name": "Journalism",
+            "url": "/tag/journalism"
+          },
+          {
+            "name": "Misinformation",
+            "url": "/tag/misinformation"
+          },
+          {
+            "name": "True Crime",
+            "url": "/tag/true-crime"
+          }
+        ]
+      },
+      {
+        "name": "Photography",
+        "url": "/tag/photography",
+        "topics": [
+          {
+            "name": "Cameras",
+            "url": "/tag/cameras"
+          },
+          {
+            "name": "Photography Tips",
+            "url": "/tag/photography-tips"
+          },
+          {
+            "name": "Photojournalism",
+            "url": "/tag/photojournalism"
+          },
+          {
+            "name": "Photos",
+            "url": "/tag/photos"
+          },
+          {
+            "name": "Street Photography",
+            "url": "/tag/street-photography"
+          }
+        ]
+      },
+      {
+        "name": "Podcasts",
+        "url": "/tag/podcast",
+        "topics": [
+          {
+            "name": "Podcast Equipment",
+            "url": "/tag/podcast-equipment"
+          },
+          {
+            "name": "Podcast Recommendations",
+            "url": "/tag/podcast-recommendations"
+          },
+          {
+            "name": "Podcasting",
+            "url": "/tag/podcasting"
+          },
+          {
+            "name": "Podcasting Tips",
+            "url": "/tag/podcasting-tips"
+          },
+          {
+            "name": "Radio",
+            "url": "/tag/radio"
+          }
+        ]
+      },
+      {
+        "name": "Television",
+        "url": "/tag/television",
+        "topics": [
+          {
+            "name": "Hbo Max",
+            "url": "/tag/hbo-max"
+          },
+          {
+            "name": "Hulu",
+            "url": "/tag/hulu"
+          },
+          {
+            "name": "Netflix",
+            "url": "/tag/netflix"
+          },
+          {
+            "name": "Reality TV",
+            "url": "/tag/reality-tv"
+          },
+          {
+            "name": "Tv Reviews",
+            "url": "/tag/tv-reviews"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "category": "Society",
+    "url": "/tag/society",
+    "subcategories": [
+      {
+        "name": "Economics",
+        "url": "/tag/economics",
+        "topics": [
+          {
+            "name": "Basic Income",
+            "url": "/tag/basic-income"
+          },
+          {
+            "name": "Debt",
+            "url": "/tag/debt"
+          },
+          {
+            "name": "Economy",
+            "url": "/tag/economy"
+          },
+          {
+            "name": "Inflation",
+            "url": "/tag/inflation"
+          },
+          {
+            "name": "Stock Market",
+            "url": "/tag/stock-market"
+          }
+        ]
+      },
+      {
+        "name": "Education",
+        "url": "/tag/education",
+        "topics": [
+          {
+            "name": "Charter Schools",
+            "url": "/tag/charter-schools"
+          },
+          {
+            "name": "Education Reform",
+            "url": "/tag/education-reform"
+          },
+          {
+            "name": "Higher Education",
+            "url": "/tag/higher-education"
+          },
+          {
+            "name": "PhD",
+            "url": "/tag/phd"
+          },
+          {
+            "name": "Public Schools",
+            "url": "/tag/public-schools"
+          },
+          {
+            "name": "Student Loans",
+            "url": "/tag/student-loans"
+          },
+          {
+            "name": "Study Abroad",
+            "url": "/tag/study-abroad"
+          },
+          {
+            "name": "Teaching",
+            "url": "/tag/teaching"
+          }
+        ]
+      },
+      {
+        "name": "Equality",
+        "url": "/tag/equality",
+        "topics": [
+          {
+            "name": "Disability",
+            "url": "/tag/disability"
+          },
+          {
+            "name": "Discrimination",
+            "url": "/tag/discrimination"
+          },
+          {
+            "name": "Diversity In Tech",
+            "url": "/tag/diversity-in-tech"
+          },
+          {
+            "name": "Feminism",
+            "url": "/tag/feminism"
+          },
+          {
+            "name": "Inclusion",
+            "url": "/tag/inclusion"
+          },
+          {
+            "name": "LGBTQ",
+            "url": "/tag/lgbtq"
+          },
+          {
+            "name": "Racism",
+            "url": "/tag/racism"
+          },
+          {
+            "name": "Transgender",
+            "url": "/tag/transgender"
+          },
+          {
+            "name": "Womens Rights",
+            "url": "/tag/womens-rights"
+          }
+        ]
+      },
+      {
+        "name": "Finance",
+        "url": "/tag/finance",
+        "topics": [
+          {
+            "name": "401k",
+            "url": "/tag/401k"
+          },
+          {
+            "name": "Investing",
+            "url": "/tag/investing"
+          },
+          {
+            "name": "Money",
+            "url": "/tag/money"
+          },
+          {
+            "name": "Philanthropy",
+            "url": "/tag/philanthropy"
+          },
+          {
+            "name": "Real Estate",
+            "url": "/tag/real-estate"
+          },
+          {
+            "name": "Retirement",
+            "url": "/tag/retirement"
+          }
+        ]
+      },
+      {
+        "name": "Law",
+        "url": "/tag/law",
+        "topics": [
+          {
+            "name": "Criminal Justice",
+            "url": "/tag/criminal-justice"
+          },
+          {
+            "name": "Law School",
+            "url": "/tag/law-school"
+          },
+          {
+            "name": "Legaltech",
+            "url": "/tag/legaltech"
+          },
+          {
+            "name": "Social Justice",
+            "url": "/tag/social-justice"
+          },
+          {
+            "name": "Supreme Court",
+            "url": "/tag/supreme-court"
+          }
+        ]
+      },
+      {
+        "name": "Transportation",
+        "url": "/tag/transportation",
+        "topics": [
+          {
+            "name": "Logistics",
+            "url": "/tag/logistics"
+          },
+          {
+            "name": "Public Transit",
+            "url": "/tag/public-transit"
+          },
+          {
+            "name": "Self Driving Cars",
+            "url": "/tag/self-driving-cars"
+          },
+          {
+            "name": "Trucking",
+            "url": "/tag/trucking"
+          },
+          {
+            "name": "Urban Planning",
+            "url": "/tag/urban-planning"
+          }
+        ]
+      },
+      {
+        "name": "Politics",
+        "url": "/tag/politics",
+        "topics": [
+          {
+            "name": "Elections",
+            "url": "/tag/elections"
+          },
+          {
+            "name": "Government",
+            "url": "/tag/government"
+          },
+          {
+            "name": "Gun Control",
+            "url": "/tag/gun-control"
+          },
+          {
+            "name": "Immigration",
+            "url": "/tag/immigration"
+          },
+          {
+            "name": "Political Parties",
+            "url": "/tag/political-parties"
+          }
+        ]
+      },
+      {
+        "name": "Race",
+        "url": "/tag/race",
+        "topics": [
+          {
+            "name": "American Indian",
+            "url": "/tag/american-indians"
+          },
+          {
+            "name": "Anti Racism",
+            "url": "/tag/anti-racism"
+          },
+          {
+            "name": "Asian American",
+            "url": "/tag/asian-american"
+          },
+          {
+            "name": "Black Lives Matter",
+            "url": "/tag/blacklivesmatter"
+          },
+          {
+            "name": "Indigenous People",
+            "url": "/tag/indigenous-people"
+          },
+          {
+            "name": "Multiracial",
+            "url": "/tag/multiracial"
+          },
+          {
+            "name": "Pacific Islander",
+            "url": "/tag/pacific-islander"
+          },
+          {
+            "name": "White Privilege",
+            "url": "/tag/white-privilege"
+          },
+          {
+            "name": "White Supremacy",
+            "url": "/tag/white-supremacy"
+          }
+        ]
+      },
+      {
+        "name": "Science",
+        "url": "/tag/science",
+        "topics": [
+          {
+            "name": "Archaeology",
+            "url": "/tag/archaeology"
+          },
+          {
+            "name": "Astronomy",
+            "url": "/tag/astronomy"
+          },
+          {
+            "name": "Astrophysics",
+            "url": "/tag/astrophysics"
+          },
+          {
+            "name": "Biotechnology",
+            "url": "/tag/biotechnology"
+          },
+          {
+            "name": "Chemistry",
+            "url": "/tag/chemistry"
+          },
+          {
+            "name": "Ecology",
+            "url": "/tag/ecology"
+          },
+          {
+            "name": "Genetics",
+            "url": "/tag/genetics"
+          },
+          {
+            "name": "Geology",
+            "url": "/tag/geology"
+          },
+          {
+            "name": "Medicine",
+            "url": "/tag/medicine"
+          },
+          {
+            "name": "Neuroscience",
+            "url": "/tag/neuroscience"
+          },
+          {
+            "name": "Physics",
+            "url": "/tag/physics"
+          },
+          {
+            "name": "Psychology",
+            "url": "/tag/psychology"
+          },
+          {
+            "name": "Space",
+            "url": "/tag/space"
+          }
+        ]
+      },
+      {
+        "name": "Mathematics",
+        "url": "/tag/mathematics",
+        "topics": [
+          {
+            "name": "Algebra",
+            "url": "/tag/algebra"
+          },
+          {
+            "name": "Calculus",
+            "url": "/tag/calculus"
+          },
+          {
+            "name": "Geometry",
+            "url": "/tag/geometry"
+          },
+          {
+            "name": "Probability",
+            "url": "/tag/probability"
+          },
+          {
+            "name": "Statistics",
+            "url": "/tag/statistics"
+          }
+        ]
+      },
+      {
+        "name": "Drugs",
+        "url": "/tag/drugs",
+        "topics": [
+          {
+            "name": "Addiction",
+            "url": "/tag/addiction"
+          },
+          {
+            "name": "Cannabis",
+            "url": "/tag/cannabis"
+          },
+          {
+            "name": "Opioids",
+            "url": "/tag/opioids"
+          },
+          {
+            "name": "Pharmaceuticals",
+            "url": "/tag/pharmaceutical"
+          },
+          {
+            "name": "Psychedelics",
+            "url": "/tag/psychedelics"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "category": "Culture",
+    "url": "/tag/culture",
+    "subcategories": [
+      {
+        "name": "Philosophy",
+        "url": "/tag/philosophy",
+        "topics": [
+          {
+            "name": "Atheism",
+            "url": "/tag/atheism"
+          },
+          {
+            "name": "Epistemology",
+            "url": "/tag/epistemology"
+          },
+          {
+            "name": "Ethics",
+            "url": "/tag/ethics"
+          },
+          {
+            "name": "Existentialism",
+            "url": "/tag/existentialism"
+          },
+          {
+            "name": "Metaphysics",
+            "url": "/tag/metaphysics"
+          },
+          {
+            "name": "Morality",
+            "url": "/tag/morality"
+          },
+          {
+            "name": "Philosophy Of Mind",
+            "url": "/tag/philosophy-of-mind"
+          },
+          {
+            "name": "Stoicism",
+            "url": "/tag/stoicism"
+          }
+        ]
+      },
+      {
+        "name": "Religion",
+        "url": "/tag/religion",
+        "topics": [
+          {
+            "name": "Buddhism",
+            "url": "/tag/buddhism"
+          },
+          {
+            "name": "Christianity",
+            "url": "/tag/christianity"
+          },
+          {
+            "name": "Hinduism",
+            "url": "/tag/hinduism"
+          },
+          {
+            "name": "Islam",
+            "url": "/tag/islam"
+          },
+          {
+            "name": "Judaism",
+            "url": "/tag/judaism"
+          },
+          {
+            "name": "Zen",
+            "url": "/tag/zen"
+          }
+        ]
+      },
+      {
+        "name": "Spirituality",
+        "url": "/tag/spirituality",
+        "topics": [
+          {
+            "name": "Astrology",
+            "url": "/tag/astrology"
+          },
+          {
+            "name": "Energy Healing",
+            "url": "/tag/energy-healing"
+          },
+          {
+            "name": "Horoscopes",
+            "url": "/tag/horoscopes"
+          },
+          {
+            "name": "Mysticism",
+            "url": "/tag/mysticism"
+          },
+          {
+            "name": "Reiki",
+            "url": "/tag/reiki"
+          }
+        ]
+      },
+      {
+        "name": "Cultural Studies",
+        "url": "/tag/cultural-studies",
+        "topics": [
+          {
+            "name": "Ancient History",
+            "url": "/tag/ancient-history"
+          },
+          {
+            "name": "Anthropology",
+            "url": "/tag/anthropology"
+          },
+          {
+            "name": "Cultural Heritage",
+            "url": "/tag/cultural-heritage"
+          },
+          {
+            "name": "Digital Life",
+            "url": "/tag/digital-life"
+          },
+          {
+            "name": "History",
+            "url": "/tag/history"
+          },
+          {
+            "name": "Museums",
+            "url": "/tag/museums"
+          },
+          {
+            "name": "Sociology",
+            "url": "/tag/sociology"
+          },
+          {
+            "name": "Tradition",
+            "url": "/tag/tradition"
+          }
+        ]
+      },
+      {
+        "name": "Fashion",
+        "url": "/tag/fashion",
+        "topics": [
+          {
+            "name": "Clothing",
+            "url": "/tag/clothing"
+          },
+          {
+            "name": "Fashion Design",
+            "url": "/tag/fashion-design"
+          },
+          {
+            "name": "Fashion Trends",
+            "url": "/tag/fashion-trends"
+          },
+          {
+            "name": "Shoes",
+            "url": "/tag/shoes"
+          },
+          {
+            "name": "Sneakers",
+            "url": "/tag/sneakers"
+          },
+          {
+            "name": "Style",
+            "url": "/tag/style"
+          }
+        ]
+      },
+      {
+        "name": "Beauty",
+        "url": "/tag/beauty",
+        "topics": [
+          {
+            "name": "Beauty Tips",
+            "url": "/tag/beauty-tips"
+          },
+          {
+            "name": "Body Image",
+            "url": "/tag/body-image"
+          },
+          {
+            "name": "Hair",
+            "url": "/tag/hair"
+          },
+          {
+            "name": "Makeup",
+            "url": "/tag/makeup"
+          },
+          {
+            "name": "Skincare",
+            "url": "/tag/skincare"
+          }
+        ]
+      },
+      {
+        "name": "Language",
+        "url": "/tag/language",
+        "topics": [
+          {
+            "name": "Arabic",
+            "url": "/tag/arabic"
+          },
+          {
+            "name": "English Language",
+            "url": "/tag/english-language"
+          },
+          {
+            "name": "English Learning",
+            "url": "/tag/english-learning"
+          },
+          {
+            "name": "French",
+            "url": "/tag/french"
+          },
+          {
+            "name": "German",
+            "url": "/tag/german"
+          },
+          {
+            "name": "Hindi",
+            "url": "/tag/hindi"
+          },
+          {
+            "name": "Language\n                                                                                Learning",
+            "url": "/tag/language-learning"
+          },
+          {
+            "name": "Linguistics",
+            "url": "/tag/linguistics"
+          },
+          {
+            "name": "Mandarin",
+            "url": "/tag/mandarin"
+          },
+          {
+            "name": "Portuguese",
+            "url": "/tag/portuguese"
+          },
+          {
+            "name": "Spanish",
+            "url": "/tag/spanish"
+          }
+        ]
+      },
+      {
+        "name": "Sports",
+        "url": "/tag/sports",
+        "topics": [
+          {
+            "name": "Baseball",
+            "url": "/tag/baseball"
+          },
+          {
+            "name": "Basketball",
+            "url": "/tag/basketball"
+          },
+          {
+            "name": "Football",
+            "url": "/tag/football"
+          },
+          {
+            "name": "NBA",
+            "url": "/tag/nba"
+          },
+          {
+            "name": "NFL",
+            "url": "/tag/nfl"
+          },
+          {
+            "name": "Premier League",
+            "url": "/tag/premier-league"
+          },
+          {
+            "name": "Soccer",
+            "url": "/tag/soccer"
+          },
+          {
+            "name": "World Cup",
+            "url": "/tag/world-cup"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "category": "World",
+    "url": "/tag/world",
+    "subcategories": [
+      {
+        "name": "Cities",
+        "url": "/tag/cities",
+        "topics": [
+          {
+            "name": "Abu Dhabi",
+            "url": "/tag/abu-dhabi"
+          },
+          {
+            "name": "Amsterdam",
+            "url": "/tag/amsterdam"
+          },
+          {
+            "name": "Athens",
+            "url": "/tag/athens"
+          },
+          {
+            "name": "Bangkok",
+            "url": "/tag/bangkok"
+          },
+          {
+            "name": "Barcelona",
+            "url": "/tag/barcelona"
+          },
+          {
+            "name": "Berlin",
+            "url": "/tag/berlin"
+          },
+          {
+            "name": "Boston",
+            "url": "/tag/boston"
+          },
+          {
+            "name": "Buenos Aires",
+            "url": "/tag/buenos-aires"
+          },
+          {
+            "name": "Chicago",
+            "url": "/tag/chicago"
+          },
+          {
+            "name": "Copenhagen",
+            "url": "/tag/copenhagen"
+          },
+          {
+            "name": "Delhi",
+            "url": "/tag/delhi"
+          },
+          {
+            "name": "Dubai",
+            "url": "/tag/dubai"
+          },
+          {
+            "name": "Dublin",
+            "url": "/tag/dublin"
+          },
+          {
+            "name": "Edinburgh",
+            "url": "/tag/edinburgh"
+          },
+          {
+            "name": "Glasgow",
+            "url": "/tag/glasgow"
+          },
+          {
+            "name": "Hong Kong",
+            "url": "/tag/hong-kong"
+          },
+          {
+            "name": "Istanbul",
+            "url": "/tag/istanbul"
+          },
+          {
+            "name": "Lisbon",
+            "url": "/tag/lisbon"
+          },
+          {
+            "name": "London",
+            "url": "/tag/london"
+          },
+          {
+            "name": "Los Angeles",
+            "url": "/tag/los-angeles"
+          },
+          {
+            "name": "Madrid",
+            "url": "/tag/madrid"
+          },
+          {
+            "name": "Melbourne",
+            "url": "/tag/melbourne"
+          },
+          {
+            "name": "Mexico City",
+            "url": "/tag/mexico-city"
+          },
+          {
+            "name": "Miami",
+            "url": "/tag/miami"
+          },
+          {
+            "name": "Montreal",
+            "url": "/tag/montreal"
+          },
+          {
+            "name": "New York City",
+            "url": "/tag/new-york-city"
+          },
+          {
+            "name": "Paris",
+            "url": "/tag/paris"
+          },
+          {
+            "name": "Prague",
+            "url": "/tag/prague"
+          },
+          {
+            "name": "Rio De Janeiro",
+            "url": "/tag/rio-de-janeiro"
+          },
+          {
+            "name": "Rome",
+            "url": "/tag/rome"
+          },
+          {
+            "name": "San Francisco",
+            "url": "/tag/san-francisco"
+          },
+          {
+            "name": "Sydney",
+            "url": "/tag/sydney"
+          },
+          {
+            "name": "Taipei",
+            "url": "/tag/taipei"
+          },
+          {
+            "name": "Tel Aviv",
+            "url": "/tag/tel-aviv"
+          },
+          {
+            "name": "Tokyo",
+            "url": "/tag/tokyo"
+          },
+          {
+            "name": "Toronto",
+            "url": "/tag/toronto"
+          },
+          {
+            "name": "Vancouver",
+            "url": "/tag/vancouver"
+          },
+          {
+            "name": "Vienna",
+            "url": "/tag/vienna"
+          }
+        ]
+      },
+      {
+        "name": "Nature",
+        "url": "/tag/nature",
+        "topics": [
+          {
+            "name": "Birding",
+            "url": "/tag/birding"
+          },
+          {
+            "name": "Camping",
+            "url": "/tag/camping"
+          },
+          {
+            "name": "Climate Change",
+            "url": "/tag/climate-change"
+          },
+          {
+            "name": "Conservation",
+            "url": "/tag/conservation"
+          },
+          {
+            "name": "Hiking",
+            "url": "/tag/hiking"
+          },
+          {
+            "name": "Sustainability",
+            "url": "/tag/sustainability"
+          },
+          {
+            "name": "Wildlife",
+            "url": "/tag/wildlife"
+          }
+        ]
+      },
+      {
+        "name": "Travel",
+        "url": "/tag/travel",
+        "topics": [
+          {
+            "name": "Tourism",
+            "url": "/tag/tourism"
+          },
+          {
+            "name": "Travel Tips",
+            "url": "/tag/travel-tips"
+          },
+          {
+            "name": "Travel Writing",
+            "url": "/tag/travel-writing"
+          },
+          {
+            "name": "Vacation",
+            "url": "/tag/vacation"
+          },
+          {
+            "name": "Vanlife",
+            "url": "/tag/vanlife"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -26,6 +26,8 @@ interface Article {
   lan_name?: string;
   cat_category?: string;
   cat_subcategory?: string;
+  user_name?: string;
+user_image?: string;
 }
 
 export default function ArticleClient() {
@@ -282,15 +284,36 @@ const shareArticle = (platform: string) => {
 
               {/* Meta Information */}
               <div className="article-meta">
-                <div className="article-author">
-                  <div className="article-avatar">
-                    <span className="article-avatar-text">A</span>
-                  </div>
-                  <div>
-                    <p className="article-author-name">Admin Author</p>
-                    <p className="article-author-title">Content Writer</p>
-                  </div>
-                </div>
+                <div
+  className="article-author clickable-author"
+  onClick={() => router.push(`/profile/${article.user_id}`)}
+>
+  <div className="article-avatar">
+
+    {article.user_image ? (
+
+      <img
+        src={`${API_BASE_URL}/uploads/profiles/${article.user_image}`}
+        alt={article.user_name}
+        className="article-avatar-image"
+      />
+
+    ) : (
+
+      <span className="article-avatar-text">
+        {article.user_name?.charAt(0)}
+      </span>
+
+    )}
+
+  </div>
+
+  <div>
+    <p className="article-author-name">
+      {article.user_name}
+    </p>
+  </div>
+</div>
 
                 <div className="article-date-time">
                   <div className="article-date">

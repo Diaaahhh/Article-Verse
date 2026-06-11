@@ -6,13 +6,18 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { loginId, password } = req.body;
 
-    // 1. Check user by email
-    const [rows] = await db.query(
-      "SELECT * FROM users WHERE user_email = ?",
-      [email]
-    );
+const [rows] = await db.query(
+  `
+  SELECT *
+  FROM users
+  WHERE user_email = ?
+     OR user_name = ?
+  LIMIT 1
+  `,
+  [loginId, loginId]
+);
 
     // ❌ User not found
     if (rows.length === 0) {

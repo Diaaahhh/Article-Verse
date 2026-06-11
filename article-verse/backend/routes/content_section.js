@@ -13,15 +13,26 @@ const router = express.Router();
 |--------------------------------------------------------------------------
 */
 
+/*
+|--------------------------------------------------------------------------
+| GET ARTICLES BY DEEP TOPIC (CURSOR PAGINATION)
+|--------------------------------------------------------------------------
+*/
+
 router.get("/articles/:deepTopic", async (req, res) => {
   try {
     const { deepTopic } = req.params;
 
-    // STEP 1: Get category ID
+    const limit = parseInt(req.query.limit) || 10;
+
+    const cursorDate = req.query.cursorDate;
+    const cursorId = req.query.cursorId;
+console.log("deepTopic received:", deepTopic);
+    // STEP 1: FIND CATEGORY ID
     const [categoryRows] = await db.query(
       `
-      SELECT id 
-      FROM categories 
+      SELECT id
+      FROM categories
       WHERE cat_sub_subcategory = ?
       LIMIT 1
       `,
@@ -29,26 +40,58 @@ router.get("/articles/:deepTopic", async (req, res) => {
     );
 
     if (categoryRows.length === 0) {
-      return res.json([]); // No category found
+      return res.json({
+        articles: [],
+        nextCursor: null,
+      });
     }
 
     const categoryId = categoryRows[0].id;
 
-    // STEP 2: Get articles using cat_id + status filter
-    const [articles] = await db.query(
-      `
+    // STEP 2: BUILD QUERY
+    let query = `
       SELECT *
       FROM articles
       WHERE cat_id = ?
       AND art_status = 1
-      ORDER BY created_at DESC
-      `,
-      [categoryId]
-    );
+    `;
 
-    res.json(articles);
+    let values = [categoryId];
+
+    // CURSOR PAGINATION
+    if (cursorDate && cursorId) {
+      query += `
+        AND (
+          created_at < ?
+          OR (created_at = ? AND id < ?)
+        )
+      `;
+
+      values.push(cursorDate, cursorDate, cursorId);
+    }
+
+    query += `
+      ORDER BY created_at DESC, id DESC
+      LIMIT ?
+    `;
+
+    values.push(limit);
+
+    const [articles] = await db.query(query, values);
+
+    res.json({
+      articles,
+      nextCursor:
+        articles.length > 0
+          ? {
+              cursorDate: articles[articles.length - 1].created_at,
+              cursorId: articles[articles.length - 1].id,
+            }
+          : null,
+    });
   } catch (error) {
     console.log(error);
+
     res.status(500).json({
       message: "Server Error",
     });
@@ -57,7 +100,7 @@ router.get("/articles/:deepTopic", async (req, res) => {
 
 /*
 |--------------------------------------------------------------------------
-| GET TOP 10 LATEST ARTICLES
+| GET TOP LATEST ARTICLES
 |--------------------------------------------------------------------------
 | Shows latest accepted articles when no category is selected
 |--------------------------------------------------------------------------
@@ -65,17 +108,50 @@ router.get("/articles/:deepTopic", async (req, res) => {
 
 router.get("/latest", async (req, res) => {
   try {
-    const [articles] = await db.query(
-      `
+    const limit = parseInt(req.query.limit) || 10;
+
+    const cursorDate = req.query.cursorDate;
+    const cursorId = req.query.cursorId;
+
+    let query = `
       SELECT *
       FROM articles
       WHERE art_status = 1
-      ORDER BY created_at DESC
-      LIMIT 10
-      `
-    );
+    `;
 
-    res.json(articles);
+    let values = [];
+
+    // Cursor pagination
+    if (cursorDate && cursorId) {
+      query += `
+        AND (
+          created_at < ?
+          OR (created_at = ? AND id < ?)
+        )
+      `;
+
+      values.push(cursorDate, cursorDate, cursorId);
+    }
+
+    query += `
+      ORDER BY created_at DESC, id DESC
+      LIMIT ?
+    `;
+
+    values.push(limit);
+
+    const [articles] = await db.query(query, values);
+
+    res.json({
+      articles,
+      nextCursor:
+        articles.length > 0
+          ? {
+              cursorDate: articles[articles.length - 1].created_at,
+              cursorId: articles[articles.length - 1].id,
+            }
+          : null,
+    });
   } catch (error) {
     console.log(error);
 

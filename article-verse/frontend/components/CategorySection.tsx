@@ -59,14 +59,27 @@ export default function CategorySection({
   const [deepTopicSearch, setDeepTopicSearch] = useState("");
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/category_section`)
-      .then((res) => res.json())
-      .then((data) => {
-        setCategories(data);
-      })
-      .catch((error) => {
+    const fetchInitialData = async () => {
+      try {
+        const [catRes, subRes, deepRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/category_section`),
+          fetch(`${API_BASE_URL}/api/category_section/all-subcategories`),
+          fetch(`${API_BASE_URL}/api/category_section/all-deep-topics`),
+        ]);
+
+        const categories = await catRes.json();
+        const subcategories = await subRes.json();
+        const deepTopics = await deepRes.json();
+
+        setCategories(categories);
+        setSubcategories(subcategories);
+        setDeepTopics(deepTopics);
+      } catch (error) {
         console.log(error);
-      });
+      }
+    };
+
+    fetchInitialData();
   }, []);
 
   const getCategoryIcon = (category: string) => {
@@ -155,6 +168,34 @@ export default function CategorySection({
     }
   };
 
+  const handleSubcategorySelect = async (subcategory: string) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/category_section/subcategory/${encodeURIComponent(
+        subcategory
+      )}`
+    );
+
+    const data = await response.json();
+
+    if (!data) return;
+
+    // select category
+    setSelectedCategory(data.cat_category);
+
+    // select subcategory
+    setSelectedSubcategory(data.cat_subcategory);
+
+    // clear selected deep topic
+    setSelectedDeepTopic("");
+
+    // load corresponding deep topics
+    await fetchDeepTopics(data.cat_subcategory);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
   const filteredCategories = categories.filter((item) =>
     item.cat_category.toLowerCase().includes(categorySearch.toLowerCase())
   );
@@ -164,7 +205,9 @@ export default function CategorySection({
   );
 
   const filteredDeepTopics = deepTopics.filter((item) =>
-    item.cat_sub_subcategory.toLowerCase().includes(deepTopicSearch.toLowerCase())
+    item.cat_sub_subcategory
+      .toLowerCase()
+      .includes(deepTopicSearch.toLowerCase())
   );
 
   // Custom scrollbar styles with new theme
@@ -225,14 +268,15 @@ export default function CategorySection({
           }}
         >
           {/* 3 Column Layout */}
-          <div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 lg:grid-cols-3 gap-6"
-          style={{
-    background: "var(--black-warm)",  // Warm black (#1E1B1A)
-    // borderRadius: "24px",
-    padding: "20px",
-    marginBottom: "0px"
-  }}>
-            
+          <div
+            className="mx-auto grid w-full max-w-[1400px] grid-cols-1 lg:grid-cols-3 gap-6"
+            style={{
+              background: "var(--black-warm)", // Warm black (#1E1B1A)
+              // borderRadius: "24px",
+              padding: "20px",
+              marginBottom: "0px",
+            }}
+          >
             {/* COLUMN 1 - CATEGORIES */}
             <div
               className="rounded-2xl border shadow-lg overflow-hidden flex flex-col"
@@ -258,12 +302,14 @@ export default function CategorySection({
                   }}
                 />
               </div>
-              
+
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3"
-               style={{
-                marginTop: "5px"
-              }}>
+              <div
+                className="flex items-center justify-between px-5 py-3"
+                style={{
+                  marginTop: "5px",
+                }}
+              >
                 <h3
                   className="text-xl font-bold"
                   style={{
@@ -285,7 +331,7 @@ export default function CategorySection({
               </div>
 
               {/* Scrollable List */}
-              <div 
+              <div
                 className="max-h-[420px] overflow-y-auto space-y-2 px-3 pb-3"
                 style={scrollbarStyles}
               >
@@ -293,9 +339,13 @@ export default function CategorySection({
                   <div
                     key={index}
                     onClick={() => {
-                      setSelectedCategory(item.cat_category);
-                      fetchSubcategories(item.cat_category);
-                    }}
+  setSelectedCategory(item.cat_category);
+  setSelectedSubcategory("");
+  setSelectedDeepTopic("");
+
+  fetchSubcategories(item.cat_category);
+}}
+
                     className="flex cursor-pointer items-center gap-3 rounded-xl border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                     style={{
                       borderColor:
@@ -340,7 +390,12 @@ export default function CategorySection({
                 ))}
                 {filteredCategories.length === 0 && (
                   <div className="text-center py-8">
-                    <p className="text-gray-500" style={{ color: "var(--text-secondary)" }}>No categories found</p>
+                    <p
+                      className="text-gray-500"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      No categories found
+                    </p>
                   </div>
                 )}
               </div>
@@ -371,12 +426,14 @@ export default function CategorySection({
                   }}
                 />
               </div>
-              
+
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3" 
-              style={{
-                marginTop: "5px"
-              }}>
+              <div
+                className="flex items-center justify-between px-5 py-3"
+                style={{
+                  marginTop: "5px",
+                }}
+              >
                 <h3
                   className="text-xl font-bold"
                   style={{
@@ -398,7 +455,7 @@ export default function CategorySection({
               </div>
 
               {/* Scrollable List */}
-              <div 
+              <div
                 className="max-h-[420px] overflow-y-auto space-y-2 px-3 pb-3"
                 style={scrollbarStyles}
               >
@@ -406,10 +463,7 @@ export default function CategorySection({
                   filteredSubcategories.slice(0, 50).map((item, index) => (
                     <div
                       key={index}
-                      onClick={() => {
-                        setSelectedSubcategory(item.cat_subcategory);
-                        fetchDeepTopics(item.cat_subcategory);
-                      }}
+                      onClick={() => handleSubcategorySelect(item.cat_subcategory)}
                       className="cursor-pointer rounded-xl border p-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                       style={{
                         borderColor:
@@ -441,10 +495,16 @@ export default function CategorySection({
                   <div className="flex min-h-[300px] items-center justify-center">
                     <div className="text-center">
                       <div className="text-4xl">📂</div>
-                      <h3 className="mt-3 text-xl font-bold" style={{ color: "var(--text-heading)" }}>
+                      <h3
+                        className="mt-3 text-xl font-bold"
+                        style={{ color: "var(--text-heading)" }}
+                      >
                         No Subcategories
                       </h3>
-                      <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
+                      <p
+                        className="mt-1 text-sm"
+                        style={{ color: "var(--text-secondary)" }}
+                      >
                         Select a category to explore
                       </p>
                     </div>
@@ -478,12 +538,14 @@ export default function CategorySection({
                   }}
                 />
               </div>
-              
+
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3"
-              style={{
-                marginTop: "5px"
-              }}>
+              <div
+                className="flex items-center justify-between px-5 py-3"
+                style={{
+                  marginTop: "5px",
+                }}
+              >
                 <h3
                   className="text-xl font-bold"
                   style={{
@@ -505,7 +567,7 @@ export default function CategorySection({
               </div>
 
               {/* Scrollable List */}
-              <div 
+              <div
                 className="max-h-[420px] overflow-y-auto space-y-2 px-3 pb-3"
                 style={scrollbarStyles}
               >
@@ -513,8 +575,25 @@ export default function CategorySection({
                   filteredDeepTopics.slice(0, 50).map((item, index) => (
                     <div
                       key={index}
-                      onClick={() => {
-                        setSelectedDeepTopic(item.cat_sub_subcategory);
+                      onClick={async () => {
+                        try {
+                          const response = await fetch(
+                            `${API_BASE_URL}/api/category_section/deep-topic/${encodeURIComponent(
+                              item.cat_sub_subcategory
+                            )}`
+                          );
+
+                          const data = await response.json();
+
+                          setSelectedCategory(data.cat_category);
+                          setSelectedSubcategory(data.cat_subcategory);
+                          setSelectedDeepTopic(data.cat_sub_subcategory);
+
+                          fetchSubcategories(data.cat_category);
+                          fetchDeepTopics(data.cat_subcategory);
+                        } catch (error) {
+                          console.log(error);
+                        }
                       }}
                       className="cursor-pointer rounded-xl border p-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                       style={{
@@ -547,10 +626,16 @@ export default function CategorySection({
                   <div className="flex min-h-[300px] items-center justify-center">
                     <div className="text-center">
                       <div className="text-4xl">🧠</div>
-                      <h3 className="mt-3 text-xl font-bold" style={{ color: "var(--text-heading)" }}>
+                      <h3
+                        className="mt-3 text-xl font-bold"
+                        style={{ color: "var(--text-heading)" }}
+                      >
                         No Deep Topics
                       </h3>
-                      <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
+                      <p
+                        className="mt-1 text-sm"
+                        style={{ color: "var(--text-secondary)" }}
+                      >
                         Select a subcategory to explore
                       </p>
                     </div>
@@ -568,15 +653,15 @@ export default function CategorySection({
           width: 6px;
         }
         div::-webkit-scrollbar-track {
-          background: #2A2A2A;
+          background: #2a2a2a;
           border-radius: 10px;
         }
         div::-webkit-scrollbar-thumb {
-          background: #D95C2B;
+          background: #d95c2b;
           border-radius: 10px;
         }
         div::-webkit-scrollbar-thumb:hover {
-          background: #1E6B6B;
+          background: #1e6b6b;
         }
       `}</style>
     </section>

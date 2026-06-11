@@ -6,8 +6,35 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Content Management System",
-  description: "Modern CMS for managing articles and posts",
+  metadataBase: new URL(siteConfig.siteUrl),
+
+  title: {
+    default: siteConfig.siteName,
+    template: `%s | ${siteConfig.siteName}`,
+  },
+
+  description: siteConfig.defaultDescription,
+
+  icons: {
+    icon: siteConfig.favicon,
+    shortcut: siteConfig.favicon,
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
+  openGraph: {
+    type: "website",
+    siteName: siteConfig.siteName,
+    images: [siteConfig.defaultOgImage],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    images: [siteConfig.defaultOgImage],
+  },
 };
 
 export default function RootLayout({

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
+  const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
 
@@ -19,7 +19,7 @@ export default function Login() {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ loginId, password }),
       });
 
       const data = await res.json();
@@ -133,9 +133,9 @@ if (userEmail === "root@iglweb.com") {
               {/* Email Input */}
               <input
                 type="email"
-                placeholder="Enter email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter email or userID"
+                value={loginId}
+onChange={(e) => setLoginId(e.target.value)}
                 className="mb-4 w-full rounded-lg border px-4 h-[55px] md:h-[65px] text-sm md:text-base outline-none"
                 style={{
                   borderColor: "var(--border-light)",

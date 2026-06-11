@@ -69,7 +69,7 @@ export default function Footer() {
       >
         {/* Row 1 */}
         <p className="text-sm">
-          Copyright © 2026 ফেলনা উচ্চ বিদ্যালয়. All Rights Reserved
+          Copyright © 2026 Chulkani.com. All Rights Reserved
         </p>
 
         {/* Row 2 */}

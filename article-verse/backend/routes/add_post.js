@@ -27,7 +27,7 @@ const upload = multer({
   storage,
 
   limits: {
-    fileSize: 5 * 1024, // 5 KB
+    fileSize: 50 * 1024, // 5 KB
   },
 });
 
@@ -49,18 +49,29 @@ router.post(
         });
       }
       const {
-        title,
-        subtitle,
-        slug,
-        content,
-        metaTitle,
-        metaDesc,
-        metaKeywords,
-        languageId,
-        category,
-        subcategory,
-        deepTopic,
-      } = req.body;
+  articleId,
+  title,
+  subtitle,
+  slug,
+  content,
+  metaTitle,
+  metaDesc,
+  metaKeywords,
+  languageId,
+  category,
+  subcategory,
+  deepTopic,
+  editorImages,
+} = req.body;
+let artMedia = [];
+
+try {
+  if (editorImages) {
+    artMedia = JSON.parse(editorImages);
+  }
+} catch (err) {
+  artMedia = [];
+}
 
       // Validation
       if (!title || !content) {
@@ -117,55 +128,130 @@ ${metaDesc || ""}
 
 ${keywordsString || ""}
 `.trim();
-      // Insert article
-      await db.query(
-        `
-        INSERT INTO articles
-        (
-          cat_id,
-          art_title,
-          art_subtitle,
-          slug,
-          art_text,
-          art_image,
-          lan_id,
-          art_status,
-          art_meta_title,
-          art_meta_desc,
-          art_meta_keywords,
-          art_description,
-           user_id
-        )
+      // ============================
+// UPDATE EXISTING ARTICLE
+// ============================
 
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
+if (articleId) {
+
+  await db.query(
+    `
+    UPDATE articles
+    SET
+      cat_id = ?,
+      art_title = ?,
+      art_subtitle = ?,
+      slug = ?,
+      art_text = ?,
+      art_media = ?,
+      lan_id = ?,
+      art_status = 0,
+      art_meta_title = ?,
+      art_meta_desc = ?,
+      art_meta_keywords = ?,
+      art_description = ?,
+      updated_at = CURRENT_TIMESTAMP
+      ${imagePath ? ", art_image = ?" : ""}
+    WHERE id = ? AND user_id = ?
+    `,
+    imagePath
+      ? [
+          cat_id,
+          title,
+          subtitle || null,
+          slug,
+          content,
+          JSON.stringify(artMedia),
+          languageId,
+          metaTitle || null,
+          metaDesc || null,
+          keywordsString || null,
+          articleDescription,
+          imagePath,
+          articleId,
+          userId,
+        ]
+      : [
+          cat_id,
+          title,
+          subtitle || null,
+          slug,
+          content,
+          JSON.stringify(artMedia),
+          languageId,
+          metaTitle || null,
+          metaDesc || null,
+          keywordsString || null,
+          articleDescription,
+          articleId,
+          userId,
+        ]
+  );
+
+} else {
+
+  // ============================
+  // CREATE NEW ARTICLE
+  // ============================
+
+  await db.query(
+    `
+    INSERT INTO articles
+(
   cat_id,
-  title,
-  subtitle || null,
+  art_title,
+  art_subtitle,
   slug,
-  content,
-  imagePath,
-  languageId,
-  0,
-  metaTitle || null,
-  metaDesc || null,
-  keywordsString || null,
-  articleDescription,
-  userId,
-]
-      );
+  art_text,
+  art_image,
+  art_media,
+  lan_id,
+  art_status,
+  art_meta_title,
+  art_meta_desc,
+  art_meta_keywords,
+  art_description,
+  user_id
+)
+
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `,
+    [
+      cat_id,
+      title,
+      subtitle || null,
+      slug,
+      content,
+      imagePath,
+      JSON.stringify(artMedia),
+      languageId,
+      0,
+      metaTitle || null,
+      metaDesc || null,
+      keywordsString || null,
+      articleDescription,
+      userId,
+    ]
+  );
+}
 
       return res.status(201).json({
         message: "Post submitted successfully",
       });
 
     } catch (error) {
-      console.log(error);
+  console.log(error);
 
-      return res.status(500).json({
-        message: "Server error",
-      });
-    }
+  if (error.code === "LIMIT_FILE_SIZE") {
+    return res.status(400).json({
+      message: "Image size must be less than 50 KB",
+    });
+  }
+
+  return res.status(500).json({
+    message: "Server error",
+  });
+}
   }
 );
 
