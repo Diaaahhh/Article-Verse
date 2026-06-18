@@ -99,31 +99,40 @@ const handleSearch = () => {
         </h1>
 
         {/* Search Box */}
-        <div
-          className="flex h-[62px] w-full max-w-[1140px] items-center overflow-hidden rounded-sm border-2 bg-white shadow-2xl md:h-[68px]"
-          style={{
-            borderColor: "#A9512C",
-            boxShadow:
-              "0 0 10px rgba(169,81,44,0.45), 0 0 25px rgba(169,81,44,0.25)",
-          }}
-        >
-          {/* Input */}
+        <div className="relative w-full max-w-[1140px]">
+  <div
+    className="flex h-[62px] items-center overflow-hidden rounded-sm border-2 bg-white shadow-2xl md:h-[68px] search-container"
+    style={{
+      borderColor: "#A9512C",
+      boxShadow:
+        "0 0 10px rgba(169,81,44,0.45), 0 0 25px rgba(169,81,44,0.25)",
+    }}
+  >
+        
+          {/* Input - IMPROVED */}
           <input
             type="text"
             placeholder="Search articles, research, journals and stories..."
-             onKeyDown={(e) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
             value={search}
-onChange={(e) => setSearch(e.target.value)}
-            className="h-full flex-1 text-base text-[#302C2B] outline-none md:text-lg"
+            onChange={(e) => setSearch(e.target.value)}
+            className="h-full flex-1 search-input text-black font-arial "
             style={{
-              paddingLeft: "32px",
+              paddingLeft: "28px",
               paddingRight: "20px",
               backgroundColor: "#FFFFFF",
-              color: "#302C2B",
+              color: "#1A1A1A",
+              fontSize: "1.1rem",
+              fontWeight: "400",
+              letterSpacing: "0.3px",
+              fontFamily: "Arial, Helvetica, sans-serif",
+              outline: "none",
+              border: "none",
+              minWidth: "0",
             }}
           />
 
@@ -144,45 +153,52 @@ onChange={(e) => setSearch(e.target.value)}
           >
             Search
           </button>
-        </div>
-{/* Search Results */}
-{search.trim() && (
-  <div
-    className="w-full max-w-[1140px] rounded-b-2xl border border-t-0 overflow-hidden"
+          </div>
+           {/* Search Results - IMPROVED with enhanced shadow */}
+        {search.trim() && (
+<div
+  className="relative z-[9999] mt-0 rounded-b-2xl border border-t-0 overflow-hidden search-results"
     style={{
+      width: "calc(100% - 140px)", // subtract search button width
       background: "#FFFFFF",
       borderColor: "#A9512C",
+      boxShadow:
+  "0 20px 50px rgba(0,0,0,0.25), 0 10px 30px rgba(169,81,44,0.25), 0 0 0 1px rgba(169,81,44,0.15)",
+        padding: "20px",
     }}
   >
-    {loading ? (
-      <div className="p-4 text-center text-black">
-        Searching...
-      </div>
-    ) : results.length > 0 ? (
-      results.map((item) => (
-        <a
-          key={item.id}
-          href={`/article/${item.slug}`}
-          className="block border-b p-4 transition-all hover:bg-[#f5f5f5]"
-        >
-          <h3 className="font-bold text-[#302C2B]">
-            {item.art_title}
-          </h3>
+            {loading ? (
+              <div className="p-4 text-center text-black font-arial" style={{ fontSize: "1rem" }}>
+                Searching...
+              </div>
+            ) : results.length > 0 ? (
+              results.map((item) => (
+                <a
+                  key={item.id}
+                  href={`/article/${item.slug}`}
+                  className="block border-b px-8 py-7 text-left transition-all hover:bg-[#f5f5f5] search-result-item"
+                  style={{
+                    padding: "10px"
+                  }}
+                >
+                  <h3 className="font-bold text-[#1A1A1A] font-arial" style={{  fontSize: "1.2rem",
+    lineHeight: "1.6", }}>
+                    {item.art_title}
+                  </h3>
 
-          {item.art_subtitle && (
-            <p className="mt-1 text-sm text-gray-600">
-              {item.art_subtitle}
-            </p>
-          )}
-        </a>
-      ))
-    ) : (
-      <div className="p-4 text-center text-gray-500">
-        No results found
-      </div>
-    )}
-  </div>
-)}
+                 
+                </a>
+              ))
+            ) : (
+              <div className="p-4 text-center text-[#666] font-arial" style={{ fontSize: "1rem" }}>
+                No results found
+              </div>
+            )}
+          </div>
+        )}
+        </div>
+
+       
         {/* Paragraph */}
         <p
           className="max-w-3xl text-lg leading-8 text-[#D5D4D3] md:text-xl"
