@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import EditorToolbar from "./EditorToolbar";
@@ -54,7 +54,9 @@ export default function TiptapEditor({ content, onChange }: Props) {
       onChange(editor.getHTML());
     },
   });
-
+useEffect(() => {
+  editor?.commands.setContent(content);
+}, [content]);
   return (
     <div className="border border-zinc-700 rounded-xl overflow-hidden bg-zinc-900">
       <div className="bg-zinc-950 border-b border-zinc-700">

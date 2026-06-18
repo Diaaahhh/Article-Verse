@@ -9,6 +9,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [userName, setUserName] = useState("");
 const [userImage, setUserImage] = useState("");
 const [userId, setUserId] = useState<number | null>(null);
 const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -34,7 +35,7 @@ const dropdownRef = useRef<HTMLDivElement | null>(null);
 
       setUserImage(data.user.user_image || "");
       setUserId(data.user.id);
-
+setUserName(data.user.user_name);
     } else {
 
       setIsLoggedIn(false);
@@ -190,6 +191,7 @@ checkAuth();
 
     <div
       className="w-12 h-12 rounded-full overflow-hidden cursor-pointer border-2 border-[#A9512C] hover:scale-105 transition-all duration-300"
+      
     >
 
       {userImage ? (
@@ -200,55 +202,66 @@ checkAuth();
           className="w-full h-full object-cover"
         />
 
-      ) : (
-
-        <div className="w-full h-full bg-gradient-to-br from-[#A9512C] to-[#302C2B] flex items-center justify-center text-white font-bold">
-          U
-        </div>
-
-      )}
+      ) :(
+  <div className="w-full h-full bg-gradient-to-br from-[#A9512C] to-[#302C2B] flex items-center justify-center text-white font-bold text-lg">
+      {(userName?.charAt(0) || "U").toUpperCase()}
+    </div>
+)}
 
     </div>
 
     {/* DROPDOWN */}
 
-    {dropdownOpen && (
-
+    {/* DROPDOWN - Enhanced Version */}
+{dropdownOpen && (
   <div
     className="
       absolute 
       right-0 
-      top-12.5
-      w-60
+      top-12
+      w-72
       overflow-hidden
       rounded-2xl
-      border
       backdrop-blur-xl
       shadow-2xl
       animate-in
       fade-in
       zoom-in-95
       duration-200
+      dropdown-glass
+      dropdown-enhanced
     "
     style={{
-      background: "rgba(26,26,26,0.96)",
-      borderColor: "var(--border-light)",
-      boxShadow: "0 20px 40px rgba(0,0,0,0.6)",
-      padding: "10px"
+      background: "rgba(26,26,26,0.98)",
+      borderColor: "rgba(217, 92, 43, 0.2)",
+      boxShadow: "0 20px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(217, 92, 43, 0.1)",
+      paddingBottom: "10px",
+      paddingRight: "10px",
+      paddingLeft: "20px"
     }}
   >
+    {/* Premium Gradient Border Top */}
+    <div 
+      className="h-1 bg-gradient-to-r from-[#D95C2B] via-[#C9973B] to-[#D95C2B]"
+      style={{ backgroundSize: "200% 100%", animation: "gradientShift 3s linear infinite", marginBottom: "10px"}}
+    ></div>
 
-    {/* TOP USER SECTION */}
-
+    {/* TOP USER SECTION - Enhanced */}
     <div
-      className="px-5 py-4 border-b"
+      className="px-5 py-4 border-b relative overflow-hidden"
       style={{
         borderColor: "var(--border-light)",
       }}
     >
-
+      {/* Decorative Background Pattern */}
+      <div className="absolute top-0 right-0 opacity-5">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" fill="currentColor"/>
+        </svg>
+      </div>
+      
       <p
-        className="text-sm font-semibold"
+        className="text-sm font-semibold gradient-text-animate"
         style={{
           color: "var(--text-heading)",
         }}
@@ -264,127 +277,175 @@ checkAuth();
       >
         Manage your profile & content
       </p>
-
     </div>
 
     {/* MENU ITEMS */}
-
-    <div className="p-2">
-
-      <button
-        onClick={() => {
-
-          setDropdownOpen(false);
-
-          router.push(`/profile/${userId}`);
-
-        }}
-        className="
-          w-full
-          flex
-          items-center
-          gap-3
-          px-4
-          py-3
-          rounded-xl
-          text-sm
-          font-medium
-          transition-all
-          duration-200
-          hover:translate-x-1
-        "
-        style={{
-          color: "var(--text-primary)",
-          paddingTop: "10px",
-          paddingBottom: "10px"
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background =
-            "rgba(217, 92, 43, 0.12)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background =
-            "transparent";
-        }}
+<div className="p-2 space-y-1">
+  {/* Profile Button */}
+  <button
+    onClick={() => {
+      setDropdownOpen(false);
+      router.push(`/profile/${userId}`);
+    }}
+    className="
+      w-full
+      flex
+      items-center
+      gap-3
+      px-4
+      py-3
+      rounded-xl
+      text-sm
+      font-medium
+      transition-all
+      duration-300
+      group
+      relative
+      overflow-hidden
+    "
+    style={{
+      color: "var(--text-primary)",
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.background = "rgba(217, 92, 43, 0.12)";
+      e.currentTarget.style.transform = "translateX(4px)";
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.background = "transparent";
+      e.currentTarget.style.transform = "translateX(0)";
+    }}
+  >
+    {/* Animated Icon Background */}
+    <div className="absolute inset-0 bg-gradient-to-r from-[#D95C2B]/0 to-[#D95C2B]/0 group-hover:from-[#D95C2B]/5 group-hover:to-[#D95C2B]/0 transition-all duration-500"></div>
+    
+    {/* Icon Container with Animation */}
+    <div className="relative">
+      <div className="absolute inset-0 bg-[#D95C2B]/20 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+      <svg
+        className="w-4 h-4 relative z-10 transition-transform duration-300 group-hover:scale-110"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
       >
-
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"
-          />
-        </svg>
-
-        Profile
-
-      </button>
-
-      <button
-        onClick={() => {
-
-          setDropdownOpen(false);
-
-          handleLogout();
-
-        }}
-        className="
-          w-full
-          flex
-          items-center
-          gap-3
-          px-4
-          py-3
-          rounded-xl
-          text-sm
-          font-medium
-          transition-all
-          duration-200
-          hover:translate-x-1
-        "
-        style={{
-          color: "#EF4444",
-          paddingTop: "10px",
-          paddingBottom: "10px"
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background =
-            "rgba(239, 68, 68, 0.12)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background =
-            "transparent";
-        }}
-      >
-
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V4"
-          />
-        </svg>
-
-        Logout
-
-      </button>
-
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"
+        />
+      </svg>
     </div>
 
+    {/* Text with Gradient Effect */}
+    <span className="relative font-semibold bg-gradient-to-r from-current to-current bg-clip-text transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-[#D95C2B] group-hover:to-[#D95C2B]">
+      Profile
+    </span>
+
+    {/* Decorative Arrow */}
+    <svg
+      className="w-3 h-3 ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M9 5l7 7-7 7"
+      />
+    </svg>
+  </button>
+
+  {/* Divider Line */}
+  <div className="relative my-2">
+    <div className="absolute inset-0 flex items-center">
+      <div className="w-full border-t" style={{ borderColor: "var(--border-light)" }}></div>
+    </div>
+    <div className="relative flex justify-center text-xs">
+      <span className="px-2 bg-transparent text-xs" style={{ color: "var(--text-tertiary)" }}>
+        •
+      </span>
+    </div>
   </div>
 
+  {/* Logout Button */}
+  <button
+    onClick={() => {
+      setDropdownOpen(false);
+      handleLogout();
+    }}
+    className="
+      w-full
+      flex
+      items-center
+      gap-3
+      px-4
+      py-3
+      rounded-xl
+      text-sm
+      font-medium
+      transition-all
+      duration-300
+      group
+      relative
+      overflow-hidden
+    "
+    style={{
+      color: "#EF4444",
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.background = "rgba(239, 68, 68, 0.12)";
+      e.currentTarget.style.transform = "translateX(4px)";
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.background = "transparent";
+      e.currentTarget.style.transform = "translateX(0)";
+    }}
+  >
+    {/* Animated Warning Background */}
+    <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 to-red-500/0 group-hover:from-red-500/5 group-hover:to-red-500/0 transition-all duration-500"></div>
+    
+    {/* Icon Container with Shake Effect on Hover */}
+    <div className="relative">
+      <div className="absolute inset-0 bg-red-500/20 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+      <svg
+        className="w-4 h-4 relative z-10 transition-all duration-300 group-hover:scale-110 group-hover:rotate-12"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V4"
+        />
+      </svg>
+    </div>
+
+    {/* Text with Pulse Effect */}
+    <span className="relative font-semibold transition-all duration-300 group-hover:tracking-wider">
+      Logout
+    </span>
+
+    {/* Decorative Arrow */}
+    <svg
+      className="w-3 h-3 ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M9 5l7 7-7 7"
+      />
+    </svg>
+  </button>
+</div>
+  </div>
 )}
 
   </div>

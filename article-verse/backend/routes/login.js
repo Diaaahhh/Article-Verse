@@ -1,13 +1,39 @@
 import express from "express";
 import db from "../db.js"; // your mysql connection
 import bcrypt from "bcryptjs";
+import axios from "axios";
 
 const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const { loginId, password } = req.body;
+    const { loginId, password, captchaToken } = req.body;
+    if (!captchaToken) {
+  return res.status(400).json({
+    message: "Captcha required",
+  });
+}
+const verifyURL =
+  "https://www.google.com/recaptcha/api/siteverify";
 
+const response = await axios.post(
+  verifyURL,
+  null,
+  {
+    params: {
+      secret:
+        process.env.RECAPTCHA_SECRET_KEY,
+      response: captchaToken,
+    },
+  }
+);
+
+if (!response.data.success) {
+  return res.status(400).json({
+    message:
+      "Captcha verification failed",
+  });
+}
 const [rows] = await db.query(
   `
   SELECT *

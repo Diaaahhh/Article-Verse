@@ -50,20 +50,30 @@ interface UserArticle {
   art_comment: string;
 }
 
+interface FollowUser {
+  id: number;
+  user_name: string;
+  user_image: string;
+}
 export default function Profile() {
+  
   const router = useRouter();
   const params = useParams();
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
-
 const [selectedComment, setSelectedComment] = useState("");
 const [selectedImage, setSelectedImage] = useState<File | null>(null);
-
 const [previewImage, setPreviewImage] = useState("");
   const [activeTab, setActiveTab] = useState("about");
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loggedInUserId, setLoggedInUserId] = useState<number | null>(null);
   const [articles, setArticles] = useState<UserArticle[]>([]);
+  
+  const [followersList, setFollowersList] = useState<any[]>([]);
+const [followingList, setFollowingList] = useState<any[]>([]);
+const [showFollowers, setShowFollowers] = useState(false);
+const [showFollowing, setShowFollowing] = useState(false);
+const [isFollowing, setIsFollowing] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
@@ -80,16 +90,85 @@ const [previewImage, setPreviewImage] = useState("");
   useEffect(() => {
 
   fetchCurrentUser();
-
+fetchFollowLists();
   if (params.id) {
 
     fetchProfile();
 
     fetchArticles();
-
+    checkFollowStatus();
   }
 
 }, [params.id]);
+
+const fetchFollowLists = async () => {
+  try {
+    const [followersRes, followingRes] = await Promise.all([
+      fetch(`${API_BASE_URL}/api/profile/${params.id}/followers`),
+      fetch(`${API_BASE_URL}/api/profile/${params.id}/following`)
+    ]);
+
+    const followersData = await followersRes.json();
+    const followingData = await followingRes.json();
+
+    if (followersRes.ok) {
+      setFollowersList(followersData.followers || []);
+    }
+
+    if (followingRes.ok) {
+      setFollowingList(followingData.following || []);
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const fetchFollowersList = async () => {
+
+  const res = await fetch(
+    `${API_BASE_URL}/api/profile/${params.id}/followers`
+  );
+
+  const data = await res.json();
+
+  if (res.ok) {
+    setFollowersList(data.followers);
+  }
+};
+
+const fetchFollowingList = async () => {
+
+  const res = await fetch(
+    `${API_BASE_URL}/api/profile/${params.id}/following`
+  );
+
+  const data = await res.json();
+
+  if (res.ok) {
+    setFollowingList(data.following);
+  }
+};
+const checkFollowStatus = async () => {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/api/profile/${params.id}/follow-status`,
+      {
+        credentials: "include",
+      }
+    );
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setIsFollowing(data.following);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
 
 const fetchCurrentUser = async () => {
   try {
@@ -301,6 +380,36 @@ const handleSaveProfile = async () => {
 
   }
 };
+
+const handleFollow = async () => {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/api/profile/${params.id}/follow`,
+      {
+        method: "POST",
+        credentials: "include",
+      }
+    );
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setIsFollowing(data.following);
+
+      await fetchProfile();
+  await fetchFollowLists();
+
+      toast.success(
+        data.following
+          ? "User followed"
+          : "User unfollowed"
+      );
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
   const tabs = [
   { id: "about", label: "About" },
   { id: "published", label: "Published" },
@@ -394,31 +503,133 @@ const handleSaveProfile = async () => {
                         "No bio added yet. Click edit to add a bio."}
                     </p>
                   </div>
-                  {isOwnProfile && (
+                 {isOwnProfile ? (
   <button
     onClick={() => setIsEditing(true)}
     className="profile-edit-btn"
   >
     Edit Profile
   </button>
+) : (
+  <button
+    onClick={handleFollow}
+    className="profile-edit-btn"
+  >
+    {isFollowing ? "Following" : "Follow"}
+  </button>
 )}
                 </div>
 
                 {/* Follow Stats */}
                 <div className="profile-stats">
-                  <div className="profile-stat">
-                    <h3 className="profile-stat-number">
-                      {user?.user_following || 0}
-                    </h3>
-                    <p className="profile-stat-label">Following</p>
-                  </div>
-                  <div className="profile-stat">
-                    <h3 className="profile-stat-number">
-                      {user?.user_followers || 0}
-                    </h3>
-                    <p className="profile-stat-label">Followers</p>
-                  </div>
-                </div>
+
+  <div
+  className="profile-stat"
+  onClick={() => {
+    const nextState = !showFollowing;
+
+    setShowFollowing(nextState);
+    setShowFollowers(false); // close followers
+
+    if (nextState) {
+      fetchFollowingList();
+    }
+  }}
+  style={{ cursor: "pointer" }}
+>
+    <h3 className="profile-stat-number">
+      {user?.user_following || 0}
+    </h3>
+
+    <p className="profile-stat-label">
+      Following
+    </p>
+  </div>
+
+  <div
+  className="profile-stat"
+  onClick={() => {
+    const nextState = !showFollowers;
+
+    setShowFollowers(nextState);
+    setShowFollowing(false); // close following
+
+    if (nextState) {
+      fetchFollowersList();
+    }
+  }}
+  style={{ cursor: "pointer" }}
+>
+    <h3 className="profile-stat-number">
+      {user?.user_followers || 0}
+    </h3>
+
+    <p className="profile-stat-label">
+      Followers
+    </p>
+  </div>
+
+</div>
+{showFollowers && (
+  <div className="profile-follow-dropdown">
+
+    {followersList.map((user) => (
+
+      <div
+        key={user.id}
+        className="profile-follow-user"
+        onClick={() => router.push(`/profile/${user.id}`)}
+      >
+        {user.user_image ? (
+  <img
+    src={`${API_BASE_URL}/uploads/profiles/${user.user_image}`}
+    className="profile-follow-avatar"
+    alt={user.user_name}
+  />
+) : (
+  <div className="profile-follow-avatar profile-follow-avatar-fallback">
+    {user.user_name?.charAt(0).toUpperCase() || "U"}
+  </div>
+)}
+
+        <span>{user.user_name}</span>
+
+      </div>
+
+    ))}
+
+  </div>
+)}
+{showFollowing && (
+  <div className="profile-follow-dropdown">
+
+    {followingList.map((user) => (
+
+      <div
+        key={user.id}
+        className="profile-follow-user"
+        onClick={() => router.push(`/profile/${user.id}`)}
+      >
+        {user.user_image ? (
+  <img
+    src={`${API_BASE_URL}/uploads/profiles/${user.user_image}`}
+    className="profile-follow-avatar"
+    alt={user.user_name}
+  />
+) : (
+  <div className="profile-follow-avatar profile-follow-avatar-fallback">
+    {user.user_name?.charAt(0).toUpperCase() || "U"}
+  </div>
+)}
+
+        <span>{user.user_name}</span>
+
+      </div>
+
+    ))}
+
+  </div>
+)}
               </div>
             </div>
 

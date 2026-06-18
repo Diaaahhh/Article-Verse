@@ -8,13 +8,20 @@ import { useSearchParams } from "next/navigation";
 import Cropper from "react-easy-crop";
 import TiptapEditor from "./editor/TiptapEditor";
 import Select from "react-select";
+import ReCAPTCHA from "react-google-recaptcha";
+
 export default function AddPost() {
+  const [captchaToken, setCaptchaToken] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const [articleTags, setArticleTags] = useState<string[]>([]);
+  const [articleTagInput, setArticleTagInput] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [title, setTitle] = useState("");
   const [titleError, setTitleError] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [content, setContent] = useState("");
+  const [categorySuggestion, setCategorySuggestion] =
+  useState("");
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDesc, setMetaDesc] = useState("");
   const [image, setImage] = useState<File | null>(null);
@@ -143,6 +150,10 @@ export default function AddPost() {
   };
   const handleSubmit = async () => {
     try {
+      if (!captchaToken) {
+        toast.error("Please complete reCAPTCHA");
+        return;
+      }
       const errors: any = {};
 
       if (!title.trim()) {
@@ -197,10 +208,14 @@ export default function AddPost() {
       formData.append("metaTitle", metaTitle);
       formData.append("metaDesc", metaDesc);
       formData.append("metaKeywords", JSON.stringify(tags));
+      formData.append("art_tags", articleTags.join(","));
       formData.append("languageId", selectedLanguage);
       formData.append("category", selectedCategory);
       formData.append("subcategory", selectedSubcategory);
       formData.append("deepTopic", selectedDeepTopic);
+      formData.append("captchaToken", captchaToken);
+      formData.append("categorySuggestion",categorySuggestion);
+
       if (articleId) {
         formData.append("articleId", articleId);
       }
@@ -223,18 +238,28 @@ export default function AddPost() {
 
       if (res.status === 201) {
         toast.success("Post submitted successfully 🚀");
+
         setTitle("");
         setSubtitle("");
         setContent("");
+
         setMetaTitle("");
         setMetaDesc("");
+
         setTags([]);
+        setTagInput("");
+
+        setArticleTags([]);
+        setArticleTagInput("");
+
         setImage(null);
         setImagePreview(null);
+
         setSelectedLanguage("");
         setSelectedCategory("");
         setSelectedSubcategory("");
         setSelectedDeepTopic("");
+
         setSubcategories([]);
         setDeepTopics([]);
       } else {
@@ -268,24 +293,24 @@ export default function AddPost() {
   };
 
   const fetchCategoryData = async () => {
-  try {
-    const [catRes, subRes, deepRes] = await Promise.all([
-      fetch(`${API_BASE_URL}/api/category_section`),
-      fetch(`${API_BASE_URL}/api/category_section/all-subcategories`),
-      fetch(`${API_BASE_URL}/api/category_section/all-deep-topics`),
-    ]);
+    try {
+      const [catRes, subRes, deepRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/category_section`),
+        fetch(`${API_BASE_URL}/api/category_section/all-subcategories`),
+        fetch(`${API_BASE_URL}/api/category_section/all-deep-topics`),
+      ]);
 
-    const categories = await catRes.json();
-    const subcategories = await subRes.json();
-    const deepTopics = await deepRes.json();
+      const categories = await catRes.json();
+      const subcategories = await subRes.json();
+      const deepTopics = await deepRes.json();
 
-    setCategories(categories);
-    setSubcategories(subcategories);
-    setDeepTopics(deepTopics);
-  } catch (error) {
-    console.log(error);
-  }
-};
+      setCategories(categories);
+      setSubcategories(subcategories);
+      setDeepTopics(deepTopics);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const fetchArticle = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/article/edit/${articleId}`, {
@@ -318,6 +343,10 @@ export default function AddPost() {
         if (article.meta_keywords) {
           setTags(article.meta_keywords.split(","));
         }
+
+        if (article.art_tags) {
+          setArticleTags(article.art_tags.split(","));
+        }
       }
     } catch (error) {
       console.log(error);
@@ -325,72 +354,85 @@ export default function AddPost() {
   };
 
   const checkOwnership = async () => {
-  try {
-    if (!articleId || !loggedInUserId) return;
+    try {
+      if (!articleId || !loggedInUserId) return;
 
-    const res = await fetch(
-      `${API_BASE_URL}/api/article/edit/${articleId}`,
-      {
+      const res = await fetch(`${API_BASE_URL}/api/article/edit/${articleId}`, {
         credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error("Article not found");
+        return;
       }
-    );
 
-    const data = await res.json();
+      if (data.article.user_id !== loggedInUserId) {
+        toast.error("Unauthorized access");
 
-    if (!res.ok) {
-      toast.error("Article not found");
-      return;
+        window.location.href = "/";
+      }
+    } catch (error) {
+      console.log(error);
     }
-
-    if (data.article.user_id !== loggedInUserId) {
-      toast.error("Unauthorized access");
-
-      window.location.href = "/";
-    }
-
-  } catch (error) {
-    console.log(error);
-  }
-};
+  };
 
   const fetchCurrentUser = async () => {
-  try {
-    const res = await fetch(
-      `${API_BASE_URL}/api/profile`,
-      {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/profile`, {
         credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setLoggedInUserId(data.user.id);
       }
-    );
-
-    const data = await res.json();
-
-    if (res.ok) {
-      setLoggedInUserId(data.user.id);
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
-  }
-};
+  };
+  const addArticleTag = (tag: string) => {
+    const cleanTag = tag.trim();
+
+    if (
+      cleanTag &&
+      !articleTags.includes(cleanTag) &&
+      articleTags.length < 20
+    ) {
+      setArticleTags([...articleTags, cleanTag]);
+    }
+  };
+
+  const removeArticleTag = (index: number) => {
+    setArticleTags(articleTags.filter((_, i) => i !== index));
+  };
+
+  const handleArticleTagKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (e.key === "," || e.key === "Enter") {
+      e.preventDefault();
+
+      addArticleTag(articleTagInput);
+
+      setArticleTagInput("");
+    }
+  };
   useEffect(() => {
+    if (articleId && loggedInUserId) {
+      checkOwnership();
 
-  if (
-    articleId &&
-    loggedInUserId
-  ) {
-
-    checkOwnership();
-
-    fetchArticle();
-
-  }
-
-}, [articleId, loggedInUserId]);
+      fetchArticle();
+    }
+  }, [articleId, loggedInUserId]);
 
   useEffect(() => {
-  fetchLanguages();
-  fetchCategoryData();
-  fetchCurrentUser();
-}, []);
+    fetchLanguages();
+    fetchCategoryData();
+    fetchCurrentUser();
+  }, []);
   useEffect(() => {
     const updateSize = async () => {
       if (!imagePreview || !croppedAreaPixels) return;
@@ -425,89 +467,84 @@ export default function AddPost() {
     }
   };
 
-  const handleSubcategoryChange = async (
-  subcategoryValue: string
-) => {
-  try {
-    const lookupRes = await fetch(
-      `${API_BASE_URL}/api/category_section/subcategory/${encodeURIComponent(
-        subcategoryValue
-      )}`
-    );
+  const handleSubcategoryChange = async (subcategoryValue: string) => {
+    try {
+      const lookupRes = await fetch(
+        `${API_BASE_URL}/api/category_section/subcategory/${encodeURIComponent(
+          subcategoryValue
+        )}`
+      );
 
-    const lookupData = await lookupRes.json();
+      const lookupData = await lookupRes.json();
 
-    if (!lookupData) return;
+      if (!lookupData) return;
 
-    setSelectedCategory(lookupData.cat_category);
-    setSelectedSubcategory(subcategoryValue);
-    setSelectedDeepTopic("");
+      setSelectedCategory(lookupData.cat_category);
+      setSelectedSubcategory(subcategoryValue);
+      setSelectedDeepTopic("");
 
-    const subRes = await fetch(
-      `${API_BASE_URL}/api/category_section/subcategories/${lookupData.cat_category}`
-    );
+      const subRes = await fetch(
+        `${API_BASE_URL}/api/category_section/subcategories/${lookupData.cat_category}`
+      );
 
-    const subData = await subRes.json();
+      const subData = await subRes.json();
 
-    setSubcategories(subData);
+      setSubcategories(subData);
 
-    const deepRes = await fetch(
-      `${API_BASE_URL}/api/category_section/deep-topics/${subcategoryValue}`
-    );
+      const deepRes = await fetch(
+        `${API_BASE_URL}/api/category_section/deep-topics/${subcategoryValue}`
+      );
 
-    const deepData = await deepRes.json();
+      const deepData = await deepRes.json();
 
-    setDeepTopics(deepData);
-  } catch (error) {
-    console.log(error);
-  }
-};
+      setDeepTopics(deepData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  const handleDeepTopicChange = async (
-  deepTopicValue: string
-) => {
-  try {
-    const res = await fetch(
-      `${API_BASE_URL}/api/category_section/deep-topic/${encodeURIComponent(
-        deepTopicValue
-      )}`
-    );
+  const handleDeepTopicChange = async (deepTopicValue: string) => {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/category_section/deep-topic/${encodeURIComponent(
+          deepTopicValue
+        )}`
+      );
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!data) return;
+      if (!data) return;
 
-    // Auto-select all three
-    setSelectedCategory(data.cat_category);
-    setSelectedSubcategory(data.cat_subcategory);
-    setSelectedDeepTopic(data.cat_sub_subcategory);
+      // Auto-select all three
+      setSelectedCategory(data.cat_category);
+      setSelectedSubcategory(data.cat_subcategory);
+      setSelectedDeepTopic(data.cat_sub_subcategory);
 
-    // Load subcategories of selected category
-    const subRes = await fetch(
-      `${API_BASE_URL}/api/category_section/subcategories/${encodeURIComponent(
-        data.cat_category
-      )}`
-    );
+      // Load subcategories of selected category
+      const subRes = await fetch(
+        `${API_BASE_URL}/api/category_section/subcategories/${encodeURIComponent(
+          data.cat_category
+        )}`
+      );
 
-    const subData = await subRes.json();
+      const subData = await subRes.json();
 
-    setSubcategories(subData);
+      setSubcategories(subData);
 
-    // Load deep topics of selected subcategory
-    const deepRes = await fetch(
-      `${API_BASE_URL}/api/category_section/deep-topics/${encodeURIComponent(
-        data.cat_subcategory
-      )}`
-    );
+      // Load deep topics of selected subcategory
+      const deepRes = await fetch(
+        `${API_BASE_URL}/api/category_section/deep-topics/${encodeURIComponent(
+          data.cat_subcategory
+        )}`
+      );
 
-    const deepData = await deepRes.json();
+      const deepData = await deepRes.json();
 
-    setDeepTopics(deepData);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
+      setDeepTopics(deepData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleImageChange = (file: File | null) => {
     if (!file) {
@@ -547,86 +584,86 @@ export default function AddPost() {
     "block text-sm font-semibold mb-2 text-[var(--text-secondary)]";
   const selectStyle =
     "w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[var(--accent-primary)]/20 outline-none transition-all duration-200 bg-[var(--black-soft)] text-[var(--text-primary)] border-[var(--border-light)] appearance-none cursor-pointer";
-const customSelectStyles = {
-  control: (provided: any, state: any) => ({
-    ...provided,
-    backgroundColor: "var(--select-bg)",
-    borderColor: state.isFocused
-      ? "var(--select-accent)"
-      : "var(--select-border)",
-    color: "var(--select-text)",
-    minHeight: "50px",
-    borderRadius: "12px",
-    boxShadow: "none",
+  const customSelectStyles = {
+    control: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: "var(--select-bg)",
+      borderColor: state.isFocused
+        ? "var(--select-accent)"
+        : "var(--select-border)",
+      color: "var(--select-text)",
+      minHeight: "50px",
+      borderRadius: "12px",
+      boxShadow: "none",
 
-    "&:hover": {
-      borderColor: "var(--select-accent)",
-    },
-  }),
+      "&:hover": {
+        borderColor: "var(--select-accent)",
+      },
+    }),
 
-  singleValue: (provided: any) => ({
-    ...provided,
-    color: "var(--select-text)",
-  }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: "var(--select-text)",
+    }),
 
-  input: (provided: any) => ({
-    ...provided,
-    color: "var(--select-text)",
-  }),
+    input: (provided: any) => ({
+      ...provided,
+      color: "var(--select-text)",
+    }),
 
-  placeholder: (provided: any) => ({
-    ...provided,
-    color: "var(--select-placeholder)",
-  }),
+    placeholder: (provided: any) => ({
+      ...provided,
+      color: "var(--select-placeholder)",
+    }),
 
-  menu: (provided: any) => ({
-    ...provided,
-    backgroundColor: "var(--select-menu-bg)",
-    borderRadius: "12px",
-    overflow: "hidden",
-    zIndex: 9999,
-  }),
+    menu: (provided: any) => ({
+      ...provided,
+      backgroundColor: "var(--select-menu-bg)",
+      borderRadius: "12px",
+      overflow: "hidden",
+      zIndex: 9999,
+    }),
 
-  menuList: (provided: any) => ({
-    ...provided,
-    backgroundColor: "var(--select-menu-bg)",
-    padding: 0,
-  }),
+    menuList: (provided: any) => ({
+      ...provided,
+      backgroundColor: "var(--select-menu-bg)",
+      padding: 0,
+    }),
 
-  option: (provided: any, state: any) => ({
-    ...provided,
-    backgroundColor: state.isSelected
-      ? "var(--select-accent)"
-      : state.isFocused
-      ? "var(--select-bg-hover)"
-      : "var(--select-menu-bg)",
+    option: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: state.isSelected
+        ? "var(--select-accent)"
+        : state.isFocused
+        ? "var(--select-bg-hover)"
+        : "var(--select-menu-bg)",
 
-    color: "#FFFFFF",
-    cursor: "pointer",
-  }),
+      color: "#FFFFFF",
+      cursor: "pointer",
+    }),
 
-  dropdownIndicator: (provided: any) => ({
-    ...provided,
-    color: "#FFFFFF",
+    dropdownIndicator: (provided: any) => ({
+      ...provided,
+      color: "#FFFFFF",
 
-    "&:hover": {
-      color: "var(--select-accent)",
-    },
-  }),
+      "&:hover": {
+        color: "var(--select-accent)",
+      },
+    }),
 
-  clearIndicator: (provided: any) => ({
-    ...provided,
-    color: "#FFFFFF",
+    clearIndicator: (provided: any) => ({
+      ...provided,
+      color: "#FFFFFF",
 
-    "&:hover": {
-      color: "var(--select-accent)",
-    },
-  }),
+      "&:hover": {
+        color: "var(--select-accent)",
+      },
+    }),
 
-  indicatorSeparator: () => ({
-    display: "none",
-  }),
-};
+    indicatorSeparator: () => ({
+      display: "none",
+    }),
+  };
   return (
     <div
       className="flex justify-center min-h-screen w-full p-6"
@@ -937,30 +974,30 @@ const customSelectStyles = {
                     Category <span className="text-red-500">*</span>
                   </label>
                   <Select
-  styles={customSelectStyles}
-  options={categories.map((cat) => ({
-    value: cat.cat_category,
-    label: cat.cat_category,
-  }))}
-  value={
-    selectedCategory
-      ? {
-          value: selectedCategory,
-          label: selectedCategory,
-        }
-      : null
-  }
-  onChange={(selected) =>
-    handleCategoryChange({
-      target: {
-        value: selected?.value || "",
-      },
-    } as any)
-  }
-  isSearchable
-  placeholder="Search Category..."
-/>
-                    {/* <option value="">Select Category</option>
+                    styles={customSelectStyles}
+                    options={categories.map((cat) => ({
+                      value: cat.cat_category,
+                      label: cat.cat_category,
+                    }))}
+                    value={
+                      selectedCategory
+                        ? {
+                            value: selectedCategory,
+                            label: selectedCategory,
+                          }
+                        : null
+                    }
+                    onChange={(selected) =>
+                      handleCategoryChange({
+                        target: {
+                          value: selected?.value || "",
+                        },
+                      } as any)
+                    }
+                    isSearchable
+                    placeholder="Search Category..."
+                  />
+                  {/* <option value="">Select Category</option>
                     {categories.map((cat, index) => (
                       <option key={index} value={cat.cat_category}>
                         {cat.cat_category}
@@ -982,26 +1019,26 @@ const customSelectStyles = {
                     Subcategory <span className="text-red-500">*</span>
                   </label>
                   <Select
-  styles={customSelectStyles}
-  options={subcategories.map((sub) => ({
-    value: sub.cat_subcategory,
-    label: sub.cat_subcategory,
-  }))}
-  value={
-    selectedSubcategory
-      ? {
-          value: selectedSubcategory,
-          label: selectedSubcategory,
-        }
-      : null
-  }
-  onChange={(selected) =>
-    handleSubcategoryChange(selected?.value || "")
-  }
-  isSearchable
-  placeholder="Search Subcategory..."
-/>
-                    {/* <option value="">Select Subcategory</option>
+                    styles={customSelectStyles}
+                    options={subcategories.map((sub) => ({
+                      value: sub.cat_subcategory,
+                      label: sub.cat_subcategory,
+                    }))}
+                    value={
+                      selectedSubcategory
+                        ? {
+                            value: selectedSubcategory,
+                            label: selectedSubcategory,
+                          }
+                        : null
+                    }
+                    onChange={(selected) =>
+                      handleSubcategoryChange(selected?.value || "")
+                    }
+                    isSearchable
+                    placeholder="Search Subcategory..."
+                  />
+                  {/* <option value="">Select Subcategory</option>
                     {subcategories.map((sub, index) => (
                       <option key={index} value={sub.cat_subcategory}>
                         {sub.cat_subcategory}
@@ -1020,26 +1057,26 @@ const customSelectStyles = {
                     Deep Topic <span className="text-red-500">*</span>
                   </label>
                   <Select
-  styles={customSelectStyles}
-  options={deepTopics.map((topic) => ({
-    value: topic.cat_sub_subcategory,
-    label: topic.cat_sub_subcategory,
-  }))}
-  value={
-    selectedDeepTopic
-      ? {
-          value: selectedDeepTopic,
-          label: selectedDeepTopic,
-        }
-      : null
-  }
-  onChange={(selected) =>
-  handleDeepTopicChange(selected?.value || "")
-}
-  isSearchable
-  placeholder="Search Deep Topic..."
-/>
-                    {/* <option value="">Select Deep Topic</option>
+                    styles={customSelectStyles}
+                    options={deepTopics.map((topic) => ({
+                      value: topic.cat_sub_subcategory,
+                      label: topic.cat_sub_subcategory,
+                    }))}
+                    value={
+                      selectedDeepTopic
+                        ? {
+                            value: selectedDeepTopic,
+                            label: selectedDeepTopic,
+                          }
+                        : null
+                    }
+                    onChange={(selected) =>
+                      handleDeepTopicChange(selected?.value || "")
+                    }
+                    isSearchable
+                    placeholder="Search Deep Topic..."
+                  />
+                  {/* <option value="">Select Deep Topic</option>
                     {deepTopics.map((topic, index) => (
                       <option key={index} value={topic.cat_sub_subcategory}>
                         {topic.cat_sub_subcategory}
@@ -1053,7 +1090,22 @@ const customSelectStyles = {
                   )}
                 </div>
               </div>
+{/* category suggestion */}
+<div className="space-y-2">
+  <label className="block text-sm font-medium">
+    Suggest a New Category (Optional)
+  </label>
 
+  <textarea
+    value={categorySuggestion}
+    onChange={(e) =>
+      setCategorySuggestion(e.target.value)
+    }
+    placeholder="Can't find a suitable category? Suggest one here..."
+    className="w-full rounded-lg border p-3"
+    rows={3}
+  />
+</div>
               {/* Meta Keywords */}
               <div>
                 <label className={labelStyle}>Meta Keywords</label>
@@ -1074,7 +1126,7 @@ const customSelectStyles = {
                         border: "1px solid rgba(217, 92, 43, 0.2)",
                         borderRadius: "5px",
                         paddingRight: "3px",
-                        paddingLeft: "3px"
+                        paddingLeft: "3px",
                       }}
                     >
                       {tag}
@@ -1107,6 +1159,81 @@ const customSelectStyles = {
                 </p>
               </div>
 
+              {/* Article Tags */}
+              <div>
+                <label className={labelStyle}>Tags</label>
+
+                <div
+                  className="min-h-[50px] flex flex-wrap gap-2 p-3 border rounded-xl focus-within:ring-2 focus-within:ring-[var(--accent-primary)]/20 transition-all duration-200"
+                  style={{
+                    borderColor: "var(--border-light)",
+                    background: "var(--black-soft)",
+                  }}
+                >
+                  {articleTags.map((tag, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1 text-sm flex items-center gap-1"
+                      style={{
+                        background: "rgba(217, 92, 43, 0.15)",
+                        color: "var(--accent-primary)",
+                        border: "1px solid rgba(217, 92, 43, 0.2)",
+                        borderRadius: "5px",
+                        paddingRight: "3px",
+                        paddingLeft: "3px",
+                      }}
+                    >
+                      {tag}
+
+                      <button
+                        type="button"
+                        onClick={() => removeArticleTag(idx)}
+                        className="ml-1 hover:text-red-500 transition-colors"
+                        style={{
+                          color: "var(--text-tertiary)",
+                        }}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+
+                  <input
+                    value={articleTagInput}
+                    onChange={(e) => setArticleTagInput(e.target.value)}
+                    onKeyDown={handleArticleTagKeyDown}
+                    className="flex-1 outline-none text-sm px-1 min-w-[120px]"
+                    style={{
+                      background: "transparent",
+                      color: "var(--text-primary)",
+                    }}
+                    placeholder="Type tag and press comma..."
+                  />
+                </div>
+
+                <p
+                  className="text-xs mt-1"
+                  style={{
+                    color: "var(--text-tertiary)",
+                  }}
+                >
+                  Press comma or enter to add tags
+                </p>
+              </div>
+
+              {/* Captcha */}
+                  <div
+                    className="mb-4 flex justify-center"
+                    style={{
+                      marginBottom: "8px",
+                    }}
+                  >
+                    <ReCAPTCHA
+                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                      onChange={(token) => setCaptchaToken(token || "")}
+                    />
+                  </div>
+                  
               {/* Submit Button */}
               <div className="pt-6 flex justify-center">
                 <button
@@ -1120,6 +1247,7 @@ const customSelectStyles = {
                     marginBottom: "5px",
                   }}
                 >
+                  
                   <span className="relative z-10 flex items-center justify-center gap-2">
                     <svg
                       className="w-5 h-5"

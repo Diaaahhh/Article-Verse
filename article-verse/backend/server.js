@@ -23,6 +23,12 @@ import articleRoute from "./routes/article.js";
 import searchRoutes from "./routes/search.js";
 import profileRoute from "./routes/profile.js";
 import checkUserIdRoute from "./routes/check-userid.js";
+import settingsRoutes from "./routes/settings.js";
+import commentsRoute from "./routes/comments.js";
+import likesRoute from "./routes/likes.js";
+import sendOtpRoute from "./routes/send-otp.js";
+import verifyOtpRoute from "./routes/verify-otp.js";
+// import sendEmail from "./routes/sendEmail.js";
 // import uploadEditorImage from "./routes/upload_editor_image.js";
 
 const app = express();
@@ -78,6 +84,12 @@ app.use("/api/article", articleRoute);
 app.use("/api/search", searchRoutes);
 app.use("/api/profile", profileRoute);
 app.use("/api/check-userid", checkUserIdRoute);
+app.use("/api/settings", settingsRoutes);
+app.use("/api/comments", commentsRoute);
+app.use("/api/likes", likesRoute);
+app.use("/api/send-otp", sendOtpRoute);
+// app.use("/api/sendEmail", sendEmail);
+app.use("/api/verify-otp", verifyOtpRoute);
 // app.use("/api/upload-editor-image", uploadEditorImage);
 const PORT = process.env.PORT || 5000;
 

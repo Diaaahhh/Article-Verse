@@ -5,10 +5,11 @@ import { API_BASE_URL } from "@/constants/api";
 import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export default function Registration() {
   const router = useRouter();
-
+  const [captchaToken, setCaptchaToken] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,9 +20,11 @@ export default function Registration() {
 const [userIdError, setUserIdError] = useState("");
 const [userIdStatus, setUserIdStatus] = useState("");const [checkingUserId, setCheckingUserId] = useState(false);  const [gender, setGender] = useState("");
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-
+const [showOTPCard, setShowOTPCard] = useState(false);
+const [otp, setOtp] = useState("");
   const [randomSuffix] = useState(Math.floor(Math.random() * 9999));
-  
+  const [otpTimer, setOtpTimer] = useState(300); // 5 minutes
+const [otpExpired, setOtpExpired] = useState(false);
   const [passwordValid, setPasswordValid] = useState({
     length: false,
     uppercase: false,
@@ -62,76 +65,130 @@ const validateUserId = (value: string) => {
   };
   
   const handleRegister = async () => {
-    if (
-      !firstName ||
-      !lastName ||
-      !userId ||
-      !gender ||
-      !selectedDate ||
-      !email ||
-      !password
-    ) {
-      toast.error("All fields are required");
-      return;
-    }
-    if (userIdError) {
-  return;
-}
-if (userIdError === "❌ User ID already exists") {
-  return;
-}
-    const passwordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[-_@$!%*?&.#])[A-Za-z\d_@$!%*?&.#-]{8,}$/;
+  if (!captchaToken) {
+    toast.error("Please complete reCAPTCHA");
+    return;
+  }
 
-    if (!passwordRegex.test(password)) {
-      toast.error(
-        "Password must contain uppercase, lowercase, number, special character and minimum 8 characters"
-      );
-      return;
-    }
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/register`, {
+  if (
+    !firstName ||
+    !lastName ||
+    !userId ||
+    !gender ||
+    !selectedDate ||
+    !email ||
+    !password
+  ) {
+    toast.error("All fields are required");
+    return;
+  }
+
+  if (userIdError) return;
+
+  if (userIdStatus === "❌ User ID already exists") {
+    toast.error("User ID already exists");
+    return;
+  }
+
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[-_@$!%*?&.#])[A-Za-z\d_@$!%*?&.#-]{8,}$/;
+
+  if (!passwordRegex.test(password)) {
+    toast.error(
+      "Password must contain uppercase, lowercase, number, special character and minimum 8 characters"
+    );
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/api/send-otp`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+  first_name: firstName,
+  last_name: lastName,
+  email,
+  password,
+  gender,
+  dob: selectedDate?.toISOString().split("T")[0],
+  user_id: userId,
+  captchaToken,
+}),
+      }
+    );
+
+    const data = await res.json();
+console.log(data);
+    if (res.ok) {
+      toast.success("OTP sent to your email");
+
+      setShowOTPCard(true);
+    } else {
+      toast.error(
+        data.message || "Failed to send OTP"
+      );
+    }
+  } catch (error) {
+    console.log(error);
+
+    toast.error("Server error");
+  }
+};
+
+const handleVerifyOTP = async () => {
+  try {
+    if (otpExpired) {
+  toast.error(
+    "OTP expired. Please request a new OTP."
+  );
+  return;
+}
+    const res = await fetch(
+      `${API_BASE_URL}/api/verify-otp`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          otp,
           first_name: firstName,
           last_name: lastName,
           user_id: userId,
-          email,
           password,
           gender,
-          dob: selectedDate?.toISOString().split("T")[0],
+          dob: selectedDate
+            ?.toISOString()
+            .split("T")[0],
         }),
-      });
-
-      const data = await res.json();
-
-      if (res.status === 409) {
-        toast.error(data.message);
-      } else if (res.status === 201) {
-        toast.success("Account created successfully");
-
-        setEmail("");
-        setPassword("");
-        setFirstName("");
-        setLastName("");
-        setUserId("");
-        setGender("");
-        setSelectedDate(null);
-
-        setTimeout(() => {
-          router.push("/login");
-        }, 1500);
-      } else {
-        toast.error(data.message || "Something went wrong");
       }
-    } catch (error) {
-      console.log(error);
-      toast.error("Server error");
+    );
+
+    const data = await res.json();
+
+    if (res.ok) {
+      toast.success(
+        "Account created successfully"
+      );
+
+      setTimeout(() => {
+        router.push("/login");
+      }, 1500);
+    } else {
+      toast.error(data.message);
     }
-  };
+  } catch (error) {
+    console.log(error);
+
+    toast.error("Server error");
+  }
+};
+
 useEffect(() => {
   if (!userId) {
     setUserIdError("");
@@ -168,6 +225,42 @@ useEffect(() => {
 
   return () => clearTimeout(timeout);
 }, [userId]);
+
+useEffect(() => {
+  if (!showOTPCard) return;
+
+  setOtpTimer(300);
+  setOtpExpired(false);
+
+  const interval = setInterval(() => {
+    setOtpTimer((prev) => {
+      if (prev <= 1) {
+        clearInterval(interval);
+
+        setOtpExpired(true);
+
+        toast.error(
+          "OTP has expired. Please request a new OTP."
+        );
+
+        return 0;
+      }
+
+      return prev - 1;
+    });
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, [showOTPCard]);
+
+const formatTime = (seconds: number) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+
+  return `${mins}:${secs
+    .toString()
+    .padStart(2, "0")}`;
+};
   return (
     <section className="relative flex min-h-[calc(100vh-80px)] items-center justify-center">
       <Toaster position="top-right" />
@@ -274,7 +367,69 @@ useEffect(() => {
               >
                 Create Account
               </h2>
-              {/* Full Name */}
+              {showOTPCard ? (
+  <div className="flex flex-col gap-4">
+    <div className="text-center">
+  <p
+    style={{
+      color: "var(--text-secondary)",
+    }}
+  >
+    Enter the 6-digit OTP sent to:
+    <br />
+    <strong>{email}</strong>
+  </p>
+
+  <p
+    className={`mt-3 text-sm font-semibold ${
+      otpExpired
+        ? "text-red-500"
+        : "text-orange-500"
+    }`}
+  >
+    {otpExpired
+      ? "OTP Expired"
+      : `Expires in ${formatTime(
+          otpTimer
+        )}`}
+  </p>
+</div>
+
+    <input
+      type="text"
+      maxLength={6}
+      value={otp}
+      onChange={(e) =>
+        setOtp(
+          e.target.value.replace(/\D/g, "")
+        )
+      }
+      placeholder="Enter OTP"
+      className="w-full rounded-lg border px-4 h-[55px]"
+      style={{
+        borderColor:
+          "var(--border-light)",
+        color: "var(--text-primary)",
+        backgroundColor:
+          "var(--black-soft)",
+      }}
+    />
+
+    <button
+      onClick={handleVerifyOTP}
+      disabled={otpExpired}
+      className="w-full rounded-lg py-3 font-semibold text-white"
+      style={{
+  background: otpExpired
+    ? "#6b7280"
+    : "var(--gradient-primary)",
+}}
+    >
+      Verify OTP
+    </button>
+  </div>
+) :
+              (<>{/* Full Name */}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <input
                   type="text"
@@ -484,7 +639,18 @@ useEffect(() => {
                   </ul>
                 </div>
               )}
-
+{/* Captcha */}
+                  <div
+                    className="mb-4 flex justify-center"
+                    style={{
+                      marginBottom: "8px",
+                    }}
+                  >
+                    <ReCAPTCHA
+                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                      onChange={(token) => setCaptchaToken(token || "")}
+                    />
+                  </div>
               {/* Create Button */}
               <button
                 onClick={handleRegister}
@@ -496,6 +662,9 @@ useEffect(() => {
               >
                 Create Account
               </button>
+              </>
+)}
+              
 
               {/* Login Redirect */}
               <p

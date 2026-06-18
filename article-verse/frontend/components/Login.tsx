@@ -4,22 +4,28 @@ import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { API_BASE_URL } from "@/constants/api";
 import { useRouter } from "next/navigation";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
   const router = useRouter();
 
   const handleLogin = async () => {
     try {
+      if (!captchaToken) {
+  toast.error("Please complete reCAPTCHA");
+  return;
+}
       const res = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify({ loginId, password }),
+        body: JSON.stringify({ loginId, password,captchaToken }),
       });
 
       const data = await res.json();
@@ -183,6 +189,21 @@ onChange={(e) => setLoginId(e.target.value)}
                   {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
+{/* Captcha */}
+<div className="mb-4 flex justify-center"
+style={{
+  marginBottom: "6px"
+}}>
+  <ReCAPTCHA
+    sitekey={
+      process.env
+        .NEXT_PUBLIC_RECAPTCHA_SITE_KEY!
+    }
+    onChange={(token) =>
+      setCaptchaToken(token || "")
+    }
+  />
+</div>
 
               {/* Login Button */}
               <button

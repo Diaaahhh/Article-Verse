@@ -1,41 +1,71 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import {API_BASE_URL} from "../constants/api" 
 
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { siteConfig } from "@/lib/siteConfig";
+import { getSettings } from "@/lib/getSettings";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.siteUrl),
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
 
-  title: {
-    default: siteConfig.siteName,
-    template: `%s | ${siteConfig.siteName}`,
-  },
+  const iconUrl = settings?.site_icon
+    ? `${API_BASE_URL}/uploads/settings/${settings.site_icon}`
+    : siteConfig.favicon;
 
-  description: siteConfig.defaultDescription,
+  return {
+    metadataBase: new URL(siteConfig.siteUrl),
 
-  icons: {
-    icon: siteConfig.favicon,
-    shortcut: siteConfig.favicon,
-  },
+    title: {
+      default: "Chulkani.com",
+      template: "%s | Chulkani.com",
+    },
 
-  robots: {
-    index: true,
-    follow: true,
-  },
+    description: siteConfig.defaultDescription,
 
-  openGraph: {
-    type: "website",
-    siteName: siteConfig.siteName,
-    images: [siteConfig.defaultOgImage],
-  },
+    icons: {
+      icon: iconUrl,
+      shortcut: iconUrl,
+    },
 
-  twitter: {
-    card: "summary_large_image",
-    images: [siteConfig.defaultOgImage],
-  },
-};
+    robots: {
+      index: true,
+      follow: true,
+    },
+ verification: {
+      google:
+        settings?.google_site_verification || "",
+    },
+
+    // ADD HERE
+    other: {
+      "fb:app_id":
+        settings?.fb_app_id || "",
+
+      "p:domain_verify":
+        settings?.pinterest_domain_verify || "",
+    },
+    openGraph: {
+      type: "website",
+      siteName: siteConfig.siteName,
+      images: [
+        {
+          url: siteConfig.defaultOgImage,
+          width: 1200,
+          height: 630,
+          alt: "Chulkani.com",
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      images: [siteConfig.defaultOgImage],
+    },
+  };
+}
 
 export default function RootLayout({
   children,
@@ -44,6 +74,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
+      <head>
+        <meta name="family" content="Arial" /><meta name="family" content="SutonnyMJ" />
+<meta name="family" content="Boishakhi;" />
+<meta
+      name="developer"
+      content=" Developed By: IGL Web Ltd Powered by : IGL Group Web address : http://www.iglweb.com Address : House 33, Road 04, Dhanmondi, Dhaka - 1205, Bangladesh, Cell : +880-1958-666999"
+    />
+      </head>
       <body >
         <Navbar />
         <main className="min-h-screen">{children}</main>

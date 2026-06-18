@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import ArticleClient from "./ArticleClient";
 import { API_BASE_URL } from "@/constants/api";
+import {siteConfig} from "../../../lib/siteConfig"
 
 type Props = {
   params: Promise<{
@@ -44,7 +45,7 @@ export async function generateMetadata({
     };
   }
 
-  const articleUrl = `${API_BASE_URL}/article/${article.slug}`;
+  const articleUrl = `${siteConfig.siteUrl}/article/${article.slug}`;
 
   const imageUrl = article.art_image
     ? `${API_BASE_URL}/uploads/${article.art_image}`
@@ -56,17 +57,19 @@ export async function generateMetadata({
     description:
       article.art_meta_desc ||
       article.art_subtitle ||
-      "Read this article on Article Verse.",
+      "Read this article on Chulkani.com.",
 
     keywords: article.art_meta_keywords || "",
-
+alternates: {
+    canonical: `/article/${article.slug}`,
+  },
     openGraph: {
       title: article.art_meta_title || article.art_title,
 
       description:
         article.art_meta_desc ||
         article.art_subtitle ||
-        "Read this article on Article Verse.",
+        "Read this article on Chulkani.com.",
 
       url: articleUrl,
 
@@ -85,7 +88,14 @@ export async function generateMetadata({
 
       type: "article",
     },
-
+ other: {
+    "ia:markup_url": articleUrl,
+    "ia:markup_url_dev": articleUrl,
+    "ia:rules_url": articleUrl,
+    "ia:rules_url_dev":articleUrl,
+    "itemprop:image": imageUrl,
+    "article:tag": article.art_tags || "",
+  },
     twitter: {
       card: "summary_large_image",
 
@@ -94,7 +104,7 @@ export async function generateMetadata({
       description:
         article.art_meta_desc ||
         article.art_subtitle ||
-        "Read this article on Article Verse.",
+        "Read this article on Chulkani.com.",
 
       images: [imageUrl],
     },

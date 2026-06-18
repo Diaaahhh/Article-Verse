@@ -180,16 +180,13 @@ export default function CategorySection({
 
     if (!data) return;
 
-    // select category
     setSelectedCategory(data.cat_category);
-
-    // select subcategory
     setSelectedSubcategory(data.cat_subcategory);
-
-    // clear selected deep topic
     setSelectedDeepTopic("");
 
-    // load corresponding deep topics
+    // Clear deep topic search
+    setDeepTopicSearch("");
+
     await fetchDeepTopics(data.cat_subcategory);
   } catch (error) {
     console.log(error);
@@ -342,6 +339,10 @@ export default function CategorySection({
   setSelectedCategory(item.cat_category);
   setSelectedSubcategory("");
   setSelectedDeepTopic("");
+
+  // Clear search boxes
+  setSubcategorySearch("");
+  setDeepTopicSearch("");
 
   fetchSubcategories(item.cat_category);
 }}

@@ -558,4 +558,243 @@ router.put("/upload-image", (req, res) => {
 
 });
 
+/* ======================================================
+   follow profile
+====================================================== */
+
+router.get("/:id/follow-status", async (req, res) => {
+  try {
+    const followerId = req.cookies.userId;
+    const followingId = req.params.id;
+
+    if (!followerId) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+
+    const [rows] = await db.query(
+      `
+      SELECT id
+      FROM followers
+      WHERE follower_id = ?
+      AND following_id = ?
+      `,
+      [followerId, followingId]
+    );
+
+    return res.json({
+      following: rows.length > 0,
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Server Error",
+    });
+
+  }
+});
+
+/* ======================================================
+   follow-unfollow profile
+====================================================== */
+
+router.post("/:id/follow", async (req, res) => {
+
+  try {
+
+    const followerId = req.cookies.userId;
+
+    const followingId = req.params.id;
+
+    if (!followerId) {
+
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+
+    }
+
+    if (Number(followerId) === Number(followingId)) {
+
+      return res.status(400).json({
+        message: "You cannot follow yourself",
+      });
+
+    }
+
+    const [existing] = await db.query(
+      `
+      SELECT id
+      FROM followers
+      WHERE follower_id = ?
+      AND following_id = ?
+      `,
+      [followerId, followingId]
+    );
+
+    // Unfollow
+    if (existing.length > 0) {
+
+      await db.query(
+        `
+        DELETE FROM followers
+        WHERE follower_id = ?
+        AND following_id = ?
+        `,
+        [followerId, followingId]
+      );
+
+      await db.query(
+        `
+        UPDATE users
+        SET user_followers = user_followers - 1
+        WHERE id = ?
+        `,
+        [followingId]
+      );
+
+      await db.query(
+        `
+        UPDATE users
+        SET user_following = user_following - 1
+        WHERE id = ?
+        `,
+        [followerId]
+      );
+
+      return res.json({
+        following: false,
+      });
+
+    }
+
+    // Follow
+    await db.query(
+      `
+      INSERT INTO followers
+      (follower_id, following_id)
+      VALUES (?, ?)
+      `,
+      [followerId, followingId]
+    );
+
+    await db.query(
+      `
+      UPDATE users
+      SET user_followers = user_followers + 1
+      WHERE id = ?
+      `,
+      [followingId]
+    );
+
+    await db.query(
+      `
+      UPDATE users
+      SET user_following = user_following + 1
+      WHERE id = ?
+      `,
+      [followerId]
+    );
+
+    return res.json({
+      following: true,
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Server Error",
+    });
+
+  }
+
+});
+
+/* ======================================================
+   followers list
+====================================================== */
+
+router.get("/:id/followers", async (req, res) => {
+
+  try {
+
+    const [rows] = await db.query(
+      `
+      SELECT
+        users.id,
+        users.user_name,
+        users.user_image
+
+      FROM followers
+
+      JOIN users
+      ON users.id = followers.follower_id
+
+      WHERE followers.following_id = ?
+      `,
+      [req.params.id]
+    );
+
+    return res.status(200).json({
+      followers: rows,
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Server Error",
+    });
+
+  }
+
+});
+
+/* ======================================================
+   following list
+====================================================== */
+
+router.get("/:id/following", async (req, res) => {
+
+  try {
+
+    const [rows] = await db.query(
+      `
+      SELECT
+        users.id,
+        users.user_name,
+        users.user_image
+
+      FROM followers
+
+      JOIN users
+      ON users.id = followers.following_id
+
+      WHERE followers.follower_id = ?
+      `,
+      [req.params.id]
+    );
+
+    return res.status(200).json({
+      following: rows,
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Server Error",
+    });
+
+  }
+
+});
 export default router;

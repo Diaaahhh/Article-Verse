@@ -1,7 +1,7 @@
 import express from "express";
 import db from "../db.js";
 import bcrypt from "bcryptjs";
-
+import axios from "axios";
 const router = express.Router();
 
 
@@ -15,8 +15,33 @@ router.post("/", async (req, res) => {
   gender,
   dob,
   user_id,
+  captchaToken
 } = req.body;
 
+if (!captchaToken) {
+  return res.status(400).json({
+    message: "Captcha required",
+  });
+}
+
+const response = await axios.post(
+  "https://www.google.com/recaptcha/api/siteverify",
+  null,
+  {
+    params: {
+      secret:
+        process.env.RECAPTCHA_SECRET_KEY,
+      response: captchaToken,
+    },
+  }
+);
+
+if (!response.data.success) {
+  return res.status(400).json({
+    message:
+      "Captcha verification failed",
+  });
+}
     // validation
     if (
   !first_name ||
@@ -66,12 +91,14 @@ if (existingUserId.length > 0) {
     // HASH PASSWORD
 const salt = await bcrypt.genSalt(10);
 const hashedPassword = await bcrypt.hash(password, salt);
-
+const fullName = `${first_name.trim()} ${last_name.trim()}`;
     // insert user
    await db.query(
+ 
   `INSERT INTO users
   (
     user_name,
+    user_id,
     first_name,
     last_name,
     user_email,
@@ -79,8 +106,9 @@ const hashedPassword = await bcrypt.hash(password, salt);
     gender,
     user_dob
   )
-  VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
   [
+    fullName,
     user_id,
     first_name,
     last_name,
@@ -89,6 +117,7 @@ const hashedPassword = await bcrypt.hash(password, salt);
     gender,
     dob,
   ]
+
 );
 const [dbName] = await db.query("SELECT DATABASE() as db");
 console.log(dbName);

@@ -36,7 +36,7 @@ router.get("/", async (req, res) => {
         a.art_status,
         a.cat_id,
         a.lan_id,
-
+a.art_cat_suggestion,
         l.lan_name,
 
         c.cat_category,

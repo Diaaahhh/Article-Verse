@@ -69,13 +69,70 @@ export default function Footer() {
       >
         {/* Row 1 */}
         <p className="text-sm">
-          Copyright © 2026 Chulkani.com. All Rights Reserved
-        </p>
+  Copyright © {new Date().getFullYear()} All rights reserved by{" "}
+  <a
+    href="https://iglgroup.org"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="font-bold text-white"
+  >
+    IGL Group
+  </a>
+</p>
 
         {/* Row 2 */}
-        <p className="text-xs text-[#A0A0A0]">
-          Domain Registration by: IGL Web Ltd. | Web Hosting by: IGL Web Ltd. | Web Design & Development by: IGL Web Ltd.
-        </p>
+        <p className="text-xs text-white">
+  <a
+    href="https://iglweb.com/web/domains-services.php"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-white"
+  >
+    Domain Registration by:
+  </a>{" "}
+  <a
+    href="https://iglweb.com/web/domains-services.php"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-white"
+  >
+    IGL Web Ltd.
+  </a>
+  {" | "}
+  <a
+    href="https://iglweb.com/web/hosting-regular-shared.php"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-white"
+  >
+    Web Hosting by:
+  </a>{" "}
+  <a
+    href="https://iglweb.com/web/hosting-regular-shared.php"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-white"
+  >
+    IGL Web Ltd.
+  </a>
+  {" | "}
+  <a
+    href="https://iglweb.com/web/web-development.php"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-white"
+  >
+    Web Design & Development by:
+  </a>{" "}
+  <a
+    href="https://iglweb.com/web/web-development.php"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-white"
+  >
+    IGL Web Ltd.
+  </a>
+</p>
       </div>
     </footer>
   );

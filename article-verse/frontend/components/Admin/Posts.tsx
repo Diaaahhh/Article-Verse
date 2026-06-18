@@ -17,6 +17,7 @@ interface Article {
   cat_category: string;
   cat_subcategory: string;
   cat_sub_subcategory: string;
+  art_cat_suggestion: string;
   cat_id: number;
   lan_id: number;
 }
@@ -31,18 +32,18 @@ export default function Posts() {
   const [isLoading, setIsLoading] = useState(true);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
-const [categories, setCategories] = useState<any[]>([]);
-const [subcategories, setSubcategories] = useState<any[]>([]);
-const [deepTopics, setDeepTopics] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [subcategories, setSubcategories] = useState<any[]>([]);
+  const [deepTopics, setDeepTopics] = useState<any[]>([]);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
-const [languages, setLanguages] = useState<Language[]>([]);
+  const [languages, setLanguages] = useState<Language[]>([]);
   const [editTitle, setEditTitle] = useState("");
   const [editSubtitle, setEditSubtitle] = useState("");
   const [editText, setEditText] = useState("");
   const [editCategory, setEditCategory] = useState("");
   const [editSubCategory, setEditSubCategory] = useState("");
   const [editDeepTopic, setEditDeepTopic] = useState("");
-const [editLanguage, setEditLanguage] = useState("");
+  const [editLanguage, setEditLanguage] = useState("");
   const [editImage, setEditImage] = useState<File | null>(null);
   const itemsPerPage = 6;
 
@@ -59,33 +60,29 @@ const [editLanguage, setEditLanguage] = useState("");
     setEditText(article.art_text || "");
     setEditCategory(article.cat_category || "");
     setEditSubCategory(article.cat_subcategory || "");
- setEditDeepTopic(article.cat_sub_subcategory || "");
-  setEditLanguage(String(article.lan_id || ""));
-  try {
+    setEditDeepTopic(article.cat_sub_subcategory || "");
+    setEditLanguage(String(article.lan_id || ""));
+    try {
+      // Load subcategories
+      const subRes = await fetch(
+        `${API_BASE_URL}/api/category_section/subcategories/${article.cat_category}`
+      );
 
-  // Load subcategories
-  const subRes = await fetch(
-    `${API_BASE_URL}/api/category_section/subcategories/${article.cat_category}`
-  );
+      const subData = await subRes.json();
 
-  const subData = await subRes.json();
+      setSubcategories(subData);
 
-  setSubcategories(subData);
+      // Load deep topics
+      const deepRes = await fetch(
+        `${API_BASE_URL}/api/category_section/deep-topics/${article.cat_subcategory}`
+      );
 
-  // Load deep topics
-  const deepRes = await fetch(
-    `${API_BASE_URL}/api/category_section/deep-topics/${article.cat_subcategory}`
-  );
+      const deepData = await deepRes.json();
 
-  const deepData = await deepRes.json();
-
-  setDeepTopics(deepData);
-
-} catch (error) {
-
-  console.log(error);
-
-}
+      setDeepTopics(deepData);
+    } catch (error) {
+      console.log(error);
+    }
     setEditModal(true);
   };
 
@@ -101,8 +98,8 @@ const [editLanguage, setEditLanguage] = useState("");
 
       formData.append("cat_category", editCategory);
       formData.append("cat_subcategory", editSubCategory);
-formData.append("cat_sub_subcategory", editDeepTopic);
-formData.append("lan_id", editLanguage);
+      formData.append("cat_sub_subcategory", editDeepTopic);
+      formData.append("lan_id", editLanguage);
       if (editImage) {
         formData.append("art_image", editImage);
       }
@@ -139,29 +136,26 @@ formData.append("lan_id", editLanguage);
   };
 
   const fetchCategories = async () => {
-  try {
-    const res = await fetch(
-      `${API_BASE_URL}/api/category_section`
-    );
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/category_section`);
 
-    const data = await res.json();
+      const data = await res.json();
 
-    setCategories(data);
+      setCategories(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const fetchLanguages = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/languages`);
+      const data = await res.json();
 
-  } catch (error) {
-    console.log(error);
-  }
-};
-const fetchLanguages = async () => {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/languages`);
-    const data = await res.json();
-
-    setLanguages(data);
-  } catch (error) {
-    console.log(error);
-  }
-};
+      setLanguages(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     fetchArticles();
     fetchCategories();
@@ -199,58 +193,44 @@ const fetchLanguages = async () => {
     }
   };
 
-  const handleEditCategoryChange = async (
-  categoryValue: string
-) => {
+  const handleEditCategoryChange = async (categoryValue: string) => {
+    setEditCategory(categoryValue);
 
-  setEditCategory(categoryValue);
+    setEditSubCategory("");
+    setEditDeepTopic("");
 
-  setEditSubCategory("");
-  setEditDeepTopic("");
+    setDeepTopics([]);
 
-  setDeepTopics([]);
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/category_section/subcategories/${categoryValue}`
+      );
 
-  try {
+      const data = await res.json();
 
-    const res = await fetch(
-      `${API_BASE_URL}/api/category_section/subcategories/${categoryValue}`
-    );
+      setSubcategories(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    const data = await res.json();
+  const handleEditSubcategoryChange = async (subcategoryValue: string) => {
+    setEditSubCategory(subcategoryValue);
 
-    setSubcategories(data);
+    setEditDeepTopic("");
 
-  } catch (error) {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/category_section/deep-topics/${subcategoryValue}`
+      );
 
-    console.log(error);
+      const data = await res.json();
 
-  }
-};
-
-const handleEditSubcategoryChange = async (
-  subcategoryValue: string
-) => {
-
-  setEditSubCategory(subcategoryValue);
-
-  setEditDeepTopic("");
-
-  try {
-
-    const res = await fetch(
-      `${API_BASE_URL}/api/category_section/deep-topics/${subcategoryValue}`
-    );
-
-    const data = await res.json();
-
-    setDeepTopics(data);
-
-  } catch (error) {
-
-    console.log(error);
-
-  }
-};
+      setDeepTopics(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const filteredArticles = articles.filter(
     (article) =>
       article.art_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -289,7 +269,6 @@ const handleEditSubcategoryChange = async (
     }
   };
 
-  
   return (
     <>
       {/* Header */}
@@ -379,6 +358,7 @@ const handleEditSubcategoryChange = async (
                     <th style={{ width: "100px" }}>Author</th>
                     <th style={{ width: "100px" }}>Language</th>
                     <th style={{ width: "150px" }}>Category</th>
+                    <th style={{ width: "180px" }}>Category Suggestion</th>
                     <th style={{ width: "110px" }}>Status</th>
                     <th style={{ width: "110px" }}>Date</th>
                     <th style={{ width: "280px" }}>Actions</th>
@@ -504,6 +484,32 @@ const handleEditSubcategoryChange = async (
                           </div>
                         )}
                       </td>
+                      <td>
+  {article.art_cat_suggestion ? (
+    <div
+      style={{
+        maxWidth: "180px",
+        fontSize: "12px",
+        color: "#F59E0B",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+      }}
+      title={article.art_cat_suggestion}
+    >
+      💡 {article.art_cat_suggestion}
+    </div>
+  ) : (
+    <span
+      style={{
+        color: "#6B7280",
+        fontSize: "12px",
+      }}
+    >
+      —
+    </span>
+  )}
+</td>
                       <td>{getStatusBadge(article.art_status)}</td>
                       <td
                         style={{
@@ -633,378 +639,340 @@ const handleEditSubcategoryChange = async (
       </div>
       {/* VIEW MODAL */}
 
-{viewModal && selectedArticle && (
+      {viewModal && selectedArticle && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal">
+            <div className="admin-modal-header">
+              <h2>View Article</h2>
 
-  <div className="admin-modal-overlay">
+              <button
+                onClick={() => setViewModal(false)}
+                className="admin-modal-close"
+              >
+                ✕
+              </button>
+            </div>
 
-    <div className="admin-modal">
+            {selectedArticle.art_image && (
+              <img
+                src={`${API_BASE_URL}/uploads/${selectedArticle.art_image}`}
+                alt={selectedArticle.art_title}
+                style={{
+                  width: "100%",
+                  maxHeight: "350px",
+                  objectFit: "cover",
+                  borderRadius: "12px",
+                  marginBottom: "20px",
+                }}
+              />
+            )}
 
-      <div className="admin-modal-header">
-        <h2>View Article</h2>
+            <h1
+              style={{
+                fontSize: "28px",
+                fontWeight: "bold",
+                marginBottom: "10px",
+              }}
+            >
+              {selectedArticle.art_title}
+            </h1>
 
-        <button
-          onClick={() => setViewModal(false)}
-          className="admin-modal-close"
-        >
-          ✕
-        </button>
-      </div>
+            <h3
+              style={{
+                color: "#9CA3AF",
+                marginBottom: "20px",
+              }}
+            >
+              {selectedArticle.art_subtitle}
+            </h3>
 
-      {selectedArticle.art_image && (
-        <img
-          src={`${API_BASE_URL}/uploads/${selectedArticle.art_image}`}
-          alt={selectedArticle.art_title}
-          style={{
-            width: "100%",
-            maxHeight: "350px",
-            objectFit: "cover",
-            borderRadius: "12px",
-            marginBottom: "20px",
-          }}
-        />
-      )}
-
-      <h1
-        style={{
-          fontSize: "28px",
-          fontWeight: "bold",
-          marginBottom: "10px",
-        }}
-      >
-        {selectedArticle.art_title}
-      </h1>
-
-      <h3
-        style={{
-          color: "#9CA3AF",
-          marginBottom: "20px",
-        }}
-      >
-        {selectedArticle.art_subtitle}
-      </h3>
-
-      <div
-        style={{
-          whiteSpace: "pre-line",
-          lineHeight: "1.8",
-          color: "#E5E7EB",
-        }}
-      >
-        {selectedArticle.art_text}
-      </div>
-
-    </div>
-
-  </div>
-
-)}
-
-{/* EDIT MODAL */}
-{editModal && (
-
-  <div className="admin-modal-overlay">
-
-    <div className="admin-modal">
-
-      <div className="admin-modal-header">
-
-        <h2>Edit Article</h2>
-
-        <button
-          onClick={() => setEditModal(false)}
-          className="admin-modal-close"
-        >
-          ✕
-        </button>
-
-      </div>
-
-      {/* Row 1 */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "16px",
-          marginBottom: "16px",
-        }}
-      >
-
-        {/* Title */}
-        <div>
-          <label
-            style={{
-              display: "block",
-              marginBottom: "6px",
-              fontWeight: "600",
-              color: "#E5E7EB",
-            }}
-          >
-            Title
-          </label>
-
-          <input
-            type="text"
-            value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
-            placeholder="Enter article title"
-            className="admin-input"
-          />
-        </div>
-
-        {/* Subtitle */}
-        <div>
-          <label
-            style={{
-              display: "block",
-              marginBottom: "6px",
-              fontWeight: "600",
-              color: "#E5E7EB",
-            }}
-          >
-            Subtitle
-          </label>
-
-          <input
-            type="text"
-            value={editSubtitle}
-            onChange={(e) => setEditSubtitle(e.target.value)}
-            placeholder="Enter subtitle"
-            className="admin-input"
-          />
-        </div>
-
-      </div>
-
-      {/* Row 2 */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr 1fr",
-          gap: "16px",
-          marginBottom: "16px",
-        }}
-      >
-
-        {/* Language */}
-        <div>
-          <label
-            style={{
-              display: "block",
-              marginBottom: "6px",
-              fontWeight: "600",
-              color: "#E5E7EB",
-            }}
-          >
-            Language
-          </label>
-
-          <select
-  value={editLanguage}
-  onChange={(e) => setEditLanguage(e.target.value)}
-  className="admin-input"
->
-  <option value="">Select Language</option>
-
-  {languages.map((lan) => (
-    <option key={lan.id} value={lan.id}>
-      {lan.lan_name}
-    </option>
-  ))}
-</select>
-        </div>
-
-        {/* Category */}
-        <div>
-          <label
-            style={{
-              display: "block",
-              marginBottom: "6px",
-              fontWeight: "600",
-              color: "#E5E7EB",
-            }}
-          >
-            Category
-          </label>
-
-          <select
-  value={editCategory}
-  onChange={(e) =>
-    handleEditCategoryChange(e.target.value)
-  }
-  className="admin-input"
->
-  <option value="">Select Category</option>
-
-  {categories.map((cat, index) => (
-    <option
-      key={index}
-      value={cat.cat_category}
-    >
-      {cat.cat_category}
-    </option>
-  ))}
-
-</select>
-        </div>
-
-        {/* Subcategory */}
-        <div>
-          <label
-            style={{
-              display: "block",
-              marginBottom: "6px",
-              fontWeight: "600",
-              color: "#E5E7EB",
-            }}
-          >
-            Subcategory
-          </label>
-
-          <select
-  value={editSubCategory}
-  onChange={(e) =>
-    handleEditSubcategoryChange(e.target.value)
-  }
-  className="admin-input"
-  disabled={!editCategory}
->
-            <option value="">Select Subcategory</option>
-
-{subcategories.map((sub, index) => (
-  <option
-    key={index}
-    value={sub.cat_subcategory}
-  >
-    {sub.cat_subcategory}
-  </option>
-))}
-          </select>
-        </div>
-
-        {/* Deep Topic */}
-        <div>
-          <label
-            style={{
-              display: "block",
-              marginBottom: "6px",
-              fontWeight: "600",
-              color: "#E5E7EB",
-            }}
-          >
-            Deep Topic
-          </label>
-
-          <select
-            value={editDeepTopic}
-            onChange={(e) => setEditDeepTopic(e.target.value)}
-    disabled={!editSubCategory}
-            className="admin-input"
-          >
-            <option value="">Select Deep Topic</option>
-
-{deepTopics.map((topic, index) => (
-  <option
-    key={index}
-    value={topic.cat_sub_subcategory}
-  >
-    {topic.cat_sub_subcategory}
-  </option>
-))}
-          </select>
-        </div>
-
-      </div>
-
-      {/* Article Text */}
-      <div style={{ marginBottom: "16px" }}>
-        <label
-          style={{
-            display: "block",
-            marginBottom: "6px",
-            fontWeight: "600",
-            color: "#E5E7EB",
-          }}
-        >
-          Article Text
-        </label>
-
-        <textarea
-          value={editText}
-          onChange={(e) => setEditText(e.target.value)}
-          placeholder="Write article content..."
-          rows={8}
-          className="admin-textarea"
-        />
-      </div>
-
-      {/* Current Image */}
-      {selectedArticle?.art_image && (
-        <div style={{ marginBottom: "16px" }}>
-
-          <label
-            style={{
-              display: "block",
-              marginBottom: "6px",
-              fontWeight: "600",
-              color: "#E5E7EB",
-            }}
-          >
-            Current Image
-          </label>
-
-          <img
-            src={`${API_BASE_URL}/uploads/${selectedArticle.art_image}`}
-            alt={selectedArticle.art_title}
-            style={{
-              width: "140px",
-              height: "100px",
-              objectFit: "cover",
-              borderRadius: "10px",
-            }}
-          />
-
+            <div
+              style={{
+                whiteSpace: "pre-line",
+                lineHeight: "1.8",
+                color: "#E5E7EB",
+              }}
+            >
+              {selectedArticle.art_text}
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Upload Image */}
-      <div style={{ marginBottom: "20px" }}>
+      {/* EDIT MODAL */}
+      {editModal && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal">
+            <div className="admin-modal-header">
+              <h2>Edit Article</h2>
 
-        <label
-          style={{
-            display: "block",
-            marginBottom: "6px",
-            fontWeight: "600",
-            color: "#E5E7EB",
-          }}
-        >
-          Upload New Image
-        </label>
+              <button
+                onClick={() => setEditModal(false)}
+                className="admin-modal-close"
+              >
+                ✕
+              </button>
+            </div>
 
-        <input
-          type="file"
-          onChange={(e) =>
-            setEditImage(
-              e.target.files ? e.target.files[0] : null
-            )
-          }
-          className="admin-input"
-        />
+            {/* Row 1 */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "16px",
+                marginBottom: "16px",
+              }}
+            >
+              {/* Title */}
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "6px",
+                    fontWeight: "600",
+                    color: "#E5E7EB",
+                  }}
+                >
+                  Title
+                </label>
 
-      </div>
+                <input
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  placeholder="Enter article title"
+                  className="admin-input"
+                />
+              </div>
 
-      {/* Update Button */}
-      <button
-        onClick={handleUpdate}
-        className="admin-btn admin-btn-primary"
-      >
-        Update Article
-      </button>
+              {/* Subtitle */}
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "6px",
+                    fontWeight: "600",
+                    color: "#E5E7EB",
+                  }}
+                >
+                  Subtitle
+                </label>
 
-    </div>
+                <input
+                  type="text"
+                  value={editSubtitle}
+                  onChange={(e) => setEditSubtitle(e.target.value)}
+                  placeholder="Enter subtitle"
+                  className="admin-input"
+                />
+              </div>
+            </div>
 
-  </div>
+            {/* Row 2 */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr 1fr 1fr",
+                gap: "16px",
+                marginBottom: "16px",
+              }}
+            >
+              {/* Language */}
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "6px",
+                    fontWeight: "600",
+                    color: "#E5E7EB",
+                  }}
+                >
+                  Language
+                </label>
 
-)}
+                <select
+                  value={editLanguage}
+                  onChange={(e) => setEditLanguage(e.target.value)}
+                  className="admin-input"
+                >
+                  <option value="">Select Language</option>
+
+                  {languages.map((lan) => (
+                    <option key={lan.id} value={lan.id}>
+                      {lan.lan_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Category */}
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "6px",
+                    fontWeight: "600",
+                    color: "#E5E7EB",
+                  }}
+                >
+                  Category
+                </label>
+
+                <select
+                  value={editCategory}
+                  onChange={(e) => handleEditCategoryChange(e.target.value)}
+                  className="admin-input"
+                >
+                  <option value="">Select Category</option>
+
+                  {categories.map((cat, index) => (
+                    <option key={index} value={cat.cat_category}>
+                      {cat.cat_category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Subcategory */}
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "6px",
+                    fontWeight: "600",
+                    color: "#E5E7EB",
+                  }}
+                >
+                  Subcategory
+                </label>
+
+                <select
+                  value={editSubCategory}
+                  onChange={(e) => handleEditSubcategoryChange(e.target.value)}
+                  className="admin-input"
+                  disabled={!editCategory}
+                >
+                  <option value="">Select Subcategory</option>
+
+                  {subcategories.map((sub, index) => (
+                    <option key={index} value={sub.cat_subcategory}>
+                      {sub.cat_subcategory}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Deep Topic */}
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "6px",
+                    fontWeight: "600",
+                    color: "#E5E7EB",
+                  }}
+                >
+                  Deep Topic
+                </label>
+
+                <select
+                  value={editDeepTopic}
+                  onChange={(e) => setEditDeepTopic(e.target.value)}
+                  disabled={!editSubCategory}
+                  className="admin-input"
+                >
+                  <option value="">Select Deep Topic</option>
+
+                  {deepTopics.map((topic, index) => (
+                    <option key={index} value={topic.cat_sub_subcategory}>
+                      {topic.cat_sub_subcategory}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Article Text */}
+            <div style={{ marginBottom: "16px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "6px",
+                  fontWeight: "600",
+                  color: "#E5E7EB",
+                }}
+              >
+                Article Text
+              </label>
+
+              <textarea
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
+                placeholder="Write article content..."
+                rows={8}
+                className="admin-textarea"
+              />
+            </div>
+
+            {/* Current Image */}
+            {selectedArticle?.art_image && (
+              <div style={{ marginBottom: "16px" }}>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "6px",
+                    fontWeight: "600",
+                    color: "#E5E7EB",
+                  }}
+                >
+                  Current Image
+                </label>
+
+                <img
+                  src={`${API_BASE_URL}/uploads/${selectedArticle.art_image}`}
+                  alt={selectedArticle.art_title}
+                  style={{
+                    width: "140px",
+                    height: "100px",
+                    objectFit: "cover",
+                    borderRadius: "10px",
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Upload Image */}
+            <div style={{ marginBottom: "20px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "6px",
+                  fontWeight: "600",
+                  color: "#E5E7EB",
+                }}
+              >
+                Upload New Image
+              </label>
+
+              <input
+                type="file"
+                onChange={(e) =>
+                  setEditImage(e.target.files ? e.target.files[0] : null)
+                }
+                className="admin-input"
+              />
+            </div>
+
+            {/* Update Button */}
+            <button
+              onClick={handleUpdate}
+              className="admin-btn admin-btn-primary"
+            >
+              Update Article
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

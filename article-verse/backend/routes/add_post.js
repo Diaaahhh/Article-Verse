@@ -2,6 +2,7 @@ import express from "express";
 import db from "../db.js";
 import multer from "multer";
 import path from "path";
+import axios from "axios";
 
 const router = express.Router();
 
@@ -57,12 +58,39 @@ router.post(
   metaTitle,
   metaDesc,
   metaKeywords,
+  art_tags,
   languageId,
   category,
   subcategory,
   deepTopic,
   editorImages,
+  captchaToken,
+  categorySuggestion
 } = req.body;
+if (!captchaToken) {
+  return res.status(400).json({
+    message: "Captcha required",
+  });
+}
+
+const response = await axios.post(
+  "https://www.google.com/recaptcha/api/siteverify",
+  null,
+  {
+    params: {
+      secret:
+        process.env.RECAPTCHA_SECRET_KEY,
+      response: captchaToken,
+    },
+  }
+);
+
+if (!response.data.success) {
+  return res.status(400).json({
+    message:
+      "Captcha verification failed",
+  });
+}
 let artMedia = [];
 
 try {
@@ -111,6 +139,7 @@ try {
         ? JSON.parse(metaKeywords).join(",")
         : metaKeywords;
 
+        
         // ============================
 // GENERATE ARTICLE DESCRIPTION
 // ============================
@@ -127,6 +156,9 @@ ${metaTitle || ""}
 ${metaDesc || ""}
 
 ${keywordsString || ""}
+
+${art_tags || ""} 
+
 `.trim();
       // ============================
 // UPDATE EXISTING ARTICLE
@@ -149,7 +181,9 @@ if (articleId) {
       art_meta_title = ?,
       art_meta_desc = ?,
       art_meta_keywords = ?,
+      art_tags=?,
       art_description = ?,
+      art_cat_suggestion=?,
       updated_at = CURRENT_TIMESTAMP
       ${imagePath ? ", art_image = ?" : ""}
     WHERE id = ? AND user_id = ?
@@ -166,7 +200,9 @@ if (articleId) {
           metaTitle || null,
           metaDesc || null,
           keywordsString || null,
+          art_tags || null,
           articleDescription,
+          categorySuggestion,
           imagePath,
           articleId,
           userId,
@@ -182,7 +218,9 @@ if (articleId) {
           metaTitle || null,
           metaDesc || null,
           keywordsString || null,
+          art_tags || null,
           articleDescription,
+          categorySuggestion,
           articleId,
           userId,
         ]
@@ -210,11 +248,13 @@ if (articleId) {
   art_meta_title,
   art_meta_desc,
   art_meta_keywords,
+  art_tags,
   art_description,
+  art_cat_suggestion,
   user_id
 )
 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       cat_id,
@@ -229,7 +269,9 @@ if (articleId) {
       metaTitle || null,
       metaDesc || null,
       keywordsString || null,
+      art_tags|| null,
       articleDescription,
+      categorySuggestion,
       userId,
     ]
   );
