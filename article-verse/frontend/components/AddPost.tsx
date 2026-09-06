@@ -20,8 +20,7 @@ export default function AddPost() {
   const [titleError, setTitleError] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [content, setContent] = useState("");
-  const [categorySuggestion, setCategorySuggestion] =
-  useState("");
+  const [categorySuggestion, setCategorySuggestion] = useState("");
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDesc, setMetaDesc] = useState("");
   const [image, setImage] = useState<File | null>(null);
@@ -52,7 +51,7 @@ export default function AddPost() {
     const regex = /^[a-zA-Z0-9\s]*$/;
     if (!regex.test(value)) {
       setTitleError(
-        "Only letters (a-z, A-Z), numbers (0-9), and spaces are allowed"
+        "Only letters (a-z, A-Z), numbers (0-9), and spaces are allowed",
       );
       return false;
     }
@@ -91,62 +90,143 @@ export default function AddPost() {
   const handleCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
-  const getCroppedImage = async () => {
+  const getCroppedImage = async (): Promise<File | null> => {
     if (!imagePreview || !croppedAreaPixels) return null;
 
-    const image = new Image();
+    const imageElement = new Image();
 
-    image.src = imagePreview;
+    imageElement.src = imagePreview;
 
-    await new Promise((resolve) => {
-      image.onload = resolve;
+    await new Promise<void>((resolve, reject) => {
+      imageElement.onload = () => resolve();
+      imageElement.onerror = reject;
     });
 
+    const MAX_SIZE = 50 * 1024; // 50 KB
+
+    let width = 850;
+    let height = 300;
+
     const canvas = document.createElement("canvas");
-
-    canvas.width = 850;
-    canvas.height = 300;
-
     const ctx = canvas.getContext("2d");
 
     if (!ctx) return null;
 
-    ctx.drawImage(
-      image,
+    // Function to create JPEG blob
+    const createBlob = (
+      targetWidth: number,
+      targetHeight: number,
+      quality: number,
+    ): Promise<Blob | null> => {
+      return new Promise((resolve) => {
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
 
-      croppedAreaPixels.x,
-      croppedAreaPixels.y,
+        ctx.clearRect(0, 0, targetWidth, targetHeight);
 
-      croppedAreaPixels.width,
-      croppedAreaPixels.height,
+        ctx.drawImage(
+          imageElement,
+          croppedAreaPixels.x,
+          croppedAreaPixels.y,
+          croppedAreaPixels.width,
+          croppedAreaPixels.height,
+          0,
+          0,
+          targetWidth,
+          targetHeight,
+        );
 
-      0,
-      0,
+        canvas.toBlob((blob) => resolve(blob), "image/jpeg", quality);
+      });
+    };
 
-      850,
-      300
-    );
+    // --------------------------------------------------
+    // STEP 1: Try high quality first
+    // --------------------------------------------------
 
-    return new Promise<File | null>((resolve) => {
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) {
-            resolve(null);
-            return;
-          }
+    let quality = 0.85;
 
-          const file = new File([blob], "featured.jpg", {
-            type: "image/jpeg",
-          });
+    let blob = await createBlob(width, height, quality);
 
-          setCroppedImageSize(file.size);
+    if (!blob) return null;
 
-          resolve(file);
-        },
-        "image/jpeg",
-        0.8
+    // --------------------------------------------------
+    // STEP 2: Reduce JPEG quality if > 50 KB
+    // --------------------------------------------------
+
+    if (blob.size > MAX_SIZE) {
+      let minQuality = 0.15;
+      let maxQuality = 0.85;
+
+      // Binary search for the highest quality under 50 KB
+      for (let i = 0; i < 7; i++) {
+        quality = (minQuality + maxQuality) / 2;
+
+        const testBlob = await createBlob(width, height, quality);
+
+        if (!testBlob) break;
+
+        if (testBlob.size <= MAX_SIZE) {
+          blob = testBlob;
+          minQuality = quality;
+        } else {
+          maxQuality = quality;
+        }
+      }
+    }
+
+    // --------------------------------------------------
+    // STEP 3: If still > 50 KB, reduce dimensions
+    // --------------------------------------------------
+
+    if (blob.size > MAX_SIZE) {
+      const sizes = [
+        [800, 282],
+        [750, 265],
+        [700, 247],
+        [650, 229],
+        [600, 212],
+        [550, 194],
+        [500, 176],
+      ];
+
+      for (const [newWidth, newHeight] of sizes) {
+        width = newWidth;
+        height = newHeight;
+
+        quality = 0.7;
+
+        const testBlob = await createBlob(width, height, quality);
+
+        if (!testBlob) continue;
+
+        blob = testBlob;
+
+        if (blob.size <= MAX_SIZE) {
+          break;
+        }
+      }
+    }
+
+    // --------------------------------------------------
+    // STEP 4: Final safety check
+    // --------------------------------------------------
+
+    if (blob.size > MAX_SIZE) {
+      toast.error(
+        "Unable to compress this image below 50 KB. Please choose another image.",
       );
+
+      return null;
+    }
+
+    const file = new File([blob], "featured.jpg", {
+      type: "image/jpeg",
     });
+
+    setCroppedImageSize(file.size);
+
+    return file;
   };
   const handleSubmit = async () => {
     try {
@@ -214,7 +294,7 @@ export default function AddPost() {
       formData.append("subcategory", selectedSubcategory);
       formData.append("deepTopic", selectedDeepTopic);
       formData.append("captchaToken", captchaToken);
-      formData.append("categorySuggestion",categorySuggestion);
+      formData.append("categorySuggestion", categorySuggestion);
 
       if (articleId) {
         formData.append("articleId", articleId);
@@ -410,7 +490,7 @@ export default function AddPost() {
   };
 
   const handleArticleTagKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (e.key === "," || e.key === "Enter") {
       e.preventDefault();
@@ -433,22 +513,23 @@ export default function AddPost() {
     fetchCategoryData();
     fetchCurrentUser();
   }, []);
-  useEffect(() => {
-    const updateSize = async () => {
-      if (!imagePreview || !croppedAreaPixels) return;
 
-      const file = await getCroppedImage();
+  // useEffect(() => {
+  //   const updateSize = async () => {
+  //     if (!imagePreview || !croppedAreaPixels) return;
 
-      if (file) {
-        setCroppedImageSize(file.size);
-      }
-    };
+  //     const file = await getCroppedImage();
 
-    updateSize();
-  }, [crop, zoom, croppedAreaPixels]);
+  //     if (file) {
+  //       setCroppedImageSize(file.size);
+  //     }
+  //   };
+
+  //   updateSize();
+  // }, [crop, zoom, croppedAreaPixels]);
 
   const handleCategoryChange = async (
-    e: React.ChangeEvent<HTMLSelectElement>
+    e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     const categoryValue = e.target.value;
     setSelectedCategory(categoryValue);
@@ -458,7 +539,7 @@ export default function AddPost() {
 
     try {
       const res = await fetch(
-        `${API_BASE_URL}/api/category_section/subcategories/${categoryValue}`
+        `${API_BASE_URL}/api/category_section/subcategories/${categoryValue}`,
       );
       const data = await res.json();
       setSubcategories(data);
@@ -471,8 +552,8 @@ export default function AddPost() {
     try {
       const lookupRes = await fetch(
         `${API_BASE_URL}/api/category_section/subcategory/${encodeURIComponent(
-          subcategoryValue
-        )}`
+          subcategoryValue,
+        )}`,
       );
 
       const lookupData = await lookupRes.json();
@@ -484,7 +565,7 @@ export default function AddPost() {
       setSelectedDeepTopic("");
 
       const subRes = await fetch(
-        `${API_BASE_URL}/api/category_section/subcategories/${lookupData.cat_category}`
+        `${API_BASE_URL}/api/category_section/subcategories/${lookupData.cat_category}`,
       );
 
       const subData = await subRes.json();
@@ -492,7 +573,7 @@ export default function AddPost() {
       setSubcategories(subData);
 
       const deepRes = await fetch(
-        `${API_BASE_URL}/api/category_section/deep-topics/${subcategoryValue}`
+        `${API_BASE_URL}/api/category_section/deep-topics/${subcategoryValue}`,
       );
 
       const deepData = await deepRes.json();
@@ -507,8 +588,8 @@ export default function AddPost() {
     try {
       const res = await fetch(
         `${API_BASE_URL}/api/category_section/deep-topic/${encodeURIComponent(
-          deepTopicValue
-        )}`
+          deepTopicValue,
+        )}`,
       );
 
       const data = await res.json();
@@ -523,8 +604,8 @@ export default function AddPost() {
       // Load subcategories of selected category
       const subRes = await fetch(
         `${API_BASE_URL}/api/category_section/subcategories/${encodeURIComponent(
-          data.cat_category
-        )}`
+          data.cat_category,
+        )}`,
       );
 
       const subData = await subRes.json();
@@ -534,8 +615,8 @@ export default function AddPost() {
       // Load deep topics of selected subcategory
       const deepRes = await fetch(
         `${API_BASE_URL}/api/category_section/deep-topics/${encodeURIComponent(
-          data.cat_subcategory
-        )}`
+          data.cat_subcategory,
+        )}`,
       );
 
       const deepData = await deepRes.json();
@@ -555,7 +636,7 @@ export default function AddPost() {
     }
 
     setImageError("");
-
+    setImage(file);
     const reader = new FileReader();
 
     reader.onload = () => {
@@ -635,8 +716,8 @@ export default function AddPost() {
       backgroundColor: state.isSelected
         ? "var(--select-accent)"
         : state.isFocused
-        ? "var(--select-bg-hover)"
-        : "var(--select-menu-bg)",
+          ? "var(--select-bg-hover)"
+          : "var(--select-menu-bg)",
 
       color: "#FFFFFF",
       cursor: "pointer",
@@ -784,13 +865,13 @@ export default function AddPost() {
               </div>
 
               {/* Tiptap Content */}
-              <div>
+              <div className="w-full">
                 <label className={labelStyle}>
                   Content <span className="text-red-500">*</span>
                 </label>
 
                 <div
-                  className="rounded-xl overflow-hidden border"
+                  className="tiptap-editor-wrapper rounded-xl overflow-hidden border w-full"
                   style={{
                     borderColor: "var(--border-light)",
                     background: "var(--black-soft)",
@@ -876,17 +957,11 @@ export default function AddPost() {
                             />
                           </div>
                           {croppedImageSize !== null && (
-                            <p
-                              className={`mt-3 text-sm font-medium ${
-                                croppedImageSize > 50 * 1024
-                                  ? "text-red-500"
-                                  : "text-green-500"
-                              }`}
-                            >
+                            <p className={`mt-3 text-sm font-medium `}>
                               Cropped Image Size:{" "}
                               {(croppedImageSize / 1024).toFixed(2)} KB
-                              {croppedImageSize > 50 * 1024 &&
-                                " (Exceeds 50 KB limit)"}
+                              {/* {croppedImageSize > 50 * 1024 &&
+                                " (Exceeds 50 KB limit)"} */}
                             </p>
                           )}
                           <div className="mt-4">
@@ -1090,22 +1165,20 @@ export default function AddPost() {
                   )}
                 </div>
               </div>
-{/* category suggestion */}
-<div className="space-y-2">
-  <label className="block text-sm font-medium">
-    Suggest a New Category (Optional)
-  </label>
+              {/* category suggestion */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium">
+                  Suggest a New Category (Optional)
+                </label>
 
-  <textarea
-    value={categorySuggestion}
-    onChange={(e) =>
-      setCategorySuggestion(e.target.value)
-    }
-    placeholder="Can't find a suitable category? Suggest one here..."
-    className="w-full rounded-lg border p-3"
-    rows={3}
-  />
-</div>
+                <textarea
+                  value={categorySuggestion}
+                  onChange={(e) => setCategorySuggestion(e.target.value)}
+                  placeholder="Can't find a suitable category? Suggest one here..."
+                  className="w-full rounded-lg border p-3"
+                  rows={3}
+                />
+              </div>
               {/* Meta Keywords */}
               <div>
                 <label className={labelStyle}>Meta Keywords</label>
@@ -1222,18 +1295,18 @@ export default function AddPost() {
               </div>
 
               {/* Captcha */}
-                  <div
-                    className="mb-4 flex justify-center"
-                    style={{
-                      marginBottom: "8px",
-                    }}
-                  >
-                    <ReCAPTCHA
-                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-                      onChange={(token) => setCaptchaToken(token || "")}
-                    />
-                  </div>
-                  
+              <div
+                className="mb-4 flex justify-center"
+                style={{
+                  marginBottom: "8px",
+                }}
+              >
+                <ReCAPTCHA
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                  onChange={(token) => setCaptchaToken(token || "")}
+                />
+              </div>
+
               {/* Submit Button */}
               <div className="pt-6 flex justify-center">
                 <button
@@ -1247,7 +1320,6 @@ export default function AddPost() {
                     marginBottom: "5px",
                   }}
                 >
-                  
                   <span className="relative z-10 flex items-center justify-center gap-2">
                     <svg
                       className="w-5 h-5"

@@ -2087,77 +2087,96 @@ textarea.profile-modal-input {
   vertical-align: top;
   white-space: nowrap;
 }
-.ProseMirror {
-  min-height: 400px;
+
+/* ========================================
+   TIPTAP EDITOR
+   ======================================== */
+
+.tiptap-editor-wrapper {
+  width: 100%;
+  display: block;
+}
+
+.tiptap-editor-wrapper .ProseMirror {
+  display: block;
+  width: 100%;
+  min-height: 500px;
+  padding: 16px;
   outline: none;
-  color: white;
+  color: var(--text-primary);
+  background: var(--black-soft);
+  box-sizing: border-box;
+
+  /* IMPORTANT: preserve spaces while typing */
+  white-space: pre-wrap;
+
+  /* Allow long text to wrap normally */
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
-.ProseMirror p {
-  margin-bottom: 12px;
+.tiptap-editor-wrapper .ProseMirror:focus {
+  outline: none;
 }
 
-.ProseMirror h1 {
+.tiptap-editor-wrapper .ProseMirror p {
+  margin: 0 0 12px 0;
+  white-space: pre-wrap;
+}
+
+.tiptap-editor-wrapper .ProseMirror h1 {
   font-size: 2rem;
-  font-weight: bold;
+  font-weight: 700;
   margin-bottom: 12px;
 }
 
-.ProseMirror h2 {
+.tiptap-editor-wrapper .ProseMirror h2 {
   font-size: 1.5rem;
-  font-weight: bold;
+  font-weight: 700;
   margin-bottom: 10px;
 }
 
-.ProseMirror ul {
+.tiptap-editor-wrapper .ProseMirror ul {
   list-style: disc;
   padding-left: 25px;
 }
 
-.ProseMirror ol {
+.tiptap-editor-wrapper .ProseMirror ol {
   list-style: decimal;
   padding-left: 25px;
 }
 
-.ProseMirror blockquote {
+.tiptap-editor-wrapper .ProseMirror blockquote {
   border-left: 4px solid #666;
   padding-left: 16px;
   margin: 12px 0;
 }
-.ProseMirror table {
+
+.tiptap-editor-wrapper .ProseMirror table {
   border-collapse: collapse;
   width: 100%;
   margin-top: 10px;
 }
 
-.ProseMirror th,
-.ProseMirror td {
+.tiptap-editor-wrapper .ProseMirror th,
+.tiptap-editor-wrapper .ProseMirror td {
   border: 1px solid #555;
   padding: 8px;
 }
 
-.ProseMirror th {
+.tiptap-editor-wrapper .ProseMirror th {
   background: #2d2d2d;
 }
-.ProseMirror {
-  outline: none;
-  min-height: 500px;
-  color: white;
+
+/* Placeholder */
+.tiptap-editor-wrapper .ProseMirror p.is-editor-empty:first-child::before {
+  content: "Start writing your article...";
+  color: var(--text-tertiary);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }
 
-.ProseMirror h1 {
-  font-size: 2rem;
-  font-weight: 700;
-}
-
-.ProseMirror h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.ProseMirror p {
-  margin-bottom: 12px;
-}
 /* ========================================
    PREMIUM COMMENT SECTION DESIGN
    ======================================== */

@@ -54,9 +54,19 @@ export default function TiptapEditor({ content, onChange }: Props) {
       onChange(editor.getHTML());
     },
   });
-useEffect(() => {
-  editor?.commands.setContent(content);
-}, [content]);
+
+  useEffect(() => {
+  if (!editor) return;
+
+  const currentContent = editor.getHTML();
+
+  if (content !== currentContent) {
+    editor.commands.setContent(content, {
+      emitUpdate: false,
+    });
+  }
+}, [editor, content]);
+
   return (
     <div className="border border-zinc-700 rounded-xl overflow-hidden bg-zinc-900">
       <div className="bg-zinc-950 border-b border-zinc-700">
