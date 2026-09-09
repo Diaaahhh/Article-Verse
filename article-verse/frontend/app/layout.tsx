@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import {API_BASE_URL} from "../constants/api" 
-
+import { API_BASE_URL } from "../constants/api";
+import { ThemeProvider } from "../context/ThemeContext";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -34,18 +34,15 @@ export async function generateMetadata(): Promise<Metadata> {
       index: true,
       follow: true,
     },
- verification: {
-      google:
-        settings?.google_site_verification || "",
+    verification: {
+      google: settings?.google_site_verification || "",
     },
 
     // ADD HERE
     other: {
-      "fb:app_id":
-        settings?.fb_app_id || "",
+      "fb:app_id": settings?.fb_app_id || "",
 
-      "p:domain_verify":
-        settings?.pinterest_domain_verify || "",
+      "p:domain_verify": settings?.pinterest_domain_verify || "",
     },
     openGraph: {
       type: "website",
@@ -75,17 +72,21 @@ export default function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <head>
-        <meta name="family" content="Arial" /><meta name="family" content="SutonnyMJ" />
-<meta name="family" content="Boishakhi;" />
-<meta
-      name="developer"
-      content=" Developed By: IGL Web Ltd Powered by : IGL Group Web address : http://www.iglweb.com Address : House 33, Road 04, Dhanmondi, Dhaka - 1205, Bangladesh, Cell : +880-1958-666999"
-    />
+        <meta name="family" content="Arial" />
+        <meta name="family" content="SutonnyMJ" />
+        <meta name="family" content="Boishakhi;" />
+        <meta
+          name="developer"
+          content=" Developed By: IGL Web Ltd Powered by : IGL Group Web address : http://www.iglweb.com Address : House 33, Road 04, Dhanmondi, Dhaka - 1205, Bangladesh, Cell : +880-1958-666999"
+        />
       </head>
-      <body >
-        <Navbar />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
+      <body>
+        <ThemeProvider>
+          <Navbar />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </ThemeProvider>
+
         <Toaster
           position="top-right"
           toastOptions={{

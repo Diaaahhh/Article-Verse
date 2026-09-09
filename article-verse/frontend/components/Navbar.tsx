@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { API_BASE_URL } from "@/constants/api";
-
+import ThemeToggle  from "./ThemeToggle"
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
@@ -176,7 +176,7 @@ checkAuth();
             </svg>
             Add Post
           </button>
-
+<ThemeToggle /> 
           {/* Log Out Button - Only show when logged in (no Sign In button) */}
           {isLoggedIn && (
 
@@ -209,8 +209,6 @@ checkAuth();
 )}
 
     </div>
-
-    {/* DROPDOWN */}
 
     {/* DROPDOWN - Enhanced Version */}
 {dropdownOpen && (
@@ -285,7 +283,7 @@ checkAuth();
   <button
     onClick={() => {
       setDropdownOpen(false);
-      router.push(`/profile/${userId}`);
+      router.push(`/${userId}`);
     }}
     className="
       w-full

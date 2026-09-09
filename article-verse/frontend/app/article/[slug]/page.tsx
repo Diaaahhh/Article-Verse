@@ -47,9 +47,11 @@ export async function generateMetadata({
 
   const articleUrl = `${siteConfig.siteUrl}/article/${article.slug}`;
 
-  const imageUrl = article.art_image
-    ? `${API_BASE_URL}/uploads/${article.art_image}`
-    : `${API_BASE_URL}/default-image.jpg`;
+  const imageUrl = article.art_og_image
+  ? `${API_BASE_URL}/uploads/${article.art_og_image}`
+  : article.art_image
+  ? `${API_BASE_URL}/uploads/${article.art_image}`
+  : `${API_BASE_URL}/default-image.jpg`;
 
   return {
     title: article.art_meta_title || article.art_title,
@@ -64,30 +66,24 @@ alternates: {
     canonical: `/article/${article.slug}`,
   },
     openGraph: {
-      title: article.art_meta_title || article.art_title,
-
-      description:
-        article.art_meta_desc ||
-        article.art_subtitle ||
-        "Read this article on Chulkani.com.",
-
-      url: articleUrl,
-
-      siteName: "Chulkani",
-
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: article.art_title,
-        },
-      ],
-
-      locale: "en_US",
-
-      type: "article",
+  title: article.art_meta_title || article.art_title,
+  description:
+    article.art_meta_desc ||
+    article.art_subtitle ||
+    "Read this article on Chulkani.com.",
+  url: articleUrl,
+  siteName: "Chulkani",
+  images: [
+    {
+      url: imageUrl,
+      width: 1200,
+      height: 600,
+      alt: article.art_title,
     },
+  ],
+  locale: "en_US",
+  type: "article",
+},
  other: {
     "ia:markup_url": articleUrl,
     "ia:markup_url_dev": articleUrl,

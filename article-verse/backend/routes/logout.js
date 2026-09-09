@@ -5,10 +5,14 @@ const router = express.Router();
 router.post("/", (req, res) => {
   // Clear authentication cookie
   res.clearCookie("userId", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-  });
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  ...(process.env.NODE_ENV === "production" && {
+    domain: ".chulkani.com",
+  }),
+  path: "/",
+});
 
   return res.status(200).json({
     success: true,

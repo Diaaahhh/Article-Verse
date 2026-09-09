@@ -25,6 +25,7 @@ import toast from "react-hot-toast";
 
 interface UserProfile {
   user_name: string;
+  user_id: string;
   user_email: string;
   user_about: string;
   user_image: string;
@@ -492,15 +493,15 @@ const handleFollow = async () => {
                 <div className="profile-name-section">
                   <div>
                     <h1 className="profile-name">
-                      {user?.user_name
-                        ? user.user_name
+                      {user?.user_id
+                        ? user.user_id
                         : user?.user_email
                         ? user.user_email.split("@")[0]
                         : "User Name"}
                     </h1>
                     <p className="profile-bio">
                       {user?.user_about ||
-                        "No bio added yet. Click edit to add a bio."}
+                        "No bio added yet."}
                     </p>
                   </div>
                  {isOwnProfile ? (
@@ -578,7 +579,7 @@ const handleFollow = async () => {
       <div
         key={user.id}
         className="profile-follow-user"
-        onClick={() => router.push(`/profile/${user.id}`)}
+        onClick={() => router.push(`/${user.id}`)}
       >
         {user.user_image ? (
   <img
@@ -608,7 +609,7 @@ const handleFollow = async () => {
       <div
         key={user.id}
         className="profile-follow-user"
-        onClick={() => router.push(`/profile/${user.id}`)}
+        onClick={() => router.push(`/${user.id}`)}
       >
         {user.user_image ? (
   <img

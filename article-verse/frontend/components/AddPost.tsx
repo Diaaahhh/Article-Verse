@@ -87,6 +87,31 @@ export default function AddPost() {
     setSubtitle(value);
     setMetaDesc(value);
   };
+  const handleSubtitlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
+    const pastedText = e.clipboardData.getData("text");
+
+    // Block URLs
+    const urlRegex = /(https?:\/\/|www\.|\.com|\.net|\.org|\.io|\.co)/i;
+
+    if (urlRegex.test(pastedText)) {
+      toast.error("URLs are not allowed in the subtitle");
+      return;
+    }
+
+    // Respect the 160 character limit
+    const remainingCharacters = 160 - subtitle.length;
+
+    if (remainingCharacters <= 0) {
+      return;
+    }
+
+    const textToInsert = pastedText.slice(0, remainingCharacters);
+
+    setSubtitle((prev) => prev + textToInsert);
+    setMetaDesc((prev) => prev + textToInsert);
+  };
   const handleCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
@@ -367,9 +392,29 @@ export default function AddPost() {
   };
 
   const fetchLanguages = async () => {
-    const res = await fetch(`${API_BASE_URL}/api/languages`);
-    const data = await res.json();
-    setLanguages(data);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/languages`);
+
+      if (!res.ok) {
+        throw new Error(`Failed to fetch languages: ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      // API returns: { languages: [...] }
+      // Always keep languages as an array.
+      if (Array.isArray(data)) {
+        setLanguages(data);
+      } else if (Array.isArray(data.languages)) {
+        setLanguages(data.languages);
+      } else {
+        console.error("Invalid languages API response:", data);
+        setLanguages([]);
+      }
+    } catch (error) {
+      console.error("Error fetching languages:", error);
+      setLanguages([]);
+    }
   };
 
   const fetchCategoryData = async () => {
@@ -849,13 +894,16 @@ export default function AddPost() {
               {/* Subtitle Field */}
               <div>
                 <label className={labelStyle}>Subtitle</label>
+
                 <input
                   type="text"
                   className={inputStyle}
                   placeholder="Add a catchy subtitle (Max 160 characters)..."
                   value={subtitle}
                   onChange={handleSubtitleChange}
+                  onPaste={handleSubtitlePaste}
                 />
+
                 <p
                   className="text-xs mt-1"
                   style={{ color: "var(--text-tertiary)" }}
@@ -950,7 +998,7 @@ export default function AddPost() {
                               image={imagePreview}
                               crop={crop}
                               zoom={zoom}
-                              aspect={850 / 300}
+                              aspect={2 / 1}
                               onCropChange={setCrop}
                               onZoomChange={setZoom}
                               onCropComplete={handleCropComplete}
@@ -1025,104 +1073,37 @@ export default function AddPost() {
                   <label className={labelStyle}>
                     Language <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    className={selectStyle}
-                    value={selectedLanguage}
-                    onChange={(e) => setSelectedLanguage(e.target.value)}
-                  >
-                    <option value="">Select Language</option>
-                    {languages.map((lan) => (
-                      <option key={lan.id} value={lan.id}>
-                        {lan.lan_name}
-                      </option>
-                    ))}
-                  </select>
+
+                  <Select
+                    styles={customSelectStyles}
+                    options={(Array.isArray(languages) ? languages : []).map(
+                      (lan) => ({
+                        value: lan.id,
+                        label: lan.lan_name,
+                      }),
+                    )}
+                    value={
+                      selectedLanguage
+                        ? {
+                            value: selectedLanguage,
+                            label:
+                              languages.find(
+                                (lan) =>
+                                  String(lan.id) === String(selectedLanguage),
+                              )?.lan_name || "",
+                          }
+                        : null
+                    }
+                    onChange={(selected) =>
+                      setSelectedLanguage(selected?.value || "")
+                    }
+                    isSearchable
+                    placeholder="Search Language..."
+                  />
+
                   {fieldErrors.language && (
                     <p className="text-red-500 text-sm mt-1">
                       {fieldErrors.language}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className={labelStyle}>
-                    Category <span className="text-red-500">*</span>
-                  </label>
-                  <Select
-                    styles={customSelectStyles}
-                    options={categories.map((cat) => ({
-                      value: cat.cat_category,
-                      label: cat.cat_category,
-                    }))}
-                    value={
-                      selectedCategory
-                        ? {
-                            value: selectedCategory,
-                            label: selectedCategory,
-                          }
-                        : null
-                    }
-                    onChange={(selected) =>
-                      handleCategoryChange({
-                        target: {
-                          value: selected?.value || "",
-                        },
-                      } as any)
-                    }
-                    isSearchable
-                    placeholder="Search Category..."
-                  />
-                  {/* <option value="">Select Category</option>
-                    {categories.map((cat, index) => (
-                      <option key={index} value={cat.cat_category}>
-                        {cat.cat_category}
-                      </option>
-                    ))} */}
-                  {/* </select> */}
-                  {fieldErrors.category && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {fieldErrors.category}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Subcategory & Deep Topic Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className={labelStyle}>
-                    Subcategory <span className="text-red-500">*</span>
-                  </label>
-                  <Select
-                    styles={customSelectStyles}
-                    options={subcategories.map((sub) => ({
-                      value: sub.cat_subcategory,
-                      label: sub.cat_subcategory,
-                    }))}
-                    value={
-                      selectedSubcategory
-                        ? {
-                            value: selectedSubcategory,
-                            label: selectedSubcategory,
-                          }
-                        : null
-                    }
-                    onChange={(selected) =>
-                      handleSubcategoryChange(selected?.value || "")
-                    }
-                    isSearchable
-                    placeholder="Search Subcategory..."
-                  />
-                  {/* <option value="">Select Subcategory</option>
-                    {subcategories.map((sub, index) => (
-                      <option key={index} value={sub.cat_subcategory}>
-                        {sub.cat_subcategory}
-                      </option>
-                    ))} */}
-                  {/* </select> */}
-                  {fieldErrors.subcategory && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {fieldErrors.subcategory}
                     </p>
                   )}
                 </div>
@@ -1158,13 +1139,124 @@ export default function AddPost() {
                       </option>
                     ))} */}
                   {/* </select> */}
+                  {selectedDeepTopic && (
+                    <p className="text-tertiary-500 text-sm mt-1 ">
+                      {selectedCategory} &gt;&gt; {selectedSubcategory} &gt;&gt;{" "}
+                      {selectedDeepTopic}
+                    </p>
+                  )}
+
                   {fieldErrors.deepTopic && (
                     <p className="text-red-500 text-sm mt-1">
                       {fieldErrors.deepTopic}
                     </p>
                   )}
                 </div>
+
+                {/* <div>
+                  <label className={labelStyle}>
+                    Category <span className="text-red-500">*</span>
+                  </label>
+                  <Select
+                    styles={customSelectStyles}
+                    options={categories.map((cat) => ({
+                      value: cat.cat_category,
+                      label: cat.cat_category,
+                    }))}
+                    value={
+                      selectedCategory
+                        ? {
+                            value: selectedCategory,
+                            label: selectedCategory,
+                          }
+                        : null
+                    }
+                    onChange={(selected) =>
+                      handleCategoryChange({
+                        target: {
+                          value: selected?.value || "",
+                        },
+                      } as any)
+                    }
+                    isSearchable
+                    placeholder="Search Category..."
+                  />
+                  
+                  {fieldErrors.category && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {fieldErrors.category}
+                    </p>
+                  )}
+                </div> */}
               </div>
+
+              {/* Subcategory & Deep Topic Grid */}
+              {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className={labelStyle}>
+                    Subcategory <span className="text-red-500">*</span>
+                  </label>
+                  <Select
+                    styles={customSelectStyles}
+                    options={subcategories.map((sub) => ({
+                      value: sub.cat_subcategory,
+                      label: sub.cat_subcategory,
+                    }))}
+                    value={
+                      selectedSubcategory
+                        ? {
+                            value: selectedSubcategory,
+                            label: selectedSubcategory,
+                          }
+                        : null
+                    }
+                    onChange={(selected) =>
+                      handleSubcategoryChange(selected?.value || "")
+                    }
+                    isSearchable
+                    placeholder="Search Subcategory..."
+                  />
+
+                  {fieldErrors.subcategory && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {fieldErrors.subcategory}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className={labelStyle}>
+                    Deep Topic <span className="text-red-500">*</span>
+                  </label>
+                  <Select
+                    styles={customSelectStyles}
+                    options={deepTopics.map((topic) => ({
+                      value: topic.cat_sub_subcategory,
+                      label: topic.cat_sub_subcategory,
+                    }))}
+                    value={
+                      selectedDeepTopic
+                        ? {
+                            value: selectedDeepTopic,
+                            label: selectedDeepTopic,
+                          }
+                        : null
+                    }
+                    onChange={(selected) =>
+                      handleDeepTopicChange(selected?.value || "")
+                    }
+                    isSearchable
+                    placeholder="Search Deep Topic..."
+                  />
+                 
+                 
+                  {fieldErrors.deepTopic && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {fieldErrors.deepTopic}
+                    </p>
+                  )}
+                </div>
+              </div> */}
               {/* category suggestion */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium">

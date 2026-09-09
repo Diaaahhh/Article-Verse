@@ -67,10 +67,16 @@ if (!isMatch) {
 }
 
  
+const isProduction = process.env.NODE_ENV === "production";
+
 res.cookie("userId", user.id, {
   httpOnly: true,
-secure: process.env.NODE_ENV === "production",
+  secure: isProduction,
   sameSite: "lax",
+  ...(isProduction && {
+    domain: ".chulkani.com",
+  }),
+  path: "/",
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
 

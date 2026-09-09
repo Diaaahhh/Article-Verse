@@ -48,7 +48,7 @@ export default function ContentSection({
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const getArticleUrl = (slug: string) => {
     return `${window.location.origin}/article/${slug}`;
@@ -74,7 +74,7 @@ const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const shareToSocial = (
     e: React.MouseEvent,
     platform: string,
-    article: ArticleType
+    article: ArticleType,
   ) => {
     e.stopPropagation();
 
@@ -140,81 +140,82 @@ const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   };
 
   const handleContainerScroll = () => {
-  const container = scrollContainerRef.current;
+    const container = scrollContainerRef.current;
 
-  if (!container || loading || !hasMore) return;
+    if (!container || loading || !hasMore) return;
 
-  const scrollTop = container.scrollTop;
-  const scrollHeight = container.scrollHeight;
-  const clientHeight = container.clientHeight;
+    const scrollTop = container.scrollTop;
+    const scrollHeight = container.scrollHeight;
+    const clientHeight = container.clientHeight;
 
-  // Load more when near bottom
-if (
-  scrollTop + clientHeight >= scrollHeight - 300 &&
-  !loading &&
-  hasMore
-) {
-  setPage((prev) => prev + 1);
-}
-};
-
-const fetchArticles = async () => {
-console.log("STep1");
-  if (loading) {console.log("STOPPED HERE"); return;}
-console.log("STEP 2");
-  setLoading(true);
-
-  try {
-    let url = "";
-
-    if (!selectedDeepTopic) {
-      url = `${API_BASE_URL}/api/content_section/latest?limit=20&offset=${
-        page * 20
-      }`;
-    } else {
-      url = `${API_BASE_URL}/api/content_section/articles/${selectedDeepTopic}?limit=20&offset=${
-        page * 20
-      }`;
+    // Load more when near bottom
+    if (scrollTop + clientHeight >= scrollHeight - 300 && !loading && hasMore) {
+      setPage((prev) => prev + 1);
     }
-  console.log("STEP 3");
-    console.log(url);
-    const res = await fetch(url);
-console.log("STEP 4");
-    const data = await res.json();
-console.log("STEP 5");
-console.log("Request URL:", url);
-console.log("API Response:", data);
-    // NEW
-    const newArticles = data.articles || [];
+  };
 
-    if (newArticles.length < 20) {
-      setHasMore(false);
+  const fetchArticles = async () => {
+    console.log("STep1");
+    if (loading) {
+      console.log("STOPPED HERE");
+      return;
     }
+    console.log("STEP 2");
+    setLoading(true);
 
-    setArticles((prev) => [...prev, ...newArticles]);
-  } catch (error) {
-    console.log(error);
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      let url = "";
+
+      if (!selectedDeepTopic) {
+        url = `${API_BASE_URL}/api/content_section/latest?limit=20&offset=${
+          page * 20
+        }`;
+      } else {
+        url = `${API_BASE_URL}/api/content_section/articles/${selectedDeepTopic}?limit=20&offset=${
+          page * 20
+        }`;
+      }
+      console.log("STEP 3");
+      console.log(url);
+      const res = await fetch(url);
+      console.log("STEP 4");
+      const data = await res.json();
+      console.log("STEP 5");
+      console.log("Request URL:", url);
+      console.log("API Response:", data);
+      // NEW
+      const newArticles = data.articles || [];
+
+      if (newArticles.length < 20) {
+        setHasMore(false);
+      }
+
+      setArticles((prev) => [...prev, ...newArticles]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-  setArticles([]);
-  setPage(0);
-  setHasMore(true);
+    setArticles([]);
+    setPage(0);
+    setHasMore(true);
 
-  fetchArticles();
-}, [selectedDeepTopic]);
-
-  useEffect(() => {
-  if (page > 0) {
     fetchArticles();
-  }
-}, [page]);
-useEffect(() => {
-  console.log("selectedDeepTopic changed:", selectedDeepTopic);
-}, [selectedDeepTopic]);
+  }, [selectedDeepTopic]);
+
+  useEffect(() => {
+    if (page > 0) {
+      fetchArticles();
+    }
+  }, [page]);
+
+  useEffect(() => {
+    console.log("selectedDeepTopic changed:", selectedDeepTopic);
+  }, [selectedDeepTopic]);
+
   // Close share dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -239,14 +240,15 @@ useEffect(() => {
         console.log(error);
       });
   }, []);
-useEffect(() => {
-  console.log("Articles Updated:", articles);
-}, [articles]);
+
+  useEffect(() => {
+    console.log("Articles Updated:", articles);
+  }, [articles]);
   const filteredArticles =
     selectedLanguage === "all"
       ? articles
       : articles.filter(
-          (article) => article.lan_id === Number(selectedLanguage)
+          (article) => article.lan_id === Number(selectedLanguage),
         );
 
   return (
@@ -333,14 +335,14 @@ useEffect(() => {
 
           {/* Scrollable List - Enhanced Cards */}
           <div
-  ref={scrollContainerRef}
-  onScroll={handleContainerScroll}
-  className="w-full overflow-y-auto overflow-x-visible pr-2 custom-scrollbar"
-  style={{
-    maxHeight: "calc(100vh - 180px)",
-    minHeight: "calc(100vh - 180px)",
-  }}
->
+            ref={scrollContainerRef}
+            onScroll={handleContainerScroll}
+            className="w-full overflow-y-auto overflow-x-visible pr-2 custom-scrollbar"
+            style={{
+              maxHeight: "calc(100vh - 180px)",
+              minHeight: "calc(100vh - 180px)",
+            }}
+          >
             {filteredArticles.length > 0 ? (
               <>
                 <div className="space-y-5 pr-4">
@@ -364,7 +366,7 @@ useEffect(() => {
                       {/* Image Section */}
                       <div className="flex-shrink-0">
                         {item.art_image ? (
-                          <div className="w-24 h-24 rounded-xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300">
+                          <div className=" w-48 h-24 rounded-xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300">
                             <img
                               src={`${API_BASE_URL}/uploads/${item.art_image}`}
                               alt={item.art_title}

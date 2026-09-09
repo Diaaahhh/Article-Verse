@@ -1,26 +1,35 @@
-"use client";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { API_BASE_URL } from "@/constants/api";
 import AddPost from "@/components/AddPost";
 
-export default function AddPostPage() {
-  const router = useRouter();
+export default async function AddPostPage() {
+  const cookieStore = await cookies();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const res = await fetch(`${API_BASE_URL}/api/check_auth`, {
-        credentials: "include",
-      });
+  const allCookies = cookieStore.getAll();
 
-      if (res.status === 401) {
-        router.push("/login");
-      }
-    };
+  const cookieHeader = allCookies
+    .map((cookie) => `${cookie.name}=${cookie.value}`)
+    .join("; ");
 
-    checkAuth();
-  }, [router]);
+  let res;
+
+  try {
+    res = await fetch(`${API_BASE_URL}/api/check_auth`, {
+      method: "GET",
+      headers: {
+        Cookie: cookieHeader,
+      },
+      cache: "no-store",
+    });
+  } catch (error) {
+    console.error("Auth request failed:", error);
+    redirect("/login");
+  }
+
+  if (!res.ok) {
+    redirect("/login");
+  }
 
   return <AddPost />;
 }

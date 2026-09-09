@@ -11,7 +11,7 @@ import {
   Share2,
   Bookmark,
   Heart,
-  Send
+  Send,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -43,7 +43,7 @@ interface Comment {
 
 export default function ArticleClient() {
   const [showShareMenu, setShowShareMenu] = useState(false);
-const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState("");
   const [currentUser, setCurrentUser] = useState<{
@@ -123,7 +123,7 @@ const dropdownRef = useRef<HTMLDivElement>(null);
 
       try {
         const res = await fetch(
-          `${API_BASE_URL}/api/likes/${article.id}/${user.id}`
+          `${API_BASE_URL}/api/likes/${article.id}/${user.id}`,
         );
 
         const data = await res.json();
@@ -138,75 +138,72 @@ const dropdownRef = useRef<HTMLDivElement>(null);
   }, [article]);
 
   useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setShowShareMenu(false);
-    }
-  };
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowShareMenu(false);
+      }
+    };
 
-  document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
 
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleShare = (e: React.MouseEvent) => {
-  e.stopPropagation();
-  setShowShareMenu((prev) => !prev);
-};
+    e.stopPropagation();
+    setShowShareMenu((prev) => !prev);
+  };
 
-const shareToSocial = (
-  e: React.MouseEvent,
-  platform: string
-) => {
-  e.stopPropagation();
+  const shareToSocial = (e: React.MouseEvent, platform: string) => {
+    e.stopPropagation();
 
-  if (!article) return;
+    if (!article) return;
 
-  const articleUrl = encodeURIComponent(
-    `${window.location.origin}/article/${article.slug}`
-  );
+    const articleUrl = encodeURIComponent(
+      `${window.location.origin}/article/${article.slug}`,
+    );
 
-  const title = encodeURIComponent(article.art_title);
+    const title = encodeURIComponent(article.art_title);
 
-  let shareUrl = "";
+    let shareUrl = "";
 
-  switch (platform) {
-    case "facebook":
-      shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${articleUrl}`;
-      break;
+    switch (platform) {
+      case "facebook":
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${articleUrl}`;
+        break;
 
-    case "whatsapp":
-      shareUrl = `https://wa.me/?text=${title}%20${articleUrl}`;
-      break;
+      case "whatsapp":
+        shareUrl = `https://wa.me/?text=${title}%20${articleUrl}`;
+        break;
 
-    case "twitter":
-      shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${articleUrl}`;
-      break;
+      case "twitter":
+        shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${articleUrl}`;
+        break;
 
-    case "linkedin":
-      shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${articleUrl}`;
-      break;
+      case "linkedin":
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${articleUrl}`;
+        break;
 
-    case "telegram":
-      shareUrl = `https://t.me/share/url?url=${articleUrl}&text=${title}`;
-      break;
+      case "telegram":
+        shareUrl = `https://t.me/share/url?url=${articleUrl}&text=${title}`;
+        break;
 
-    case "instagram":
-      toast("Instagram doesn't support direct web sharing.");
-      return;
+      case "instagram":
+        toast("Instagram doesn't support direct web sharing.");
+        return;
 
-    default:
-      return;
-  }
+      default:
+        return;
+    }
 
-  window.open(shareUrl, "_blank", "width=600,height=500");
-  setShowShareMenu(false);
-};
+    window.open(shareUrl, "_blank", "width=600,height=500");
+    setShowShareMenu(false);
+  };
 
   const handleLike = async () => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -309,7 +306,7 @@ const shareToSocial = (
 
         // Add target="_blank"
         return `<a ${before} href=${quote}${url}${quote} target="_blank" rel="noopener noreferrer" ${after}>`;
-      }
+      },
     );
 
     return { __html: processedHtml };
@@ -361,7 +358,7 @@ const shareToSocial = (
     if (!article) return;
 
     const url = encodeURIComponent(
-      `${window.location.origin}/article/${article.slug}`
+      `${window.location.origin}/article/${article.slug}`,
     );
 
     const title = encodeURIComponent(article.art_title);
@@ -525,7 +522,7 @@ const shareToSocial = (
               <div className="article-meta">
                 <div
                   className="article-author clickable-author"
-                  onClick={() => router.push(`/profile/${article.user_id}`)}
+                  onClick={() => router.push(`/${article.user_id}`)}
                 >
                   <div className="article-avatar">
                     {article.user_image ? (
@@ -556,7 +553,7 @@ const shareToSocial = (
                           year: "numeric",
                           month: "long",
                           day: "numeric",
-                        }
+                        },
                       )}
                     </span>
                   </div>
@@ -588,120 +585,109 @@ const shareToSocial = (
 
                     <span>{article.art_like || 0}</span>
                   </div>
-                  {/* <button
-                    onClick={() => setIsBookmarked(!isBookmarked)}
-                    className={`article-action-btn ${
-                      isBookmarked ? "bookmarked" : ""
-                    }`}
-                  >
-                    <Bookmark
-                      className={`article-action-icon ${
-                        isBookmarked ? "filled" : ""
-                      }`}
-                    />
-                  </button> */}
+                  
                   <div style={{ position: "relative" }}>
-  <button
-    onClick={handleShare}
-    className="article-action-btn"
-  >
-    <Share2 className="article-action-icon" />
-  </button>
+                    <button
+                      onClick={handleShare}
+                      className="article-action-btn"
+                    >
+                      <Share2 className="article-action-icon" />
+                    </button>
 
-  {showShareMenu && (
-    <div
-      ref={dropdownRef}
-      className="absolute top-12 right-0 z-50 w-56 rounded-2xl p-2 shadow-2xl border backdrop-blur-xl"
-      style={{
-        background: "rgba(26,26,26,0.98)",
-        borderColor: "var(--border-light)",
-      }}
-    >
-      <div
-        className="p-2 border-b"
-        style={{ borderColor: "var(--border-light)" }}
-      >
-        <p
-          className="text-xs font-medium text-center"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          Share via
-        </p>
-      </div>
+                    {showShareMenu && (
+                      <div
+                        ref={dropdownRef}
+                        className="absolute top-12 right-0 z-50 w-56 rounded-2xl p-2 shadow-2xl border backdrop-blur-xl"
+                        style={{
+                          background: "rgba(26,26,26,0.98)",
+                          borderColor: "var(--border-light)",
+                        }}
+                      >
+                        <div
+                          className="p-2 border-b"
+                          style={{ borderColor: "var(--border-light)" }}
+                        >
+                          <p
+                            className="text-xs font-medium text-center"
+                            style={{ color: "var(--text-secondary)" }}
+                          >
+                            Share via
+                          </p>
+                        </div>
 
-      <div className="flex flex-col gap-1 p-2">
-        {/* Facebook */}
-        <button
-          onClick={(e) => shareToSocial(e, "facebook")}
-          className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:translate-x-1 transition-all"
-        >
-          <div className="w-9 h-9 rounded-full bg-[#1877F2] flex items-center justify-center">
-            <svg
-              className="w-4 h-4 text-white"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12z" />
-            </svg>
-          </div>
-          <span>Facebook</span>
-        </button>
+                        <div className="flex flex-col gap-1 p-2">
+                          {/* Facebook */}
+                          <button
+                            onClick={(e) => shareToSocial(e, "facebook")}
+                            className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:translate-x-1 transition-all"
+                          >
+                            <div className="w-9 h-9 rounded-full bg-[#1877F2] flex items-center justify-center">
+                              <svg
+                                className="w-4 h-4 text-white"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12z" />
+                              </svg>
+                            </div>
+                            <span>Facebook</span>
+                          </button>
 
-        {/* WhatsApp */}
-        <button
-          onClick={(e) => shareToSocial(e, "whatsapp")}
-          className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:translate-x-1 transition-all"
-        >
-          <div className="w-9 h-9 rounded-full bg-[#25D366] flex items-center justify-center">
-            <svg
-              className="w-4 h-4 text-white"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M22 16.19a8.34 8.34 0 01-2.36.65 4.13 4.13 0 001.81-2.27 8.31 8.31 0 01-2.61 1 4.1 4.1 0 00-7 3.74 11.65 11.65 0 01-8.45-4.29 4.1 4.1 0 001.27 5.47A4.06 4.06 0 012.8 19.1a4.1 4.1 0 003.82 2.85 8.23 8.23 0 01-5.1 1.76 8.22 8.22 0 01-.98-.06 11.62 11.62 0 006.29 1.85c7.55 0 11.67-6.25 11.67-11.67 0-.18 0-.36-.01-.53A8.36 8.36 0 0022 16.19z" />
-            </svg>
-          </div>
-          <span>WhatsApp</span>
-        </button>
+                          {/* WhatsApp */}
+                          <button
+                            onClick={(e) => shareToSocial(e, "whatsapp")}
+                            className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:translate-x-1 transition-all"
+                          >
+                            <div className="w-9 h-9 rounded-full bg-[#25D366] flex items-center justify-center">
+                              <svg
+                                className="w-4 h-4 text-white"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M22 16.19a8.34 8.34 0 01-2.36.65 4.13 4.13 0 001.81-2.27 8.31 8.31 0 01-2.61 1 4.1 4.1 0 00-7 3.74 11.65 11.65 0 01-8.45-4.29 4.1 4.1 0 001.27 5.47A4.06 4.06 0 012.8 19.1a4.1 4.1 0 003.82 2.85 8.23 8.23 0 01-5.1 1.76 8.22 8.22 0 01-.98-.06 11.62 11.62 0 006.29 1.85c7.55 0 11.67-6.25 11.67-11.67 0-.18 0-.36-.01-.53A8.36 8.36 0 0022 16.19z" />
+                              </svg>
+                            </div>
+                            <span>WhatsApp</span>
+                          </button>
 
-        {/* Twitter */}
-        <button
-          onClick={(e) => shareToSocial(e, "twitter")}
-          className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:translate-x-1 transition-all"
-        >
-          <span>X (Twitter)</span>
-        </button>
+                          {/* Twitter */}
+                          <button
+                            onClick={(e) => shareToSocial(e, "twitter")}
+                            className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:translate-x-1 transition-all"
+                          >
+                            <span>X (Twitter)</span>
+                          </button>
 
-        {/* LinkedIn */}
-        <button
-          onClick={(e) => shareToSocial(e, "linkedin")}
-          className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:translate-x-1 transition-all"
-        >
-          <span>LinkedIn</span>
-        </button>
+                          {/* LinkedIn */}
+                          <button
+                            onClick={(e) => shareToSocial(e, "linkedin")}
+                            className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:translate-x-1 transition-all"
+                          >
+                            <span>LinkedIn</span>
+                          </button>
 
-        {/* Telegram */}
-        <button
-          onClick={(e) => shareToSocial(e, "telegram")}
-          className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:translate-x-1 transition-all"
-        >
-          <div className="w-9 h-9 rounded-full bg-[#0088cc] flex items-center justify-center">
-            <Send className="w-4 h-4 text-white" />
-          </div>
-          <span>Telegram</span>
-        </button>
+                          {/* Telegram */}
+                          <button
+                            onClick={(e) => shareToSocial(e, "telegram")}
+                            className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:translate-x-1 transition-all"
+                          >
+                            <div className="w-9 h-9 rounded-full bg-[#0088cc] flex items-center justify-center">
+                              <Send className="w-4 h-4 text-white" />
+                            </div>
+                            <span>Telegram</span>
+                          </button>
 
-        {/* Instagram */}
-        <button
-          onClick={(e) => shareToSocial(e, "instagram")}
-          className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:translate-x-1 transition-all"
-        >
-          <span>Instagram</span>
-        </button>
-      </div>
-    </div>
-  )}
-</div>
+                          {/* Instagram */}
+                          <button
+                            onClick={(e) => shareToSocial(e, "instagram")}
+                            className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:translate-x-1 transition-all"
+                          >
+                            <span>Instagram</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -763,27 +749,6 @@ const shareToSocial = (
                       <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12z" />
                     </svg>
                   </button>
-                  {/* <button
-                    className="share-btn whatsapp"
-                    onClick={() => shareArticle("whatsapp")}
-                  >
-                    <svg
-                      className="share-icon"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M22 16.19a8.34 8.34 0 0 1-2.36.65 4.13 4.13 0 0 0 1.81-2.27 8.31 8.31 0 0 1-2.61 1 4.1 4.1 0 0 0-7 3.74 11.65 11.65 0 0 1-8.45-4.29 4.1 4.1 0 0 0 1.27 5.47A4.06 4.06 0 0 1 2.8 19.1a4.1 4.1 0 0 0 3.82 2.85 8.23 8.23 0 0 1-5.1 1.76 8.22 8.22 0 0 1-.98-.06 11.62 11.62 0 0 0 6.29 1.85c7.55 0 11.67-6.25 11.67-11.67 0-.18 0-.36-.01-.53A8.36 8.36 0 0 0 22 16.19z" />
-                    </svg>
-                  </button> */}
-                  {/* <button className="share-btn instagram">
-                    <svg
-                      className="share-icon"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
-                    </svg>
-                  </button> */}
                 </div>
               </div>
 

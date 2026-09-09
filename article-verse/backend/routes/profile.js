@@ -104,6 +104,7 @@ router.get("/", async (req, res) => {
       SELECT
   id,
   user_name,
+  user_id,
   user_email,
   user_about,
   user_image,
@@ -122,6 +123,7 @@ WHERE id = ?
       `,
       [userId]
     );
+console.log(rows[0].user_id);
 
     // User not found
     if (rows.length === 0) {
@@ -208,6 +210,7 @@ router.get("/:id", async (req, res) => {
       `
       SELECT
         id,
+        user_id,
         user_name,
         user_email,
         user_about,
