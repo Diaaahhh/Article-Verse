@@ -428,19 +428,21 @@ ${art_tags || ""}
       });
 
     } catch (error) {
+  console.error("ADD POST ERROR:", error);
 
-      console.log(error);
+  if (error.code === "LIMIT_FILE_SIZE") {
+    return res.status(400).json({
+      message: "Image size must be less than 5 MB",
+    });
+  }
 
-      if (error.code === "LIMIT_FILE_SIZE") {
-        return res.status(400).json({
-          message: "Image size must be less than 5 MB",
-        });
-      }
-
-      return res.status(500).json({
-        message: "Server error",
-      });
-    }
+  return res.status(500).json({
+    message: "Server error",
+    error: error instanceof Error ? error.message : String(error),
+    code: error?.code || null,
+    sqlMessage: error?.sqlMessage || null,
+  });
+}
   }
 );
 
