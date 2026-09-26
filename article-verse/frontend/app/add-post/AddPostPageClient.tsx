@@ -12,6 +12,9 @@ export default async function AddPostPage() {
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join("; ");
 
+  console.log("ADD POST - COOKIE HEADER:", cookieHeader);
+  console.log("ADD POST - API URL:", API_BASE_URL);
+
   let res;
 
   try {
@@ -22,12 +25,18 @@ export default async function AddPostPage() {
       },
       cache: "no-store",
     });
-  } catch (error) {
-    console.error("Auth request failed:", error);
-    redirect("/login");
-  }
 
-  if (!res.ok) {
+    console.log("ADD POST - AUTH STATUS:", res.status);
+
+    const responseText = await res.text();
+
+    console.log("ADD POST - AUTH RESPONSE:", responseText);
+
+    if (!res.ok) {
+      redirect("/login");
+    }
+  } catch (error) {
+    console.error("ADD POST - AUTH REQUEST FAILED:", error);
     redirect("/login");
   }
 

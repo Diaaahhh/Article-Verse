@@ -78,7 +78,7 @@ export default function ContentSection({
   ) => {
     e.stopPropagation();
 
-    const url = encodeURIComponent(getArticleUrl(article.slug));
+    const url = getArticleUrl(article.slug);
     const title = encodeURIComponent(article.art_title);
 
     let shareUrl = "";
@@ -136,6 +136,9 @@ export default function ContentSection({
   };
 
   const handleArticleClick = (article: ArticleType) => {
+    console.log("CLICKED ARTICLE:", article);
+    console.log("ARTICLE SLUG:", article?.slug);
+
     router.push(`/article/${article.slug}`);
   };
 
@@ -364,30 +367,30 @@ export default function ContentSection({
                       }}
                     >
                       {/* Image Section */}
-                      <div className="flex-shrink-0">
-                        {item.art_image ? (
-                          <div className=" w-48 h-24 rounded-xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300">
-                            <img
-                              src={`${API_BASE_URL}/uploads/${item.art_image}`}
-                              alt={item.art_title}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            />
-                          </div>
-                        ) : (
-                          <div
-                            className="w-24 h-24 rounded-xl flex items-center justify-center shadow-md"
-                            style={{
-                              background:
-                                "linear-gradient(135deg, rgba(217,92,43,0.15), rgba(30,107,107,0.15))",
-                            }}
-                          >
-                            <BookOpen
-                              className="w-10 h-10"
-                              style={{ color: "var(--accent-primary)" }}
-                            />
-                          </div>
-                        )}
-                      </div>
+<div className="flex-shrink-0">
+  {item.art_image ? (
+    <div className="w-[240px] h-[120px] aspect-[2/1] rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300">
+      <img
+        src={`${API_BASE_URL}/uploads/${item.art_image}`}
+        alt={item.art_title}
+        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+      />
+    </div>
+  ) : (
+    <div
+      className="w-[240px] h-[120px] aspect-[2/1] rounded-2xl flex items-center justify-center shadow-md"
+      style={{
+        background:
+          "linear-gradient(135deg, rgba(217,92,43,0.15), rgba(30,107,107,0.15))",
+      }}
+    >
+      <BookOpen
+        className="w-10 h-10"
+        style={{ color: "var(--accent-primary)" }}
+      />
+    </div>
+  )}
+</div>
 
                       {/* Content Section */}
                       <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between gap-4">

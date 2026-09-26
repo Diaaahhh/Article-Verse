@@ -98,9 +98,7 @@ export default function SearchContent() {
   ) => {
     e.stopPropagation();
 
-    const url = encodeURIComponent(
-      getArticleUrl(article.slug)
-    );
+    const url = getArticleUrl(article.slug);
 
     const title = encodeURIComponent(
       article.art_title

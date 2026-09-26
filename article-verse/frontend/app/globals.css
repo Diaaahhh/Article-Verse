@@ -863,16 +863,20 @@ tr:hover {
 .article-image-glow {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(217, 92, 43, 0.2), rgba(26, 26, 26, 0.2));
+  background: linear-gradient(
+    to right,
+    rgba(217, 92, 43, 0.2),
+    rgba(26, 26, 26, 0.2)
+  );
   border-radius: 1rem;
   filter: blur(1.5rem);
+  pointer-events: none;
 }
 
 .article-image {
   display: block;
   width: 100%;
   max-width: 850px;
-  height: 425px;
   object-fit: cover;
   border-radius: 1rem;
   box-shadow: var(--shadow-xl);

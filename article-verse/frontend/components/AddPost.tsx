@@ -300,10 +300,19 @@ export default function AddPost() {
       setFieldErrors({});
       const formData = new FormData();
 
-      const slug = slugify(title, {
-        lower: true,
-        strict: true,
-      });
+      const slug = title
+        .trim()
+        .toLowerCase()
+        .normalize("NFC")
+        .replace(/\s+/g, "-")
+        .replace(/[^\p{L}\p{N}\p{M}-]/gu, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+
+      if (!slug) {
+        toast.error("Unable to generate article slug");
+        return;
+      }
 
       formData.append("title", title);
       formData.append("slug", slug);
@@ -326,10 +335,32 @@ export default function AddPost() {
       }
 
       if (imagePreview) {
+        // User uploaded an image
         const croppedFile = await getCroppedImage();
 
         if (croppedFile) {
           formData.append("image", croppedFile);
+        }
+      } else {
+        // No image uploaded → use default Chulkani image
+        try {
+          const response = await fetch("/chulkani.png");
+
+          if (!response.ok) {
+            throw new Error("Failed to load default image");
+          }
+
+          const blob = await response.blob();
+
+          const defaultImage = new File([blob], "chulkani.png", {
+            type: blob.type || "image/png",
+          });
+
+          formData.append("image", defaultImage);
+        } catch (error) {
+          console.error("Error loading default image:", error);
+          toast.error("Could not load the default image");
+          return;
         }
       }
 

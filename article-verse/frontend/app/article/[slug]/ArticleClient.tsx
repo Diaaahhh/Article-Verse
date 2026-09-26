@@ -164,9 +164,9 @@ export default function ArticleClient() {
 
     if (!article) return;
 
-    const articleUrl = encodeURIComponent(
-      `${window.location.origin}/article/${article.slug}`,
-    );
+    const articleUrl = 
+      `${window.location.origin}/article/${article.slug}`
+    ;
 
     const title = encodeURIComponent(article.art_title);
 
@@ -357,9 +357,7 @@ export default function ArticleClient() {
   const shareArticle = (platform: string) => {
     if (!article) return;
 
-    const url = encodeURIComponent(
-      `${window.location.origin}/article/${article.slug}`,
-    );
+    const url = `${window.location.origin}/article/${article.slug}`;
 
     const title = encodeURIComponent(article.art_title);
 
@@ -463,10 +461,12 @@ export default function ArticleClient() {
               {article.art_image ? (
                 <div className="article-image-container">
                   <div className="article-image-glow"></div>
+
                   <img
                     src={`${API_BASE_URL}/uploads/${article.art_image}`}
                     alt={article.art_title}
                     className="article-image"
+                    draggable={false}
                   />
                 </div>
               ) : (
@@ -585,7 +585,7 @@ export default function ArticleClient() {
 
                     <span>{article.art_like || 0}</span>
                   </div>
-                  
+
                   <div style={{ position: "relative" }}>
                     <button
                       onClick={handleShare}
